@@ -1,0 +1,1542 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buff差价监控系统</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .loading {
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .profit-positive {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+        .profit-high {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        }
+        .profit-very-high {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <!-- 顶部导航 -->
+    <nav class="gradient-bg shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <i class="fas fa-chart-line text-white text-2xl mr-3"></i>
+                    <h1 class="text-white text-xl font-bold">Buff差价监控系统</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button id="refreshBtn" class="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-4 py-2 rounded-lg transition duration-200">
+                        <i class="fas fa-sync-alt mr-2"></i>
+                        刷新数据
+                    </button>
+                    <button id="settingsBtn" class="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-4 py-2 rounded-lg transition duration-200">
+                        <i class="fas fa-cog mr-2"></i>
+                        设置
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- 统计面板 -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-blue-100 text-blue-600">
+                        <i class="fas fa-gem text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-600">总饰品数</p>
+                        <p class="text-2xl font-semibold text-gray-900" id="totalCount">-</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-green-100 text-green-600">
+                        <i class="fas fa-coins text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-600">平均价差</p>
+                        <p class="text-2xl font-semibold text-gray-900" id="avgDiff">-</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-yellow-100 text-yellow-600">
+                        <i class="fas fa-chart-bar text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-600">最大价差</p>
+                        <p class="text-2xl font-semibold text-gray-900" id="maxDiff">-</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-purple-100 text-purple-600">
+                        <i class="fas fa-clock text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-600">更新时间</p>
+                        <p class="text-sm font-semibold text-gray-900" id="lastUpdate">-</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 过滤和排序 -->
+        <div class="bg-white rounded-lg shadow p-6 mb-8">
+            <div class="flex flex-wrap items-center gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">价格区间（元）</label>
+                    <div class="flex items-center space-x-2">
+                        <input type="number" id="minPriceFilter" placeholder="最小价差" 
+                               class="border border-gray-300 rounded-md px-3 py-2 w-24" step="0.1" min="0">
+                        <span class="text-gray-500">-</span>
+                        <input type="number" id="maxPriceFilter" placeholder="最大价差" 
+                               class="border border-gray-300 rounded-md px-3 py-2 w-24" step="0.1" min="0">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">排序方式</label>
+                    <select id="sortBy" class="border border-gray-300 rounded-md px-3 py-2">
+                        <option value="price_diff">按价差排序</option>
+                        <option value="profit_margin">按利润率排序</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">显示数量</label>
+                    <select id="limitCount" class="border border-gray-300 rounded-md px-3 py-2">
+                        <option value="50">50个</option>
+                        <option value="100" selected>100个</option>
+                        <option value="200">200个</option>
+                        <option value="500">500个</option>
+                    </select>
+                </div>
+                <div class="flex items-end">
+                    <button id="applyFilter" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition duration-200">
+                        <i class="fas fa-filter mr-2"></i>
+                        应用筛选
+                    </button>
+                </div>
+                <div class="flex items-end">
+                    <button id="resetFilter" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md transition duration-200 ml-2">
+                        <i class="fas fa-undo mr-2"></i>
+                        重置
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 饰品列表 -->
+        <div class="bg-white rounded-lg shadow">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h2 class="text-lg font-semibold text-gray-900">
+                    <i class="fas fa-list mr-2"></i>
+                    差价饰品列表
+                </h2>
+            </div>
+            
+            <div id="loading" class="flex items-center justify-center p-8">
+                <div class="loading text-blue-600 text-2xl">
+                    <i class="fas fa-spinner"></i>
+                </div>
+                <span class="ml-3 text-gray-600">正在加载数据...</span>
+            </div>
+            
+            <div id="itemsList" class="hidden">
+                <!-- 动态生成的饰品列表 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 设置模态框 -->
+    <div id="settingsModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg max-w-4xl w-full p-6 max-h-screen overflow-y-auto">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-xl font-semibold">系统设置</h3>
+                    <button id="closeSettings" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                
+                <!-- 设置标签页 -->
+                <div class="flex border-b mb-6">
+                    <button id="generalTab" class="px-4 py-2 font-medium text-blue-600 border-b-2 border-blue-600">
+                        常规设置
+                    </button>
+                    <button id="tokensTab" class="px-4 py-2 font-medium text-gray-600 hover:text-blue-600 ml-4">
+                        Token管理
+                    </button>
+                </div>
+                
+                <!-- 常规设置面板 -->
+                <div id="generalPanel" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">价格差异区间（元）</label>
+                        <div class="flex items-center space-x-2">
+                            <input type="number" id="priceRangeMin" placeholder="最小价差" 
+                                   class="border border-gray-300 rounded-md px-3 py-2 w-24" step="0.1" min="0">
+                            <span class="text-gray-500">-</span>
+                            <input type="number" id="priceRangeMax" placeholder="最大价差" 
+                                   class="border border-gray-300 rounded-md px-3 py-2 w-24" step="0.1" min="0">
+                        </div>
+                        <p class="text-xs text-gray-500 mt-1">设置价差筛选区间，例如 3-5元</p>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Buff价格筛选区间（元）</label>
+                        <div class="flex items-center space-x-2">
+                            <input type="number" id="buffPriceMin" placeholder="最小价格" 
+                                   class="border border-gray-300 rounded-md px-3 py-2 w-24" step="0.1" min="0">
+                            <span class="text-gray-500">-</span>
+                            <input type="number" id="buffPriceMax" placeholder="最大价格" 
+                                   class="border border-gray-300 rounded-md px-3 py-2 w-24" step="0.1" min="0">
+                        </div>
+                        <p class="text-xs text-gray-500 mt-1">只分析此价格区间内的Buff商品，用于增量更新</p>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">最大输出数量</label>
+                        <input type="number" id="maxOutputItems" placeholder="300" 
+                               class="w-full border border-gray-300 rounded-md px-3 py-2" min="1" step="1">
+                        <p class="text-xs text-gray-500 mt-1">限制最终输出的商品数量</p>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">更新间隔设置</label>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs text-gray-600 mb-1">全量更新（小时）</label>
+                                <div class="text-sm text-blue-600 font-medium" id="fullUpdateInterval">1小时</div>
+                                <p class="text-xs text-gray-500">获取全部数据的间隔</p>
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-600 mb-1">增量更新（分钟）</label>
+                                <div class="text-sm text-blue-600 font-medium" id="incrementalUpdateInterval">1分钟</div>
+                                <p class="text-xs text-gray-500">搜索特定商品的间隔</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">手动更新操作</label>
+                        <div class="flex space-x-2">
+                            <button id="forceFullUpdate" class="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded text-sm">
+                                <i class="fas fa-download mr-1"></i>
+                                强制全量更新
+                            </button>
+                            <button id="forceIncrementalUpdate" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded text-sm">
+                                <i class="fas fa-sync mr-1"></i>
+                                强制增量更新
+                            </button>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-1">立即执行指定类型的更新</p>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">价差阈值（元）- 兼容模式</label>
+                        <input type="number" id="thresholdInput" placeholder="20" 
+                               class="w-full border border-gray-300 rounded-md px-3 py-2" step="0.1" min="0">
+                        <p class="text-xs text-gray-500 mt-1">传统单一阈值模式（建议使用价格区间）</p>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">当前价格区间</label>
+                        <div id="currentPriceRange" class="text-sm text-blue-600 font-medium">
+                            加载中...
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">当前Buff价格筛选</label>
+                        <div id="currentBuffPriceRange" class="text-sm text-blue-600 font-medium">
+                            加载中...
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">更新状态</label>
+                        <div id="updateStatus" class="text-sm">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                <i class="fas fa-clock mr-1"></i>
+                                正在检查...
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Token管理面板 -->
+                <div id="tokensPanel" class="hidden space-y-6">
+                    <!-- Token状态概览 -->
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h4 class="font-medium text-gray-900 mb-3">Token状态</h4>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <p class="text-sm text-gray-600">Buff API</p>
+                                <div id="buffTokenStatus" class="mt-1">
+                                    <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-800">
+                                        检查中...
+                                    </span>
+                                </div>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-600">悠悠有品 API</p>
+                                <div id="youpinTokenStatus" class="mt-1">
+                                    <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-800">
+                                        检查中...
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Buff Token设置 -->
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <div class="flex justify-between items-center mb-4">
+                            <h4 class="font-medium text-gray-900">Buff Token 配置</h4>
+                            <button id="testBuffConnection" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm">
+                                <i class="fas fa-plug mr-1"></i>
+                                测试连接
+                            </button>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Session Cookie</label>
+                                <input type="text" id="buffSession" placeholder="session值..." 
+                                       class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">CSRF Token</label>
+                                <input type="text" id="buffCsrfToken" placeholder="csrf_token值..." 
+                                       class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">其他Cookies (JSON格式)</label>
+                                <textarea id="buffOtherCookies" placeholder='{"Device-Id": "xxx", "remember_me": "xxx"}'
+                                          class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm h-20"></textarea>
+                                <p class="text-xs text-gray-500 mt-1">可选：其他cookies，JSON格式</p>
+                            </div>
+                            <button id="updateBuffToken" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">
+                                <i class="fas fa-save mr-2"></i>
+                                更新 Buff Token
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 悠悠有品Token设置 -->
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <div class="flex justify-between items-center mb-4">
+                            <h4 class="font-medium text-gray-900">悠悠有品 Token 配置</h4>
+                            <button id="testYoupinConnection" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm">
+                                <i class="fas fa-plug mr-1"></i>
+                                测试连接
+                            </button>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Device ID</label>
+                                <input type="text" id="youpinDeviceId" placeholder="device_id值..." 
+                                       class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Device UK</label>
+                                <input type="text" id="youpinDeviceUk" placeholder="device_uk值..." 
+                                       class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">UK</label>
+                                <input type="text" id="youpinUk" placeholder="uk值..." 
+                                       class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">B3</label>
+                                <input type="text" id="youpinB3" placeholder="b3值..." 
+                                       class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Authorization Token</label>
+                                <input type="text" id="youpinAuthorization" placeholder="Bearer xxx或JWT token..." 
+                                       class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm">
+                                <p class="text-xs text-gray-500 mt-1">认证Token，通常以Bearer开头</p>
+                            </div>
+                            <button id="updateYoupinToken" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">
+                                <i class="fas fa-save mr-2"></i>
+                                更新悠悠有品 Token
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Token获取说明 -->
+                    <div class="bg-blue-50 p-4 rounded-lg">
+                        <h4 class="font-medium text-blue-900 mb-2">
+                            <i class="fas fa-info-circle mr-2"></i>
+                            如何获取Token
+                        </h4>
+                        <div class="text-sm text-blue-800 space-y-2">
+                            <p><strong>Buff Token:</strong></p>
+                            <p>1. 在浏览器中登录 buff.163.com</p>
+                            <p>2. 打开开发者工具 (F12) → Network 标签</p>
+                            <p>3. 刷新页面，查找对 /api/market/goods 的请求</p>
+                            <p>4. 复制请求头中的 session 和 csrf_token cookies</p>
+                            
+                            <p><strong>悠悠有品Token:</strong></p>
+                            <p>1. 在浏览器中访问 youpin898.com</p>
+                            <p>2. 打开开发者工具 → Network 标签</p>
+                            <p>3. 查找对 api.youpin898.com 的请求</p>
+                            <p>4. 复制请求头中的相关参数</p>
+                            <p>5. <strong>重要</strong>：复制Authorization头（通常以Bearer开头）</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-6 flex justify-end space-x-3">
+                    <button id="saveSettings" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition duration-200">
+                        保存设置
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class BuffMonitor {
+            constructor() {
+                this.items = [];
+                this.allItems = [];
+                this.filters = { minPrice: null, maxPrice: null };
+                this.sortBy = 'price_diff';
+                
+                // 🔥 新增：流式分析变量
+                this.streamingActive = false;
+                this.eventSource = null;
+                
+                this.initEventListeners();
+                this.loadData();
+                this.loadStatus();
+            }
+
+            // 绑定事件监听器
+            initEventListeners() {
+                // 刷新按钮
+                const refreshBtn = document.getElementById('refreshBtn');
+                if (refreshBtn) {
+                    refreshBtn.addEventListener('click', () => this.forceUpdate());
+                }
+                
+                // 设置按钮
+                const settingsBtn = document.getElementById('settingsBtn');
+                if (settingsBtn) {
+                    settingsBtn.addEventListener('click', () => this.openSettings());
+                }
+                
+                // 关闭设置模态框
+                const closeSettings = document.getElementById('closeSettings');
+                if (closeSettings) {
+                    closeSettings.addEventListener('click', () => this.closeSettings());
+                }
+                
+                // 标签页切换
+                const generalTab = document.getElementById('generalTab');
+                if (generalTab) {
+                    generalTab.addEventListener('click', () => this.showGeneralTab());
+                }
+                
+                const tokensTab = document.getElementById('tokensTab');
+                if (tokensTab) {
+                    tokensTab.addEventListener('click', () => this.showTokenTab());
+                }
+                
+                // 应用筛选按钮
+                const applyFilter = document.getElementById('applyFilter');
+                if (applyFilter) {
+                    applyFilter.addEventListener('click', () => this.applyFilters());
+                }
+
+                // 重置筛选按钮
+                const resetFilter = document.getElementById('resetFilter');
+                if (resetFilter) {
+                    resetFilter.addEventListener('click', () => this.resetFilters());
+                }
+
+                // 保存设置按钮
+                const saveSettings = document.getElementById('saveSettings');
+                if (saveSettings) {
+                    saveSettings.addEventListener('click', () => this.saveSettings());
+                }
+
+                // Token相关按钮
+                const updateBuffToken = document.getElementById('updateBuffToken');
+                if (updateBuffToken) {
+                    updateBuffToken.addEventListener('click', () => this.updateBuffToken());
+                }
+
+                const updateYoupinToken = document.getElementById('updateYoupinToken');
+                if (updateYoupinToken) {
+                    updateYoupinToken.addEventListener('click', () => this.updateYoupinToken());
+                }
+
+                const testBuffConnection = document.getElementById('testBuffConnection');
+                if (testBuffConnection) {
+                    testBuffConnection.addEventListener('click', () => this.testBuffConnection());
+                }
+
+                const testYoupinConnection = document.getElementById('testYoupinConnection');
+                if (testYoupinConnection) {
+                    testYoupinConnection.addEventListener('click', () => this.testYoupinConnection());
+                }
+
+                // 🔥 新增：强制更新按钮
+                const forceFullUpdate = document.getElementById('forceFullUpdate');
+                if (forceFullUpdate) {
+                    forceFullUpdate.addEventListener('click', () => this.forceFullUpdate());
+                }
+                
+                const forceIncrementalUpdate = document.getElementById('forceIncrementalUpdate');
+                if (forceIncrementalUpdate) {
+                    forceIncrementalUpdate.addEventListener('click', () => this.forceIncrementalUpdate());
+                }
+            }
+
+            // 应用筛选功能
+            async applyFilters() {
+                try {
+                    const minPrice = document.getElementById('minPriceFilter').value || 0;
+                    const maxPrice = document.getElementById('maxPriceFilter').value || 0;
+                    const sortBy = document.getElementById('sortBy').value || 'price_diff';
+                    const limit = document.getElementById('limitCount').value || 100;
+                    
+                    // 如果设置了价格区间，先更新后端配置
+                    if (minPrice > 0 && maxPrice > 0 && minPrice < maxPrice) {
+                        await this.updatePriceRange(parseFloat(minPrice), parseFloat(maxPrice));
+                    }
+                    
+                    // 重新加载数据
+                    await this.loadData();
+                    
+                    this.showAlert('success', '筛选已应用');
+                } catch (error) {
+                    console.error('应用筛选失败:', error);
+                    this.showAlert('error', '筛选失败: ' + error.message);
+                }
+            }
+
+            // 重置筛选功能
+            async resetFilters() {
+                try {
+                    // 清空输入框
+                    document.getElementById('minPriceFilter').value = '';
+                    document.getElementById('maxPriceFilter').value = '';
+                    document.getElementById('sortBy').value = 'price_diff';
+                    document.getElementById('limitCount').value = '100';
+                    
+                    // 重置为默认价格区间
+                    await this.updatePriceRange(3.0, 5.0);
+                    
+                    // 重新加载数据
+                    await this.loadData();
+                    
+                    this.showAlert('success', '筛选已重置');
+                } catch (error) {
+                    console.error('重置筛选失败:', error);
+                    this.showAlert('error', '重置失败: ' + error.message);
+                }
+            }
+
+            // 更新价格区间
+            async updatePriceRange(min, max) {
+                try {
+                    const response = await fetch('/api/price_range', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ min: min, max: max })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (!result.success) {
+                        throw new Error(result.error || '更新价格区间失败');
+                    }
+                    
+                    console.log('价格区间已更新:', result.message);
+                } catch (error) {
+                    console.error('更新价格区间失败:', error);
+                    throw error;
+                }
+            }
+
+            async init() {
+                this.loadConfig();
+                this.loadData();
+                this.loadStatus();
+                this.loadStatistics();
+                
+                // 启动定时刷新
+                setInterval(() => {
+                    this.loadData();
+                    this.loadStatus();
+                    this.loadStatistics();
+                }, 30000); // 每30秒刷新一次
+            }
+
+            async loadData() {
+                const loading = document.getElementById('loading');
+                const itemsList = document.getElementById('itemsList');
+                
+                loading.classList.remove('hidden');
+                itemsList.classList.add('hidden');
+                
+                try {
+                    // 🔥 新增：尝试增量分析（立即返回缓存数据）
+                    const incrementalResponse = await fetch('/api/analyze_incremental', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ force_refresh: false })
+                    });
+                    
+                    const incrementalResult = await incrementalResponse.json();
+                    
+                    if (incrementalResult.success && incrementalResult.data.cached) {
+                        // 立即显示缓存数据
+                        this.items = incrementalResult.data.items;
+                        document.getElementById('totalCount').textContent = this.items.length;
+                        this.renderItems();
+                        
+                        // 显示缓存提示
+                        this.showAlert('info', '显示缓存数据，正在后台更新全量数据...');
+                        
+                        // 启动流式更新
+                        if (incrementalResult.background_update) {
+                            setTimeout(() => this.startStreamingUpdate(), 1000);
+                        }
+                        
+                        this.calculateStatistics();
+                        return;
+                    }
+                    
+                    // 回退到原有逻辑
+                    const response = await fetch('/api/data');
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        this.items = result.data.items;
+                        document.getElementById('totalCount').textContent = this.items.length;
+                        this.renderItems();
+                        this.calculateStatistics();
+                    } else {
+                        itemsList.innerHTML = `<div class="p-8 text-center text-red-500">加载失败: ${result.error}</div>`;
+                    }
+                } catch (error) {
+                    console.error('加载数据失败:', error);
+                    itemsList.innerHTML = `<div class="p-8 text-center text-red-500">网络错误: ${error.message}</div>`;
+                } finally {
+                    if (!this.streamingActive) {
+                        loading.classList.add('hidden');
+                    }
+                }
+            }
+
+            // 🔥 新增：流式更新方法
+            startStreamingUpdate() {
+                if (this.streamingActive) return;
+                
+                this.streamingActive = true;
+                this.showStreamingProgress();
+                
+                const eventSource = new EventSource('/api/stream_analyze');
+                
+                eventSource.onmessage = (event) => {
+                    try {
+                        const data = JSON.parse(event.data);
+                        this.handleStreamingUpdate(data);
+                    } catch (e) {
+                        console.error('解析流式数据失败:', e);
+                    }
+                };
+                
+                eventSource.onerror = (error) => {
+                    console.error('流式连接错误:', error);
+                    eventSource.close();
+                    this.streamingActive = false;
+                    this.hideStreamingProgress();
+                };
+                
+                // 保存引用以便后续关闭
+                this.eventSource = eventSource;
+            }
+
+            // 🔥 新增：处理流式更新数据
+            handleStreamingUpdate(data) {
+                const { type, message } = data;
+                
+                switch (type) {
+                    case 'progress':
+                        this.updateStreamingProgress(data);
+                        break;
+                        
+                    case 'incremental_results':
+                        this.addIncrementalResults(data);
+                        break;
+                        
+                    case 'completed':
+                        this.completeStreamingUpdate(data);
+                        break;
+                        
+                    case 'error':
+                        this.showAlert('error', `流式更新错误: ${data.error}`);
+                        this.stopStreaming();
+                        break;
+                }
+            }
+
+            // 🔥 新增：显示流式进度
+            showStreamingProgress() {
+                const loading = document.getElementById('loading');
+                if (loading) {
+                    loading.innerHTML = `
+                        <div class="flex flex-col items-center justify-center p-8">
+                            <div class="w-64 bg-gray-200 rounded-full h-2 mb-4">
+                                <div id="streamProgress" class="bg-blue-600 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                            </div>
+                            <div class="loading text-blue-600 text-2xl mb-2">
+                                <i class="fas fa-spinner"></i>
+                            </div>
+                            <span id="streamStatus" class="text-gray-600">开始流式分析...</span>
+                            <div class="mt-4 text-sm text-gray-500">
+                                <div>已处理: <span id="streamProcessed">0</span> 个商品</div>
+                                <div>新发现: <span id="streamFound">0</span> 个价差商品</div>
+                            </div>
+                        </div>
+                    `;
+                    loading.classList.remove('hidden');
+                }
+            }
+
+            // 🔥 新增：更新流式进度
+            updateStreamingProgress(data) {
+                const progress = data.progress || 0;
+                const message = data.message || '';
+                
+                const progressBar = document.getElementById('streamProgress');
+                const statusText = document.getElementById('streamStatus');
+                
+                if (progressBar) {
+                    progressBar.style.width = `${progress}%`;
+                }
+                
+                if (statusText) {
+                    statusText.textContent = message;
+                }
+            }
+
+            // 🔥 新增：添加增量结果
+            addIncrementalResults(data) {
+                const newItems = data.data || [];
+                const totalFound = data.total_found || 0;
+                const totalProcessed = data.total_processed || 0;
+                
+                // 更新统计显示
+                const processedElement = document.getElementById('streamProcessed');
+                const foundElement = document.getElementById('streamFound');
+                
+                if (processedElement) {
+                    processedElement.textContent = totalProcessed.toLocaleString();
+                }
+                
+                if (foundElement) {
+                    foundElement.textContent = totalFound.toLocaleString();
+                }
+                
+                // 添加新商品到列表
+                if (newItems.length > 0) {
+                    this.items = [...this.items, ...newItems];
+                    
+                    // 重新排序和渲染
+                    this.applySorting();
+                    this.renderItems();
+                    
+                    // 更新总数
+                    document.getElementById('totalCount').textContent = this.items.length;
+                    
+                    // 重新计算统计
+                    this.calculateStatistics();
+                    
+                    // 显示增量提示
+                    this.showAlert('success', `新发现 ${newItems.length} 个价差商品！`);
+                }
+            }
+
+            // 🔥 新增：完成流式更新
+            completeStreamingUpdate(data) {
+                const totalFound = data.total_found || 0;
+                const totalProcessed = data.total_processed || 0;
+                
+                this.showAlert('success', `分析完成！处理了 ${totalProcessed.toLocaleString()} 个商品，发现 ${totalFound.toLocaleString()} 个价差商品`);
+                this.stopStreaming();
+            }
+
+            // 🔥 新增：停止流式更新
+            stopStreaming() {
+                if (this.eventSource) {
+                    this.eventSource.close();
+                    this.eventSource = null;
+                }
+                
+                this.streamingActive = false;
+                this.hideStreamingProgress();
+            }
+
+            // 🔥 新增：隐藏流式进度
+            hideStreamingProgress() {
+                const loading = document.getElementById('loading');
+                if (loading) {
+                    loading.classList.add('hidden');
+                }
+            }
+
+            updateTable(items) {
+                this.items = items || [];
+                this.renderItems();
+            }
+
+            async loadStatistics() {
+                try {
+                    // 移除统计信息API调用，直接使用status接口的数据
+                    const response = await fetch('/api/status');
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        const data = result.data;
+                        
+                        // 修正元素ID：从totalItems改为totalCount
+                        const totalCountElement = document.getElementById('totalCount');
+                        const avgDiffElement = document.getElementById('avgDiff');
+                        const maxDiffElement = document.getElementById('maxDiff');
+                        
+                        if (totalCountElement) {
+                            totalCountElement.textContent = data.current_items_count || 0;
+                        }
+                        if (avgDiffElement) {
+                            avgDiffElement.textContent = '计算中...';
+                        }
+                        if (maxDiffElement) {
+                            maxDiffElement.textContent = '计算中...';
+                        }
+                        
+                        // 如果有商品数据，获取更详细的统计
+                        if (data.current_items_count > 0) {
+                            await this.loadDetailedStatistics();
+                        }
+                    }
+                } catch (error) {
+                    console.error('加载统计信息失败:', error);
+                }
+            }
+
+            async loadDetailedStatistics() {
+                try {
+                    const response = await fetch('/api/data');
+                    const result = await response.json();
+                    
+                    if (result.success && result.data.items.length > 0) {
+                        const items = result.data.items;
+                        const totalDiff = items.reduce((sum, item) => sum + item.price_diff, 0);
+                        const avgDiff = totalDiff / items.length;
+                        const maxDiff = Math.max(...items.map(item => item.price_diff));
+                        
+                        const avgDiffElement = document.getElementById('avgDiff');
+                        const maxDiffElement = document.getElementById('maxDiff');
+                        
+                        if (avgDiffElement) {
+                            avgDiffElement.textContent = `¥${avgDiff.toFixed(2)}`;
+                        }
+                        if (maxDiffElement) {
+                            maxDiffElement.textContent = `¥${maxDiff.toFixed(2)}`;
+                        }
+                    }
+                } catch (error) {
+                    console.error('加载详细统计失败:', error);
+                }
+            }
+
+            async loadStatus() {
+                try {
+                    const response = await fetch('/api/status');
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        this.updateStatus(result.data);
+                    }
+                } catch (error) {
+                    console.error('检查状态失败:', error);
+                }
+            }
+
+            updateStatus(status) {
+                const lastUpdate = status.last_update ? 
+                    new Date(status.last_update).toLocaleString('zh-CN') : '未知';
+                document.getElementById('lastUpdate').textContent = lastUpdate;
+                
+                // 更新监控状态
+                const statusElement = document.getElementById('updateStatus');
+                if (statusElement) {
+                    const isRunning = status.is_running;
+                    statusElement.innerHTML = `
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${isRunning ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                            <i class="fas ${isRunning ? 'fa-play' : 'fa-pause'} mr-1"></i>
+                            ${isRunning ? '监控中' : '已停止'}
+                        </span>
+                    `;
+                }
+            }
+
+            renderItems() {
+                const loading = document.getElementById('loading');
+                const itemsList = document.getElementById('itemsList');
+                
+                loading.classList.add('hidden');
+                itemsList.classList.remove('hidden');
+                
+                if (this.items.length === 0) {
+                    itemsList.innerHTML = `
+                        <div class="p-8 text-center text-gray-500">
+                            <i class="fas fa-inbox text-4xl mb-4"></i>
+                            <p>暂无符合条件的差价饰品</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                const itemsHtml = this.items.map(item => this.renderItem(item)).join('');
+                itemsList.innerHTML = itemsHtml;
+            }
+
+            renderItem(item) {
+                const profitClass = this.getProfitClass(item.profit_rate || 0);
+                const imageUrl = item.image_url || '/static/placeholder.png';
+                
+                return `
+                    <div class="border-b border-gray-200 p-6 card-hover">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-4">
+                                <img src="${imageUrl}" alt="${item.name}" 
+                                     class="w-16 h-16 rounded-lg object-cover bg-gray-100"
+                                     onerror="this.src='/static/placeholder.png'">
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-900 mb-1">${item.name}</h3>
+                                    <div class="flex items-center space-x-4 text-sm text-gray-600">
+                                        <span>Buff: <span class="font-medium text-red-600">¥${item.buff_price}</span></span>
+                                        <span>悠悠: <span class="font-medium text-green-600">¥${item.youpin_price}</span></span>
+                                        <span class="text-xs ${profitClass} text-white px-2 py-1 rounded-full">
+                                            利润率 ${(item.profit_rate || 0).toFixed(1)}%
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center space-x-4">
+                                <div class="text-right">
+                                    <div class="text-2xl font-bold text-green-600">
+                                        +¥${(item.price_diff || 0).toFixed(2)}
+                                    </div>
+                                    <div class="text-sm text-gray-500">价差</div>
+                                </div>
+                                
+                                <button onclick="window.open('${item.buff_url || '#'}', '_blank')" 
+                                        class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition duration-200 flex items-center">
+                                    <i class="fas fa-external-link-alt mr-2"></i>
+                                    立即购买
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            getProfitClass(margin) {
+                if (margin >= 50) return 'profit-very-high';
+                if (margin >= 30) return 'profit-high';
+                return 'profit-positive';
+            }
+
+            async forceUpdate() {
+                const btn = document.getElementById('refreshBtn');
+                const originalText = btn.innerHTML;
+                
+                btn.innerHTML = '<i class="fas fa-spinner loading mr-1"></i>更新中...';
+                btn.disabled = true;
+                
+                try {
+                    // 🔥 新增：启动流式分析而不是传统的force_update
+                    if (this.streamingActive) {
+                        this.stopStreaming();
+                    }
+                    
+                    // 清空当前数据
+                    this.items = [];
+                    this.renderItems();
+                    
+                    // 启动增量分析（强制刷新）
+                    const response = await fetch('/api/analyze_incremental', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ force_refresh: true })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        // 立即显示缓存数据（如果有）
+                        if (result.data.items.length > 0) {
+                            this.items = result.data.items;
+                            document.getElementById('totalCount').textContent = this.items.length;
+                            this.renderItems();
+                            this.calculateStatistics();
+                        }
+                        
+                        // 显示成功消息
+                        this.showAlert('success', '开始强制刷新，正在启动流式分析...');
+                        
+                        // 启动流式更新
+                        setTimeout(() => this.startStreamingUpdate(), 1000);
+                    } else {
+                        this.showAlert('error', '更新失败: ' + (result.error || '未知错误'));
+                    }
+                } catch (error) {
+                    console.error('强制更新失败:', error);
+                    this.showAlert('error', '更新失败: ' + error.message);
+                } finally {
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                }
+            }
+
+            openSettings() {
+                document.getElementById('settingsModal').classList.remove('hidden');
+                this.loadConfig();
+            }
+
+            closeSettings() {
+                document.getElementById('settingsModal').classList.add('hidden');
+            }
+
+            async loadConfig() {
+                try {
+                    // 加载设置
+                    const settingsResponse = await fetch('/api/settings');
+                    const settingsResult = await settingsResponse.json();
+                    
+                    if (settingsResult.success) {
+                        const data = settingsResult.data;
+                        document.getElementById('thresholdInput').value = data.threshold || '';
+                        document.getElementById('maxOutputItems').value = data.max_output_items || '';
+                        
+                        if (data.price_range) {
+                            document.getElementById('priceRangeMin').value = data.price_range.min || '';
+                            document.getElementById('priceRangeMax').value = data.price_range.max || '';
+                        }
+                        
+                        if (data.buff_price_range) {
+                            document.getElementById('buffPriceMin').value = data.buff_price_range.min || '';
+                            document.getElementById('buffPriceMax').value = data.buff_price_range.max || '';
+                        }
+                        
+                        if (data.update_intervals) {
+                            const fullInterval = document.getElementById('fullUpdateInterval');
+                            const incrementalInterval = document.getElementById('incrementalUpdateInterval');
+                            
+                            if (fullInterval) {
+                                fullInterval.textContent = `${data.update_intervals.full_update_hours}小时`;
+                            }
+                            
+                            if (incrementalInterval) {
+                                incrementalInterval.textContent = `${data.update_intervals.incremental_update_minutes}分钟`;
+                            }
+                        }
+                    }
+
+                    // 加载当前价格区间
+                    const rangeResponse = await fetch('/api/price_range');
+                    const rangeResult = await rangeResponse.json();
+                    
+                    if (rangeResult.success) {
+                        const currentRange = document.getElementById('currentPriceRange');
+                        if (currentRange) {
+                            currentRange.textContent = rangeResult.data.current_range;
+                        }
+                    }
+                    
+                    // 加载Buff价格筛选区间
+                    const buffRangeResponse = await fetch('/api/buff_price_range');
+                    const buffRangeResult = await buffRangeResponse.json();
+                    
+                    if (buffRangeResult.success) {
+                        const currentBuffRange = document.getElementById('currentBuffPriceRange');
+                        if (currentBuffRange) {
+                            currentBuffRange.textContent = buffRangeResult.data.current_range;
+                        }
+                    }
+                } catch (error) {
+                    console.error('加载配置失败:', error);
+                }
+            }
+
+            async saveSettings() {
+                try {
+                    const threshold = document.getElementById('thresholdInput').value;
+                    const priceMin = document.getElementById('priceRangeMin').value;
+                    const priceMax = document.getElementById('priceRangeMax').value;
+                    const buffPriceMin = document.getElementById('buffPriceMin').value;
+                    const buffPriceMax = document.getElementById('buffPriceMax').value;
+                    const maxOutputItems = document.getElementById('maxOutputItems').value;
+                    
+                    // 验证价格区间
+                    if (priceMin && priceMax) {
+                        const min = parseFloat(priceMin);
+                        const max = parseFloat(priceMax);
+                        
+                        if (min >= max) {
+                            this.showAlert('error', '最小价差必须小于最大价差');
+                            return;
+                        }
+                        
+                        if (min < 0 || max < 0) {
+                            this.showAlert('error', '价差不能为负数');
+                            return;
+                        }
+                    }
+                    
+                    // 验证Buff价格区间
+                    if (buffPriceMin && buffPriceMax) {
+                        const min = parseFloat(buffPriceMin);
+                        const max = parseFloat(buffPriceMax);
+                        
+                        if (min >= max) {
+                            this.showAlert('error', 'Buff最小价格必须小于最大价格');
+                            return;
+                        }
+                        
+                        if (min < 0 || max < 0) {
+                            this.showAlert('error', 'Buff价格不能为负数');
+                            return;
+                        }
+                    }
+                    
+                    const updateData = {};
+                    
+                    if (threshold) {
+                        updateData.threshold = parseFloat(threshold);
+                    }
+                    
+                    if (priceMin && priceMax) {
+                        updateData.price_min = parseFloat(priceMin);
+                        updateData.price_max = parseFloat(priceMax);
+                    }
+                    
+                    if (buffPriceMin && buffPriceMax) {
+                        updateData.buff_price_min = parseFloat(buffPriceMin);
+                        updateData.buff_price_max = parseFloat(buffPriceMax);
+                    }
+                    
+                    if (maxOutputItems) {
+                        updateData.max_output_items = parseInt(maxOutputItems);
+                    }
+                    
+                    if (Object.keys(updateData).length === 0) {
+                        this.showAlert('warning', '没有设置需要保存');
+                        return;
+                    }
+                    
+                    const response = await fetch('/api/settings', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(updateData)
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        this.showAlert('success', '设置已保存: ' + result.message);
+                        this.closeSettings();
+                        
+                        // 重新加载配置显示
+                        setTimeout(() => this.loadConfig(), 500);
+                        
+                        // 重新加载数据
+                        setTimeout(() => this.loadData(), 1000);
+                    } else {
+                        this.showAlert('error', '保存失败: ' + result.error);
+                    }
+                } catch (error) {
+                    console.error('保存设置失败:', error);
+                    this.showAlert('error', '保存失败: ' + error.message);
+                }
+            }
+
+            // 🔥 新增：强制全量更新
+            async forceFullUpdate() {
+                const btn = document.getElementById('forceFullUpdate');
+                const originalText = btn.innerHTML;
+                
+                try {
+                    btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i>正在更新...';
+                    btn.disabled = true;
+                    
+                    const response = await fetch('/api/force_update', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' }
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        this.showAlert('success', result.message);
+                        // 延迟重新加载数据
+                        setTimeout(() => this.loadData(), 2000);
+                    } else {
+                        this.showAlert('error', '全量更新失败: ' + (result.error || '未知错误'));
+                    }
+                } catch (error) {
+                    console.error('强制全量更新失败:', error);
+                    this.showAlert('error', '全量更新失败: ' + error.message);
+                } finally {
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                }
+            }
+            
+            // 🔥 新增：强制增量更新
+            async forceIncrementalUpdate() {
+                const btn = document.getElementById('forceIncrementalUpdate');
+                const originalText = btn.innerHTML;
+                
+                try {
+                    btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i>正在更新...';
+                    btn.disabled = true;
+                    
+                    const response = await fetch('/api/force_incremental_update', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' }
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        this.showAlert('success', result.message);
+                        // 延迟重新加载数据
+                        setTimeout(() => this.loadData(), 1000);
+                    } else {
+                        this.showAlert('error', '增量更新失败: ' + (result.error || '未知错误'));
+                    }
+                } catch (error) {
+                    console.error('强制增量更新失败:', error);
+                    this.showAlert('error', '增量更新失败: ' + error.message);
+                } finally {
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                }
+            }
+
+            showAlert(type, message) {
+                // 创建或更新提示框
+                let alertDiv = document.getElementById('alertBox');
+                if (!alertDiv) {
+                    alertDiv = document.createElement('div');
+                    alertDiv.id = 'alertBox';
+                    alertDiv.className = 'fixed top-4 right-4 z-50 max-w-sm';
+                    document.body.appendChild(alertDiv);
+                }
+                
+                const alertClass = type === 'success' ? 'bg-green-100 text-green-800 border-green-400' : 
+                                  type === 'warning' ? 'bg-yellow-100 text-yellow-800 border-yellow-400' :
+                                  type === 'info' ? 'bg-blue-100 text-blue-800 border-blue-400' :
+                                  'bg-red-100 text-red-800 border-red-400';
+                
+                const icon = type === 'success' ? 'check-circle' : 
+                            type === 'warning' ? 'exclamation-triangle' : 
+                            type === 'info' ? 'info-circle' :
+                            'times-circle';
+                
+                alertDiv.innerHTML = `
+                    <div class="border ${alertClass} rounded-lg p-4 shadow-lg">
+                        <div class="flex items-center">
+                            <i class="fas fa-${icon} mr-2"></i>
+                            <span>${message}</span>
+                            <button onclick="this.parentElement.parentElement.remove()" class="ml-auto pl-2">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                // 自动隐藏
+                setTimeout(() => {
+                    if (alertDiv.parentNode) {
+                        alertDiv.remove();
+                    }
+                }, 5000);
+            }
+
+            // Token管理方法
+            showGeneralTab() {
+                document.getElementById('generalTab').className = 'px-4 py-2 font-medium text-blue-600 border-b-2 border-blue-600';
+                document.getElementById('tokensTab').className = 'px-4 py-2 font-medium text-gray-600 hover:text-blue-600 ml-4';
+                document.getElementById('generalPanel').classList.remove('hidden');
+                document.getElementById('tokensPanel').classList.add('hidden');
+            }
+            
+            showTokenTab() {
+                document.getElementById('generalTab').className = 'px-4 py-2 font-medium text-gray-600 hover:text-blue-600';
+                document.getElementById('tokensTab').className = 'px-4 py-2 font-medium text-blue-600 border-b-2 border-blue-600 ml-4';
+                document.getElementById('generalPanel').classList.add('hidden');
+                document.getElementById('tokensPanel').classList.remove('hidden');
+                
+                // 加载Token状态
+                this.loadTokenStatus();
+            }
+            
+            async loadTokenStatus() {
+                try {
+                    const response = await fetch('/api/tokens/status');
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        const { buff, youpin } = result.data;
+                        
+                        // 更新Buff状态
+                        const buffStatus = document.getElementById('buffTokenStatus');
+                        buffStatus.innerHTML = this.getStatusBadge(buff.status, buff.has_cookies && buff.has_csrf);
+                        
+                        // 更新悠悠有品状态
+                        const youpinStatus = document.getElementById('youpinTokenStatus');
+                        youpinStatus.innerHTML = this.getStatusBadge(youpin.status, youpin.has_device_id && youpin.has_uk);
+                    }
+                } catch (error) {
+                    console.error('加载Token状态失败:', error);
+                }
+            }
+            
+            getStatusBadge(status, isValid) {
+                if (status === '已配置' && isValid) {
+                    return `<span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-800">
+                        <i class="fas fa-check mr-1"></i>已配置
+                    </span>`;
+                } else if (status === '已配置' && !isValid) {
+                    return `<span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-yellow-100 text-yellow-800">
+                        <i class="fas fa-exclamation-triangle mr-1"></i>配置不完整
+                    </span>`;
+                } else {
+                    return `<span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-red-100 text-red-800">
+                        <i class="fas fa-times mr-1"></i>未配置
+                    </span>`;
+                }
+            }
+            
+            async updateBuffToken() {
+                try {
+                    const session = document.getElementById('buffSession').value.trim();
+                    const csrfToken = document.getElementById('buffCsrfToken').value.trim();
+                    const otherCookiesText = document.getElementById('buffOtherCookies').value.trim();
+                    
+                    if (!session || !csrfToken) {
+                        alert('请输入Session和CSRF Token');
+                        return;
+                    }
+                    
+                    const cookies = {
+                        session: session,
+                        csrf_token: csrfToken
+                    };
+                    
+                    // 解析其他cookies
+                    if (otherCookiesText) {
+                        try {
+                            const otherCookies = JSON.parse(otherCookiesText);
+                            Object.assign(cookies, otherCookies);
+                        } catch (e) {
+                            alert('其他Cookies格式错误，请使用正确的JSON格式');
+                            return;
+                        }
+                    }
+                    
+                    const response = await fetch('/api/tokens/buff', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ cookies })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        alert('Buff Token更新成功！');
+                        this.loadTokenStatus();
+                        // 清空输入框
+                        document.getElementById('buffSession').value = '';
+                        document.getElementById('buffCsrfToken').value = '';
+                        document.getElementById('buffOtherCookies').value = '';
+                    } else {
+                        alert('更新失败: ' + (result.error || result.detail));
+                    }
+                } catch (error) {
+                    console.error('更新Buff Token失败:', error);
+                    alert('更新失败: ' + error.message);
+                }
+            }
+            
+            async updateYoupinToken() {
+                try {
+                    const deviceId = document.getElementById('youpinDeviceId').value.trim();
+                    const deviceUk = document.getElementById('youpinDeviceUk').value.trim();
+                    const uk = document.getElementById('youpinUk').value.trim();
+                    const b3 = document.getElementById('youpinB3').value.trim();
+                    const authorization = document.getElementById('youpinAuthorization').value.trim();
+                    
+                    if (!deviceId || !uk) {
+                        alert('请至少输入Device ID和UK');
+                        return;
+                    }
+                    
+                    const response = await fetch('/api/tokens/youpin', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            device_id: deviceId,
+                            device_uk: deviceUk,
+                            uk: uk,
+                            b3: b3,
+                            authorization: authorization
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        alert('悠悠有品Token更新成功！');
+                        this.loadTokenStatus();
+                        // 清空输入框
+                        document.getElementById('youpinDeviceId').value = '';
+                        document.getElementById('youpinDeviceUk').value = '';
+                        document.getElementById('youpinUk').value = '';
+                        document.getElementById('youpinB3').value = '';
+                        document.getElementById('youpinAuthorization').value = '';
+                    } else {
+                        alert('更新失败: ' + (result.error || result.detail));
+                    }
+                } catch (error) {
+                    console.error('更新悠悠有品Token失败:', error);
+                    alert('更新失败: ' + error.message);
+                }
+            }
+            
+            async testBuffConnection() {
+                const btn = document.getElementById('testBuffConnection');
+                const originalText = btn.innerHTML;
+                
+                btn.innerHTML = '<i class="fas fa-spinner loading mr-1"></i>测试中...';
+                btn.disabled = true;
+                
+                try {
+                    const response = await fetch('/api/test/buff', { method: 'POST' });
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        alert(`Buff连接测试成功！\n${result.message}`);
+                    } else {
+                        alert(`Buff连接测试失败：\n${result.error}`);
+                    }
+                } catch (error) {
+                    console.error('测试Buff连接失败:', error);
+                    alert('测试失败: ' + error.message);
+                } finally {
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                }
+            }
+            
+            async testYoupinConnection() {
+                const btn = document.getElementById('testYoupinConnection');
+                const originalText = btn.innerHTML;
+                
+                btn.innerHTML = '<i class="fas fa-spinner loading mr-1"></i>测试中...';
+                btn.disabled = true;
+                
+                try {
+                    const response = await fetch('/api/test/youpin', { method: 'POST' });
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        alert(`悠悠有品连接测试成功！\n${result.message}`);
+                    } else {
+                        alert(`悠悠有品连接测试失败：\n${result.error}`);
+                    }
+                } catch (error) {
+                    console.error('测试悠悠有品连接失败:', error);
+                    alert('测试失败: ' + error.message);
+                } finally {
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                }
+            }
+
+            // 🔥 新增：应用排序
+            applySorting() {
+                if (this.sortBy === 'price_diff') {
+                    this.items.sort((a, b) => (b.price_diff || 0) - (a.price_diff || 0));
+                } else if (this.sortBy === 'profit_margin') {
+                    this.items.sort((a, b) => (b.profit_rate || 0) - (a.profit_rate || 0));
+                }
+            }
+
+            // 🔥 新增：计算统计信息
+            calculateStatistics() {
+                if (this.items.length === 0) {
+                    document.getElementById('avgDiff').textContent = '-';
+                    document.getElementById('maxDiff').textContent = '-';
+                    return;
+                }
+                
+                const totalDiff = this.items.reduce((sum, item) => sum + (item.price_diff || 0), 0);
+                const avgDiff = totalDiff / this.items.length;
+                const maxDiff = Math.max(...this.items.map(item => item.price_diff || 0));
+                
+                document.getElementById('avgDiff').textContent = `¥${avgDiff.toFixed(2)}`;
+                document.getElementById('maxDiff').textContent = `¥${maxDiff.toFixed(2)}`;
+            }
+        }
+
+        // 初始化应用
+        document.addEventListener('DOMContentLoaded', () => {
+            new BuffMonitor();
+        });
+    </script>
+</body>
+</html> 

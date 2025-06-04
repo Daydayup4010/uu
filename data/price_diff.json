@@ -1,0 +1,161 @@
+{
+  "last_updated": "2025-06-03T14:51:43.573048",
+  "threshold": 20.0,
+  "total_count": 14,
+  "items": [
+    {
+      "id": "demo_8",
+      "name": "蝴蝶刀(★) | 渐变之色 (久经沙场)",
+      "buff_price": 6066.37,
+      "youpin_price": 7808.19,
+      "price_diff": 1741.8199999999997,
+      "profit_margin": 28.71272276501433,
+      "buff_buy_url": "https://buff.163.com/market/goods?goods_id=1007",
+      "image_url": "https://via.placeholder.com/150x150/007acc/fff?text=SKIN8",
+      "category": "刀具"
+    },
+    {
+      "id": "demo_5",
+      "name": "刺刀(★) | 虎牙 (崭新出厂)",
+      "buff_price": 4330.78,
+      "youpin_price": 5437.44,
+      "price_diff": 1106.6599999999999,
+      "profit_margin": 25.553364520940796,
+      "buff_buy_url": "https://buff.163.com/market/goods?goods_id=1004",
+      "image_url": "https://via.placeholder.com/150x150/007acc/fff?text=SKIN5",
+      "category": "刀具"
+    },
+    {
+      "id": "demo_12",
+      "name": "猎杀者匕首(★) | 虎牙 (崭新出厂)",
+      "buff_price": 3539.12,
+      "youpin_price": 4458.09,
+      "price_diff": 918.9700000000003,
+      "profit_margin": 25.966059359388783,
+      "buff_buy_url": "https://buff.163.com/market/goods?goods_id=1011",
+      "image_url": "https://via.placeholder.com/150x150/007acc/fff?text=SKIN12",
+      "category": "刀具"
+    },
+    {
+      "id": "demo_6",
+      "name": "专业手套(★) | 深红织物 (久经沙场)",
+      "buff_price": 3342.32,
+      "youpin_price": 3929.72,
+      "price_diff": 587.3999999999996,
+      "profit_margin": 17.57461882764067,
+      "buff_buy_url": "https://buff.163.com/market/goods?goods_id=1005",
+      "image_url": "https://via.placeholder.com/150x150/007acc/fff?text=SKIN6",
+      "category": "手套"
+    },
+    {
+      "id": "demo_14",
+      "name": "弯刀(★) | 致命紫罗兰 (久经沙场)",
+      "buff_price": 2205.16,
+      "youpin_price": 2619.72,
+      "price_diff": 414.55999999999995,
+      "profit_margin": 18.799542890311812,
+      "buff_buy_url": "https://buff.163.com/market/goods?goods_id=1013",
+      "image_url": "https://via.placeholder.com/150x150/007acc/fff?text=SKIN14",
+      "category": "刀具"
+    },
+    {
+      "id": "demo_11",
+      "name": "运动手套(★) | 猩红头巾 (略有磨损)",
+      "buff_price": 2971.01,
+      "youpin_price": 3371.09,
+      "price_diff": 400.0799999999999,
+      "profit_margin": 13.466127680485757,
+      "buff_buy_url": "https://buff.163.com/market/goods?goods_id=1010",
+      "image_url": "https://via.placeholder.com/150x150/007acc/fff?text=SKIN11",
+      "category": "手套"
+    },
+    {
+      "id": "demo_3",
+      "name": "M4A4 | 龙王 (久经沙场)",
+      "buff_price": 1283.44,
+      "youpin_price": 1522.37,
+      "price_diff": 238.92999999999984,
+      "profit_margin": 18.6163747428785,
+      "buff_buy_url": "https://buff.163.com/market/goods?goods_id=1002",
+      "image_url": "https://via.placeholder.com/150x150/007acc/fff?text=SKIN3",
+      "category": "步枪"
+    },
+    {
+      "id": "demo_2",
+      "name": "AWP | 龙狙 (久经沙场)",
+      "buff_price": 2644.7,
+      "youpin_price": 2848.29,
+      "price_diff": 203.59000000000015,
+      "profit_margin": 7.698037584603175,
+      "buff_buy_url": "https://buff.163.com/market/goods?goods_id=1001",
+      "image_url": "https://via.placeholder.com/150x150/007acc/fff?text=SKIN2",
+      "category": "狙击枪"
+    },
+    {
+      "id": "demo_9",
+      "name": "M4A1 消音型 | 热带风暴 (崭新出厂)",
+      "buff_price": 456.51,
+      "youpin_price": 524.0,
+      "price_diff": 67.49000000000001,
+      "profit_margin": 14.783903967054393,
+      "buff_buy_url": "https://buff.163.com/market/goods?goods_id=1008",
+      "image_url": "https://via.placeholder.com/150x150/007acc/fff?text=SKIN9",
+      "category": "步枪"
+    },
+    {
+      "id": "demo_7",
+      "name": "沙漠之鹰 | 烈焰风暴 (略有磨损)",
+      "buff_price": 272.79,
+      "youpin_price": 336.82,
+      "price_diff": 64.02999999999997,
+      "profit_margin": 23.4722680450163,
+      "buff_buy_url": "https://buff.163.com/market/goods?goods_id=1006",
+      "image_url": "https://via.placeholder.com/150x150/007acc/fff?text=SKIN7",
+      "category": "手枪"
+    },
+    {
+      "id": "demo_13",
+      "name": "P250 | 亚洲龙 (崭新出厂)",
+      "buff_price": 90.97,
+      "youpin_price": 138.72,
+      "price_diff": 47.75,
+      "profit_margin": 52.48983181268551,
+      "buff_buy_url": "https://buff.163.com/market/goods?goods_id=1012",
+      "image_url": "https://via.placeholder.com/150x150/007acc/fff?text=SKIN13",
+      "category": "手枪"
+    },
+    {
+      "id": "demo_1",
+      "name": "AK-47 | 红线 (久经沙场)",
+      "buff_price": 606.32,
+      "youpin_price": 647.97,
+      "price_diff": 41.64999999999998,
+      "profit_margin": 6.869309935347667,
+      "buff_buy_url": "https://buff.163.com/market/goods?goods_id=1000",
+      "image_url": "https://via.placeholder.com/150x150/007acc/fff?text=SKIN1",
+      "category": "步枪"
+    },
+    {
+      "id": "demo_4",
+      "name": "格洛克 18 型 | 水元素 (崭新出厂)",
+      "buff_price": 169.81,
+      "youpin_price": 198.64,
+      "price_diff": 28.829999999999984,
+      "profit_margin": 16.977798716212227,
+      "buff_buy_url": "https://buff.163.com/market/goods?goods_id=1003",
+      "image_url": "https://via.placeholder.com/150x150/007acc/fff?text=SKIN4",
+      "category": "手枪"
+    },
+    {
+      "id": "demo_10",
+      "name": "USP-S | 杀戮确认 (略有磨损)",
+      "buff_price": 176.84,
+      "youpin_price": 196.93,
+      "price_diff": 20.090000000000003,
+      "profit_margin": 11.36055191133228,
+      "buff_buy_url": "https://buff.163.com/market/goods?goods_id=1009",
+      "image_url": "https://via.placeholder.com/150x150/007acc/fff?text=SKIN10",
+      "category": "手枪"
+    }
+  ]
+}

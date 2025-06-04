@@ -1,0 +1,65 @@
+{
+  "buff": {
+    "cookies": {
+      "nts_mail_user": "",
+      "Device-Id": "test_device_789",
+      "NTES_P_UTID": "",
+      "P_INFO": "",
+      "_ga": "",
+      "Qs_lvt_382223": "",
+      "Qs_pv_382223": "",
+      "_ga_C6TGHFPQ1H": "",
+      "_clck": "",
+      "Locale-Supported": "zh-Hans",
+      "game": "csgo",
+      "qr_code_verify_ticket": "",
+      "remember_me": "",
+      "session": "1-KgPJXSDYHmV_Ir2-_O8QbFXap-6KSf8x_Ya-hVfrImrB2044457754",
+      "csrf_token": "Ijg1MjZkNGM1MDBiNDhlNDYxNmE2NzM5M2FhZTM2MDg0OGJjN2FkNTIi.aD6k4Q.Zv9qjrKMRucj_N3Y6RzyY6llivg"
+    },
+    "headers": {
+      "Accept": "application/json, text/javascript, */*; q=0.01",
+      "Accept-Language": "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7",
+      "Connection": "keep-alive",
+      "Referer": "https://buff.163.com/market/csgo",
+      "Sec-Fetch-Dest": "empty",
+      "Sec-Fetch-Mode": "cors",
+      "Sec-Fetch-Site": "same-origin",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36 Edg/136.0.0.0",
+      "X-Requested-With": "XMLHttpRequest",
+      "sec-ch-ua": "\"Chromium\";v=\"136\", \"Microsoft Edge\";v=\"136\", \"Not.A/Brand\";v=\"99\"",
+      "sec-ch-ua-mobile": "?0",
+      "sec-ch-ua-platform": "\"Windows\""
+    },
+    "last_updated": "2025-06-03T15:35:22.463848",
+    "status": "已配置"
+  },
+  "youpin": {
+    "device_id": "5b38ebeb-5a5b-4b1a-afe9-b51edbbb8e01",
+    "device_uk": "5FL2dtSfBIZQLNPlY4YtlIpSD5w2eah0QR7X3HF4leUJiggsqk8w8NhKOqdfkab1L",
+    "uk": "5FEvkZD2PSMLMTtE0BqOfidTtuoaX9HWBIze4zzFxfdXrsajaPWS4yY5ay96BuX1M",
+    "b3": "36aed755c52d4b90a2d878e744b4fcce-c12d15f8ce9b379a-1",
+    "headers": {
+      "accept": "application/json, text/plain, */*",
+      "accept-language": "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7",
+      "app-version": "5.26.0",
+      "apptype": "1",
+      "appversion": "5.26.0",
+      "content-type": "application/json",
+      "origin": "https://www.youpin898.com",
+      "platform": "pc",
+      "referer": "https://www.youpin898.com/",
+      "secret-v": "h5_v1",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36 Edg/136.0.0.0",
+      "deviceid": "5b38ebeb-5a5b-4b1a-afe9-b51edbbb8e01",
+      "deviceuk": "5FL1LivkoZc0wHPPu32ZdiQ7JmBqAxsYDuoCGHZGTmqVZzHFSSRCFjThjezDx8v1N",
+      "uk": "5FEvkZD2PSMLMTtE0BqOfidTtuoaX9HWBIze4zzFxfdXrsajaPWS4yY5ay96BuX1M",
+      "b3": "4883421fca3c418fa7f8b96bc7d993d4-1e388053edf3f84d-1",
+      "traceparent": "00-4883421fca3c418fa7f8b96bc7d993d4-1e388053edf3f84d-01",
+      "authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiI2N2VhNDVmMjliZjg0MzY0YjE3YmQ5M2I0OTFmZDE0MyIsIm5hbWVpZCI6IjE2MjU2MDIiLCJJZCI6IjE2MjU2MDIiLCJ1bmlxdWVfbmFtZSI6IllQMDAwMTYyNTYwMiIsIk5hbWUiOiJZUDAwMDE2MjU2MDIiLCJ2ZXJzaW9uIjoibVJGIiwibmJmIjoxNzQ5MDAzODYzLCJleHAiOjE3NDk4Njc4NjMsImlzcyI6InlvdXBpbjg5OC5jb20iLCJkZXZpY2VJZCI6IjViMzhlYmViLTVhNWItNGIxYS1hZmU5LWI1MWVkYmJiOGUwMSIsImF1ZCI6InVzZXIifQ.q2osMHmyKNNrgEqSynCnYJ7f5wtv1jmvXlgGNai4lGU"
+    },
+    "last_updated": "2025-06-03T15:43:39.670977",
+    "status": "已配置",
+    "authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiI2N2VhNDVmMjliZjg0MzY0YjE3YmQ5M2I0OTFmZDE0MyIsIm5hbWVpZCI6IjE2MjU2MDIiLCJJZCI6IjE2MjU2MDIiLCJ1bmlxdWVfbmFtZSI6IllQMDAwMTYyNTYwMiIsIk5hbWUiOiJZUDAwMDE2MjU2MDIiLCJ2ZXJzaW9uIjoibVJGIiwibmJmIjoxNzQ5MDAzODYzLCJleHAiOjE3NDk4Njc4NjMsImlzcyI6InlvdXBpbjg5OC5jb20iLCJkZXZpY2VJZCI6IjViMzhlYmViLTVhNWItNGIxYS1hZmU5LWI1MWVkYmJiOGUwMSIsImF1ZCI6InVzZXIifQ.q2osMHmyKNNrgEqSynCnYJ7f5wtv1jmvXlgGNai4lGU"
+  }
+}
