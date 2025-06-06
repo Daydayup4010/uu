@@ -16,20 +16,20 @@ class Config:
     """系统配置类"""
     
     # 🔥 价格差异区间筛选（元）- 新功能！
-    PRICE_DIFF_MIN: float = float(os.getenv('PRICE_DIFF_MIN', 3.0))    # 最小价差
-    PRICE_DIFF_MAX: float = float(os.getenv('PRICE_DIFF_MAX', 5.0))    # 最大价差
+    PRICE_DIFF_MIN: float = float(os.getenv('PRICE_DIFF_MIN', 2.0))    # 最小价差
+    PRICE_DIFF_MAX: float = float(os.getenv('PRICE_DIFF_MAX', 100.0))    # 最大价差
     
     # 🔥 Buff饰品价格区间筛选（用于增量更新）
-    BUFF_PRICE_MIN: float = float(os.getenv('BUFF_PRICE_MIN', 10.0))   # Buff最小价格
-    BUFF_PRICE_MAX: float = float(os.getenv('BUFF_PRICE_MAX', 1000.0)) # Buff最大价格
+    BUFF_PRICE_MIN: float = float(os.getenv('BUFF_PRICE_MIN', 1.0))   # Buff最小价格
+    BUFF_PRICE_MAX: float = float(os.getenv('BUFF_PRICE_MAX', 100.0)) # Buff最大价格
     
     # 兼容性：保留原来的阈值配置
     PRICE_DIFF_THRESHOLD: float = float(os.getenv('PRICE_DIFF_THRESHOLD', 3.0))
     
     # 🔥 更新机制配置
-    FULL_UPDATE_INTERVAL_HOURS: int = 1      # 全量更新间隔（小时）
-    INCREMENTAL_UPDATE_INTERVAL_MINUTES: int = 1  # 增量更新间隔（分钟）
-    INCREMENTAL_CACHE_SIZE: int = 1000       # 增量缓存的hashname数量
+    FULL_UPDATE_INTERVAL_HOURS: int = 10     # 全量更新间隔（小时）
+    INCREMENTAL_UPDATE_INTERVAL_MINUTES: int = 10  # 增量更新间隔（分钟）
+    INCREMENTAL_CACHE_SIZE: int = 100000       # 增量缓存的hashname数量
     
     # 商品数量配置 - 重新定义语义
     MAX_OUTPUT_ITEMS: int = 300          # 🔥 修改：最大输出商品数量（筛选后）
@@ -47,6 +47,8 @@ class Config:
     
     # 请求间隔（秒）
     REQUEST_DELAY: float = 2.0          # 请求延迟（秒）
+    BUFF_API_DELAY: float = 8.0         # Buff API单次请求延迟（秒）
+    YOUPIN_API_DELAY: float = 8.0       # 🔥 新增：悠悠有品API延迟（秒），可调节
     RETRY_DELAY: float = 2.0             # 重试延迟
     
     # 数据存储

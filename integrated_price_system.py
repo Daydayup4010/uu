@@ -60,6 +60,9 @@ class PriceComparison:
 class BuffAPIClient:
     """Buff API客户端"""
     
+    # 🔥 类级别的全局延迟控制，与其他Buff客户端共享
+    _global_last_request_time = 0
+    
     def __init__(self):
         self.base_url = "https://buff.163.com"
         self.session = None
@@ -146,10 +149,23 @@ class BuffAPIClient:
     async def get_goods_list(self, page_num: int = 1, page_size: int = 100) -> Optional[Dict]:
         """获取商品列表"""
         try:
+            # 🔥 使用全局延迟控制，与其他Buff客户端共享
+            import time
+            current_time = time.time()
+            time_since_last = current_time - self.__class__._global_last_request_time
+            
+            # 使用配置文件中的延迟
+            min_delay = Config.BUFF_API_DELAY
+            if time_since_last < min_delay:
+                wait_time = min_delay - time_since_last
+                print(f"   ⏳ Buff API延迟 {wait_time:.1f}秒 (全局延迟控制)...")
+                await asyncio.sleep(wait_time)
+            
+            self.__class__._global_last_request_time = time.time()
+            
             url = f"{self.base_url}/api/market/goods"
             
             # 生成时间戳
-            import time
             timestamp = int(time.time() * 1000)
             
             params = {
@@ -180,12 +196,10 @@ class BuffAPIClient:
                     else:
                         print(f"   ⚠️ 响应格式异常: {list(data.keys())}")
                     
-                    # 每次请求后等待0.5秒，减少频率限制
-                    await asyncio.sleep(0.5)
                     return data
                     
                 elif response.status == 429:
-                    print(f"   ⚠️ 频率限制 (429)")
+                    print(f"   ⚠️ 频率限制 (429) - 可能需要增加 BUFF_API_DELAY")
                     # 频率限制时等待更久
                     await asyncio.sleep(2.0)
                     return None
@@ -418,58 +432,35 @@ class IntegratedPriceAnalyzer:
         start_time = time.time()
         
         # 🔥 使用优化客户端降低失败率
-        try:
-            print(f"   🛡️ 使用优化API客户端降低失败率")
-            
-            # 创建优化客户端任务
-            buff_task = asyncio.create_task(self._get_buff_data_optimized())
-            youpin_task = asyncio.create_task(self._get_youpin_data_optimized())
-            
-            # 等待两个任务完成
-            buff_data, youpin_items = await asyncio.gather(buff_task, youpin_task, return_exceptions=True)
-            
-            # 检查结果
-            if isinstance(buff_data, Exception):
-                print(f"❌ Buff数据获取失败: {buff_data}")
-                buff_data = []
-            elif not buff_data:
-                print("❌ 无法获取Buff商品数据")
-                return []
-            
-            if isinstance(youpin_items, Exception):
-                print(f"❌ 悠悠有品数据获取失败: {youpin_items}")
-                youpin_items = []
-            elif not youpin_items:
-                print("❌ 无法获取悠悠有品商品数据")
-                youpin_items = []
-                
-        except Exception as e:
-            print(f"❌ 优化客户端获取失败: {e}")
-            print("🔄 回退到原有客户端...")
-            
-            # 回退到原有获取方式
-            try:
-                buff_task = asyncio.create_task(self.buff_client.get_all_goods())
-                youpin_task = asyncio.create_task(self.youpin_client.get_all_items())
-                
-                buff_data, youpin_items = await asyncio.gather(buff_task, youpin_task, return_exceptions=True)
-                
-                if isinstance(buff_data, Exception):
-                    print(f"❌ Buff数据获取失败: {buff_data}")
-                    buff_data = []
-                elif not buff_data:
-                    print("❌ 无法获取Buff商品数据")
-                    return []
-                
-                if isinstance(youpin_items, Exception):
-                    print(f"❌ 悠悠有品数据获取失败: {youpin_items}")
-                    youpin_items = []
-                elif not youpin_items:
-                    youpin_items = []
-                    
-            except Exception as e2:
-                print(f"❌ 回退模式也失败: {e2}")
-                return []
+        print(f"   🛡️ 使用优化API客户端降低失败率")
+        
+        # 创建优化客户端任务
+        buff_task = asyncio.create_task(self._get_buff_data_optimized())
+        youpin_task = asyncio.create_task(self._get_youpin_data_optimized())
+        
+        # 等待两个任务完成
+        buff_data, youpin_items = await asyncio.gather(buff_task, youpin_task, return_exceptions=True)
+        
+        # 检查结果
+        if isinstance(buff_data, Exception):
+            print(f"❌ Buff数据获取失败: {buff_data}")
+            buff_data = []
+        elif not buff_data:
+            print("❌ 无法获取Buff商品数据")
+            return []
+        
+        if isinstance(youpin_items, Exception):
+            print(f"❌ 悠悠有品数据获取失败: {youpin_items}")
+            youpin_items = []
+        elif not youpin_items:
+            print("❌ 无法获取悠悠有品商品数据")
+            youpin_items = []
+        
+        # 🔥 移除回退逻辑，避免重复获取
+        # 如果优化客户端失败，直接返回空结果而不是启动第二套获取逻辑
+        if not buff_data and not youpin_items:
+            print("❌ 两个平台都无法获取数据，分析终止")
+            return []
         
         parallel_time = time.time() - start_time
         print(f"⚡ 并行获取完成，耗时: {parallel_time:.2f} 秒")
@@ -538,6 +529,10 @@ class IntegratedPriceAnalyzer:
             # 解析Buff商品
             buff_item = self.buff_client.parse_goods_item(item_data)
             if not buff_item:
+                continue
+            
+            # 🔥 检查Buff价格是否在筛选范围内
+            if not Config.is_buff_price_in_range(buff_item.buff_price):
                 continue
             
             # 🔥 只使用Hash精确匹配 - 移除模糊匹配

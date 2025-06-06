@@ -20,6 +20,7 @@ from integrated_price_system import PriceDiffItem, IntegratedPriceAnalyzer
 from search_api_client import SearchManager, SearchResult
 from analysis_manager import get_analysis_manager
 from config import Config
+from data_storage import DataStorage
 
 logger = logging.getLogger(__name__)
 
@@ -118,6 +119,16 @@ class UpdateManager:
         self.last_full_update = None
         self.last_incremental_update = None
         
+        # 🔥 新增：数据存储管理器
+        try:
+            from data_storage import DataStorage
+            self.data_storage = DataStorage()
+        except ImportError:
+            self.data_storage = None
+        
+        # 🔥 新增：初始全量更新完成标志
+        self.initial_full_update_completed = False
+        
         # 线程控制
         self.full_update_thread = None
         self.incremental_update_thread = None
@@ -133,6 +144,15 @@ class UpdateManager:
         self.stop_event.clear()
         
         logger.info("🚀 启动更新管理器")
+        
+        # 🔥 修改：检查是否需要初始全量更新
+        needs_initial_update = self.hashname_cache.should_full_update()
+        if needs_initial_update:
+            logger.info("📊 需要初始全量更新，将等待完成后再启动增量更新")
+            self.initial_full_update_completed = False
+        else:
+            logger.info("📊 有缓存数据，可直接启动增量更新")
+            self.initial_full_update_completed = True
         
         # 启动全量更新线程
         self.full_update_thread = threading.Thread(
@@ -150,10 +170,17 @@ class UpdateManager:
         )
         self.incremental_update_thread.start()
         
-        # 如果需要，立即执行一次全量更新
-        if self.hashname_cache.should_full_update():
-            logger.info("需要全量更新，启动初始化更新...")
-            self._trigger_full_update()
+        # 🔥 修复：无论是否需要初始更新，都不在这里立即执行
+        # 让定时循环来处理，避免重复执行
+        if not needs_initial_update:
+            # 如果有缓存数据，加载当前数据
+            try:
+                self._load_latest_data()
+                self.initial_full_update_completed = True  # 标记为已完成
+            except Exception as e:
+                logger.warning(f"加载缓存数据失败: {e}")
+        
+        logger.info("🎯 启动完成，定时循环将处理更新任务")
     
     def stop(self):
         """停止更新管理器"""
@@ -173,8 +200,25 @@ class UpdateManager:
     
     def _full_update_loop(self):
         """全量更新循环"""
+        # 🔥 修复死锁：如果需要初始更新，立即执行一次
+        if not self.initial_full_update_completed and self.hashname_cache.should_full_update():
+            logger.info("🔄 立即执行初始全量更新...")
+            self._trigger_full_update(is_initial=True)
+            
+            # 等待初始更新完成
+            logger.info("⏳ 等待初始全量更新完成...")
+            while self.is_running and not self.stop_event.is_set():
+                if self.initial_full_update_completed:
+                    break
+                # 每5秒检查一次
+                if self.stop_event.wait(timeout=5):
+                    return
+        
+        logger.info("✅ 开始全量更新定时循环")
+        
         while self.is_running and not self.stop_event.is_set():
             try:
+                # 检查是否需要定时全量更新
                 if self.hashname_cache.should_full_update():
                     logger.info("⏰ 开始定时全量更新")
                     self._trigger_full_update()
@@ -191,6 +235,18 @@ class UpdateManager:
     
     def _incremental_update_loop(self):
         """增量更新循环"""
+        # 🔥 新增：等待初始全量更新完成
+        if not self.initial_full_update_completed:
+            logger.info("⏳ 增量更新等待初始全量更新完成...")
+            while self.is_running and not self.stop_event.is_set():
+                if self.initial_full_update_completed:
+                    logger.info("✅ 初始全量更新已完成，开始增量更新循环")
+                    break
+                # 每5秒检查一次
+                if self.stop_event.wait(timeout=5):
+                    return
+        
+        # 🔥 开始正常的增量更新循环
         while self.is_running and not self.stop_event.is_set():
             try:
                 # 检查是否有hashname可以搜索
@@ -210,14 +266,14 @@ class UpdateManager:
                 if self.stop_event.wait(timeout=30):
                     break
     
-    def _trigger_full_update(self):
+    def _trigger_full_update(self, is_initial=False):
         """触发全量更新"""
         manager = get_analysis_manager()
         analysis_id = f"full_update_{int(time.time())}"
         
-        # 启动全量分析
-        if not manager.start_analysis('full_update', analysis_id):
-            logger.warning("全量更新跳过：已有分析在运行")
+        # 🔥 修复：使用强制模式，避免多个分析同时运行
+        if not manager.start_analysis('full_update', analysis_id, force=True):
+            logger.warning("全量更新跳过：无法启动分析")
             return
         
         def run_async_analysis():
@@ -235,6 +291,9 @@ class UpdateManager:
                         self.current_diff_items = diff_items
                         self.last_full_update = datetime.now()
                         
+                        # 🔥 保存当前数据到文件
+                        self._save_current_data()
+                        
                         # 更新hashname缓存
                         self.hashname_cache.update_from_full_analysis(diff_items)
                         
@@ -242,9 +301,19 @@ class UpdateManager:
                         manager.finish_analysis(analysis_id, diff_items)
                         
                         logger.info(f"✅ 全量更新完成: {len(diff_items)}个商品")
+                        
+                        # 🔥 新增：如果是初始更新，设置完成标志
+                        if is_initial:
+                            self.initial_full_update_completed = True
+                            logger.info("🎯 初始全量更新已完成，增量更新可以开始了")
                     else:
                         logger.warning("全量更新未获取到数据")
                         manager.finish_analysis(analysis_id, [])
+                        
+                        # 🔥 即使没有数据，也标记初始更新完成（避免卡住）
+                        if is_initial:
+                            self.initial_full_update_completed = True
+                            logger.info("⚠️ 初始全量更新无数据，但标记为完成以启动增量更新")
                         
                 finally:
                     loop.close()
@@ -252,6 +321,11 @@ class UpdateManager:
             except Exception as e:
                 logger.error(f"全量更新失败: {e}")
                 manager.finish_analysis(analysis_id)
+                
+                # 🔥 新增：即使出错，也标记初始更新完成（避免系统卡住）
+                if is_initial:
+                    self.initial_full_update_completed = True
+                    logger.error("❌ 初始全量更新失败，但标记为完成以启动增量更新")
         
         # 在新线程中运行异步任务
         thread = threading.Thread(target=run_async_analysis, daemon=True)
@@ -280,6 +354,9 @@ class UpdateManager:
                     if incremental_items:
                         # 合并到当前数据中（去重）
                         self._merge_incremental_data(incremental_items)
+                        
+                        # 🔥 保存合并后的数据到文件
+                        self._save_current_data()
                         
                         # 更新全局缓存
                         manager.finish_analysis(analysis_id, self.current_diff_items)
@@ -438,6 +515,7 @@ class UpdateManager:
         """获取更新状态"""
         return {
             'is_running': self.is_running,
+            'initial_full_update_completed': self.initial_full_update_completed,
             'last_full_update': self.last_full_update.isoformat() if self.last_full_update else None,
             'last_incremental_update': self.last_incremental_update.isoformat() if self.last_incremental_update else None,
             'current_items_count': len(self.current_diff_items),
@@ -450,12 +528,101 @@ class UpdateManager:
     def force_full_update(self):
         """强制全量更新"""
         logger.info("🔄 强制执行全量更新")
-        threading.Thread(target=self._trigger_full_update, daemon=True).start()
+        # 🔥 修复：直接调用而不是创建新线程，避免多个线程同时运行
+        self._trigger_full_update()
     
     def force_incremental_update(self):
         """强制增量更新"""
         logger.info("🔄 强制执行增量更新")
         threading.Thread(target=self._trigger_incremental_update, daemon=True).start()
+    
+    def _load_latest_data(self):
+        """加载最新的价差数据"""
+        try:
+            # 尝试加载保存的价差数据
+            if os.path.exists(Config.LATEST_DATA_FILE):
+                with open(Config.LATEST_DATA_FILE, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                
+                # 转换为PriceDiffItem对象
+                loaded_items = []
+                for item_data in data.get('items', []):
+                    try:
+                        item = PriceDiffItem(
+                            id=item_data.get('id', ''),
+                            name=item_data.get('name', ''),
+                            buff_price=float(item_data.get('buff_price', 0)),
+                            youpin_price=float(item_data.get('youpin_price', 0)),
+                            price_diff=float(item_data.get('price_diff', 0)),
+                            profit_rate=float(item_data.get('profit_rate', 0)),
+                            buff_url=item_data.get('buff_url', ''),
+                            youpin_url=item_data.get('youpin_url', ''),
+                            image_url=item_data.get('image_url', ''),
+                            category=item_data.get('category', ''),
+                            last_updated=datetime.fromisoformat(item_data['last_updated']) if item_data.get('last_updated') else datetime.now()
+                        )
+                        loaded_items.append(item)
+                    except Exception as e:
+                        logger.warning(f"解析保存的商品数据失败: {e}")
+                        continue
+                
+                if loaded_items:
+                    self.current_diff_items = loaded_items
+                    # 从文件元数据获取更新时间
+                    metadata = data.get('metadata', {})
+                    if metadata.get('last_full_update'):
+                        self.last_full_update = datetime.fromisoformat(metadata['last_full_update'])
+                    
+                    logger.info(f"📊 已加载缓存数据: {len(loaded_items)}个商品")
+                else:
+                    logger.warning("缓存数据文件为空")
+            else:
+                logger.info("未找到缓存数据文件")
+                
+        except Exception as e:
+            logger.error(f"加载最新数据失败: {e}")
+    
+    def _save_current_data(self):
+        """保存当前数据到文件"""
+        try:
+            # 确保目录存在
+            os.makedirs(os.path.dirname(Config.LATEST_DATA_FILE), exist_ok=True)
+            
+            # 转换为可序列化的格式
+            items_data = []
+            for item in self.current_diff_items:
+                items_data.append({
+                    'id': item.id,
+                    'name': item.name,
+                    'buff_price': item.buff_price,
+                    'youpin_price': item.youpin_price,
+                    'price_diff': item.price_diff,
+                    'profit_rate': item.profit_rate,
+                    'buff_url': item.buff_url,
+                    'youpin_url': item.youpin_url,
+                    'image_url': item.image_url,
+                    'category': item.category,
+                    'last_updated': item.last_updated.isoformat() if item.last_updated else None
+                })
+            
+            data = {
+                'metadata': {
+                    'last_full_update': self.last_full_update.isoformat() if self.last_full_update else None,
+                    'last_incremental_update': self.last_incremental_update.isoformat() if self.last_incremental_update else None,
+                    'total_count': len(items_data),
+                    'generated_at': datetime.now().isoformat()
+                },
+                'items': items_data
+            }
+            
+            # 保存到文件
+            with open(Config.LATEST_DATA_FILE, 'w', encoding='utf-8') as f:
+                json.dump(data, f, ensure_ascii=False, indent=2)
+            
+            logger.debug(f"💾 已保存 {len(items_data)} 个商品到缓存文件")
+            
+        except Exception as e:
+            logger.error(f"保存当前数据失败: {e}")
 
 # 全局更新管理器实例
 _update_manager_instance = None

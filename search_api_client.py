@@ -16,7 +16,63 @@ from dataclasses import dataclass
 from token_manager import TokenManager
 from config import Config
 
+# 🔥 导入优化客户端以共享全局延迟
+try:
+    from optimized_api_client import OptimizedYoupinClient
+    YOUPIN_GLOBAL_DELAY_AVAILABLE = True
+except ImportError:
+    YOUPIN_GLOBAL_DELAY_AVAILABLE = False
+
 logger = logging.getLogger(__name__)
+
+# 🔥 全局延迟控制 - 所有API客户端共享
+class GlobalRateLimiter:
+    """全局API速率限制器"""
+    _last_request_time = 0
+    _lock = None
+    
+    @classmethod
+    async def wait_if_needed(cls, min_delay: float, api_name: str = "API"):
+        """如果需要，等待足够的时间间隔"""
+        # 🔥 修复：在每次使用时获取当前事件循环的锁
+        if cls._lock is None:
+            try:
+                cls._lock = asyncio.Lock()
+            except RuntimeError:
+                # 如果没有运行中的事件循环，先获取事件循环
+                loop = asyncio.get_event_loop()
+                cls._lock = asyncio.Lock()
+        
+        # 🔥 修复：如果锁绑定到错误的事件循环，重新创建
+        try:
+            async with cls._lock:
+                import time
+                current_time = time.time()
+                time_since_last = current_time - cls._last_request_time
+                
+                if time_since_last < min_delay:
+                    wait_time = min_delay - time_since_last
+                    logger.info(f"{api_name}全局延迟 {wait_time:.1f}秒 (跨平台延迟控制)...")
+                    await asyncio.sleep(wait_time)
+                
+                cls._last_request_time = time.time()
+        except RuntimeError as e:
+            if "different loop" in str(e):
+                # 重新创建锁
+                cls._lock = asyncio.Lock()
+                async with cls._lock:
+                    import time
+                    current_time = time.time()
+                    time_since_last = current_time - cls._last_request_time
+                    
+                    if time_since_last < min_delay:
+                        wait_time = min_delay - time_since_last
+                        logger.info(f"{api_name}全局延迟 {wait_time:.1f}秒 (跨平台延迟控制)...")
+                        await asyncio.sleep(wait_time)
+                    
+                    cls._last_request_time = time.time()
+            else:
+                raise
 
 @dataclass
 class SearchResult:
@@ -32,11 +88,15 @@ class SearchResult:
 class YouPinSearchClient:
     """悠悠有品搜索客户端"""
     
+    # 🔥 类级别的全局延迟控制，与其他悠悠有品客户端共享
+    _global_last_request_time = 0
+    
     def __init__(self):
         self.base_url = "https://api.youpin898.com"
         self.session = None
         self.token_manager = TokenManager()
         self.headers = self._get_headers()
+        self.last_request_time = 0  # 保留实例级别用于兼容
     
     def _get_headers(self) -> Dict[str, str]:
         """获取请求头"""
@@ -87,6 +147,9 @@ class YouPinSearchClient:
     async def search_by_keyword(self, keyword: str, page_index: int = 1, page_size: int = 20) -> List[SearchResult]:
         """根据关键词搜索商品"""
         try:
+            # 🔥 使用统一的全局延迟控制器
+            await GlobalRateLimiter.wait_if_needed(Config.YOUPIN_API_DELAY, "悠悠有品搜索")
+            
             url = f"{self.base_url}/api/homepage/pc/goods/market/querySaleTemplate"
             
             data = {
@@ -101,6 +164,9 @@ class YouPinSearchClient:
                 if response.status == 200:
                     result = await response.json()
                     return self._parse_search_results(result)
+                elif response.status == 429:
+                    logger.error(f"悠悠有品搜索频率限制 (429): {keyword} - 可能需要增加 YOUPIN_API_DELAY")
+                    return []
                 else:
                     logger.error(f"悠悠有品搜索失败: {response.status} - {keyword}")
                     return []
@@ -143,6 +209,9 @@ class YouPinSearchClient:
 
 class BuffSearchClient:
     """Buff搜索客户端"""
+    
+    # 🔥 类级别的全局延迟控制，与其他Buff客户端共享
+    _global_last_request_time = 0
     
     def __init__(self):
         self.base_url = "https://buff.163.com"
@@ -203,6 +272,9 @@ class BuffSearchClient:
     async def search_by_keyword(self, keyword: str, page_num: int = 1) -> List[SearchResult]:
         """根据关键词搜索商品"""
         try:
+            # 🔥 使用统一的全局延迟控制器
+            await GlobalRateLimiter.wait_if_needed(Config.BUFF_API_DELAY, "Buff搜索")
+            
             # URL编码关键词
             encoded_keyword = urllib.parse.quote(keyword)
             
@@ -219,6 +291,9 @@ class BuffSearchClient:
                 if response.status == 200:
                     result = await response.json()
                     return self._parse_search_results(result)
+                elif response.status == 429:
+                    logger.error(f"Buff搜索频率限制 (429): {keyword} - 可能需要增加 BUFF_API_DELAY")
+                    return []
                 else:
                     logger.error(f"Buff搜索失败: {response.status} - {keyword}")
                     return []
@@ -287,25 +362,24 @@ class SearchManager:
             await self.buff_client.__aexit__(exc_type, exc_val, exc_tb)
     
     async def search_both_platforms(self, keyword: str) -> Dict[str, List[SearchResult]]:
-        """在两个平台上搜索关键词"""
+        """在两个平台上搜索关键词 - 串行执行确保全局延迟控制生效"""
         try:
-            # 并行搜索
-            youpin_task = self.youpin_client.search_by_keyword(keyword)
-            buff_task = self.buff_client.search_by_keyword(keyword)
+            # 🔥 修改为串行搜索，确保全局延迟控制生效
+            youpin_results = []
+            buff_results = []
             
-            youpin_results, buff_results = await asyncio.gather(
-                youpin_task, 
-                buff_task, 
-                return_exceptions=True
-            )
-            
-            # 处理异常
-            if isinstance(youpin_results, Exception):
-                logger.error(f"悠悠有品搜索异常: {youpin_results}")
+            # 先搜索悠悠有品
+            try:
+                youpin_results = await self.youpin_client.search_by_keyword(keyword)
+            except Exception as e:
+                logger.error(f"悠悠有品搜索异常: {e}")
                 youpin_results = []
             
-            if isinstance(buff_results, Exception):
-                logger.error(f"Buff搜索异常: {buff_results}")
+            # 再搜索Buff（会自动遵守全局延迟控制）
+            try:
+                buff_results = await self.buff_client.search_by_keyword(keyword)
+            except Exception as e:
+                logger.error(f"Buff搜索异常: {e}")
                 buff_results = []
             
             return {

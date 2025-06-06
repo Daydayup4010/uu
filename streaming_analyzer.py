@@ -179,6 +179,10 @@ class StreamingAnalyzer:
         
         try:
             async with OptimizedBuffClient() as client:
+                # 🔥 如果分析被取消，立即取消客户端
+                if manager.should_stop():
+                    client.cancel()
+                    return
                 # 获取第一页确定总数
                 first_page = await client.get_goods_list(page_num=1)
                 if not first_page or 'data' not in first_page:
@@ -210,6 +214,7 @@ class StreamingAnalyzer:
                     # 检查是否应该停止
                     if not self.is_running or manager.should_stop():
                         logger.info(f"Buff数据获取被停止，已处理{page_num-1}页")
+                        client.cancel()  # 🔥 取消客户端
                         break
                         
                     page_data = await client.get_goods_list(page_num=page_num)
@@ -262,6 +267,7 @@ class StreamingAnalyzer:
                     # 检查是否应该停止
                     if not self.is_running or manager.should_stop():
                         logger.info(f"悠悠有品数据获取被停止，已处理{page_index-1}页")
+                        client.cancel()  # 🔥 取消客户端
                         break
                         
                     items = await client.get_market_goods_safe(page_index=page_index)
@@ -326,7 +332,11 @@ class StreamingAnalyzer:
             buff_item = buff_client.parse_goods_item(item_data)
             if not buff_item:
                 continue
-            
+
+            # 🔥 检查Buff价格是否在筛选范围内
+            if not Config.is_buff_price_in_range(buff_item.buff_price):
+                continue
+
             # 查找悠悠有品价格
             youpin_price = None
             matched_by = None

@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>前端配置调试</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .debug-item { margin: 10px 0; padding: 10px; border: 1px solid #ddd; }
+        .success { background: #d4edda; border-color: #c3e6cb; }
+        .error { background: #f8d7da; border-color: #f5c6cb; }
+        .info { background: #d1ecf1; border-color: #bee5eb; }
+        input { margin: 5px; padding: 5px; }
+        button { margin: 5px; padding: 8px 15px; background: #007bff; color: white; border: none; cursor: pointer; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 4px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>🔍 前端配置加载调试</h1>
+    
+    <div class="debug-item info">
+        <h3>📋 测试步骤</h3>
+        <ol>
+            <li>点击"测试API连接"检查后端是否可访问</li>
+            <li>点击"加载配置"测试配置获取</li>
+            <li>修改Buff价格区间并保存</li>
+            <li>再次加载配置验证是否成功</li>
+        </ol>
+    </div>
+
+    <div class="debug-item">
+        <h3>🔗 API连接测试</h3>
+        <button onclick="testApiConnection()">测试API连接</button>
+        <div id="connectionResult"></div>
+    </div>
+
+    <div class="debug-item">
+        <h3>📥 配置加载测试</h3>
+        <button onclick="loadConfigDebug()">加载配置</button>
+        <div id="configResult"></div>
+    </div>
+
+    <div class="debug-item">
+        <h3>🔧 Buff价格区间设置</h3>
+        <div>
+            <label>最小价格：</label>
+            <input type="number" id="buffPriceMin" placeholder="最小价格" step="0.1" min="0">
+            <label>最大价格：</label>
+            <input type="number" id="buffPriceMax" placeholder="最大价格" step="0.1" min="0">
+            <button onclick="saveBuffPriceRange()">保存Buff价格区间</button>
+        </div>
+        <div id="saveResult"></div>
+    </div>
+
+    <div class="debug-item">
+        <h3>📊 当前值显示</h3>
+        <div>
+            <p>Buff最小价格输入框值: <span id="currentMinValue">-</span></p>
+            <p>Buff最大价格输入框值: <span id="currentMaxValue">-</span></p>
+        </div>
+    </div>
+
+    <div class="debug-item">
+        <h3>📝 调试日志</h3>
+        <div id="debugLog" style="max-height: 300px; overflow-y: auto; background: #f8f9fa; padding: 10px; border-radius: 4px;"></div>
+        <button onclick="clearLog()">清空日志</button>
+    </div>
+
+    <script>
+        function log(message, type = 'info') {
+            const debugLog = document.getElementById('debugLog');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.innerHTML = `<span style="color: #666;">[${timestamp}]</span> <span style="color: ${type === 'error' ? 'red' : type === 'success' ? 'green' : 'blue'};">${message}</span>`;
+            debugLog.appendChild(logEntry);
+            debugLog.scrollTop = debugLog.scrollHeight;
+        }
+
+        function clearLog() {
+            document.getElementById('debugLog').innerHTML = '';
+        }
+
+        async function testApiConnection() {
+            log('🔍 开始测试API连接...', 'info');
+            const resultDiv = document.getElementById('connectionResult');
+            
+            try {
+                const response = await fetch('/api/settings');
+                log(`📡 响应状态: ${response.status}`, response.ok ? 'success' : 'error');
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    log('✅ API连接成功', 'success');
+                    resultDiv.innerHTML = '<div class="success">✅ API连接正常</div>';
+                    log(`📋 获取到的数据: ${JSON.stringify(data, null, 2)}`, 'info');
+                } else {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+            } catch (error) {
+                log(`❌ API连接失败: ${error.message}`, 'error');
+                resultDiv.innerHTML = `<div class="error">❌ API连接失败: ${error.message}</div>`;
+            }
+        }
+
+        async function loadConfigDebug() {
+            log('📥 开始加载配置...', 'info');
+            const resultDiv = document.getElementById('configResult');
+            
+            try {
+                // 测试 /api/settings 接口
+                log('🔗 请求 /api/settings...', 'info');
+                const settingsResponse = await fetch('/api/settings');
+                log(`📡 /api/settings 响应状态: ${settingsResponse.status}`, settingsResponse.ok ? 'success' : 'error');
+                
+                if (!settingsResponse.ok) {
+                    throw new Error(`settings API 失败: ${settingsResponse.status}`);
+                }
+                
+                const settingsData = await settingsResponse.json();
+                log(`📋 /api/settings 响应数据: ${JSON.stringify(settingsData, null, 2)}`, 'info');
+                
+                if (settingsData.success && settingsData.data.buff_price_range) {
+                    const buffRange = settingsData.data.buff_price_range;
+                    log(`🎯 找到 buff_price_range: min=${buffRange.min}, max=${buffRange.max}`, 'success');
+                    
+                    // 填充输入框
+                    const minInput = document.getElementById('buffPriceMin');
+                    const maxInput = document.getElementById('buffPriceMax');
+                    
+                    log(`🔍 获取输入框元素: minInput=${!!minInput}, maxInput=${!!maxInput}`, 'info');
+                    
+                    if (minInput && maxInput) {
+                        minInput.value = buffRange.min || '';
+                        maxInput.value = buffRange.max || '';
+                        log(`✅ 输入框已填充: min=${minInput.value}, max=${maxInput.value}`, 'success');
+                        updateCurrentValues();
+                    } else {
+                        log('❌ 找不到输入框元素', 'error');
+                    }
+                } else {
+                    log('❌ 响应中没有 buff_price_range 数据', 'error');
+                }
+                
+                resultDiv.innerHTML = '<div class="success">✅ 配置加载完成，查看日志了解详情</div>';
+                
+            } catch (error) {
+                log(`❌ 加载配置失败: ${error.message}`, 'error');
+                resultDiv.innerHTML = `<div class="error">❌ 加载失败: ${error.message}</div>`;
+            }
+        }
+
+        async function saveBuffPriceRange() {
+            const minValue = document.getElementById('buffPriceMin').value;
+            const maxValue = document.getElementById('buffPriceMax').value;
+            const resultDiv = document.getElementById('saveResult');
+            
+            log(`💾 开始保存 Buff 价格区间: min=${minValue}, max=${maxValue}`, 'info');
+            
+            if (!minValue || !maxValue) {
+                log('❌ 请输入有效的最小和最大价格', 'error');
+                resultDiv.innerHTML = '<div class="error">❌ 请输入有效的最小和最大价格</div>';
+                return;
+            }
+
+            try {
+                const updateData = {
+                    buff_price_min: parseFloat(minValue),
+                    buff_price_max: parseFloat(maxValue)
+                };
+                
+                log(`📤 发送更新数据: ${JSON.stringify(updateData)}`, 'info');
+                
+                const response = await fetch('/api/settings', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(updateData)
+                });
+                
+                log(`📡 保存响应状态: ${response.status}`, response.ok ? 'success' : 'error');
+                
+                const result = await response.json();
+                log(`📋 保存响应数据: ${JSON.stringify(result, null, 2)}`, 'info');
+                
+                if (result.success) {
+                    log('✅ 保存成功', 'success');
+                    resultDiv.innerHTML = `<div class="success">✅ 保存成功: ${result.message}</div>`;
+                    
+                    // 重新加载配置验证
+                    setTimeout(() => {
+                        log('🔄 自动重新加载配置进行验证...', 'info');
+                        loadConfigDebug();
+                    }, 500);
+                } else {
+                    throw new Error(result.error || '保存失败');
+                }
+            } catch (error) {
+                log(`❌ 保存失败: ${error.message}`, 'error');
+                resultDiv.innerHTML = `<div class="error">❌ 保存失败: ${error.message}</div>`;
+            }
+        }
+
+        function updateCurrentValues() {
+            const minInput = document.getElementById('buffPriceMin');
+            const maxInput = document.getElementById('buffPriceMax');
+            
+            document.getElementById('currentMinValue').textContent = minInput ? minInput.value || '空' : '元素不存在';
+            document.getElementById('currentMaxValue').textContent = maxInput ? maxInput.value || '空' : '元素不存在';
+        }
+
+        // 监听输入框变化
+        document.addEventListener('DOMContentLoaded', () => {
+            const minInput = document.getElementById('buffPriceMin');
+            const maxInput = document.getElementById('buffPriceMax');
+            
+            if (minInput) minInput.addEventListener('input', updateCurrentValues);
+            if (maxInput) maxInput.addEventListener('input', updateCurrentValues);
+            
+            updateCurrentValues();
+            log('🚀 调试页面初始化完成', 'success');
+        });
+    </script>
+</body>
+</html>

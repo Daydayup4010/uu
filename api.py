@@ -808,4 +808,26 @@ def streaming_demo():
         """
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000) 
+    # 🔥 启动更新管理器 - 只启动一次
+    from update_manager import get_update_manager
+    
+    update_manager = None
+    try:
+        print("📊 启动数据更新管理器...")
+        update_manager = get_update_manager()
+        update_manager.start()
+        
+        print("🚀 启动Web应用...")
+        print("💻 访问地址: http://localhost:5000")
+        print("按 Ctrl+C 停止服务")
+        
+        # 禁用自动重启避免重复启动UpdateManager
+        app.run(debug=True, host='0.0.0.0', port=5000, use_reloader=False)
+        
+    except KeyboardInterrupt:
+        print("\n📴 收到停止信号...")
+    finally:
+        if update_manager:
+            print("🛑 停止更新管理器...")
+            update_manager.stop()
+            print("✅ 服务已停止") 

@@ -45,10 +45,6 @@
                     <h1 class="text-white text-xl font-bold">Buff差价监控系统</h1>
                 </div>
                 <div class="flex items-center space-x-4">
-                    <button id="refreshBtn" class="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-4 py-2 rounded-lg transition duration-200">
-                        <i class="fas fa-sync-alt mr-2"></i>
-                        刷新数据
-                    </button>
                     <button id="settingsBtn" class="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-4 py-2 rounded-lg transition duration-200">
                         <i class="fas fa-cog mr-2"></i>
                         设置
@@ -441,17 +437,11 @@
                 this.eventSource = null;
                 
                 this.initEventListeners();
-                this.loadData();
-                this.loadStatus();
+                this.init(); // 🔥 修复：调用完整的初始化方法
             }
 
             // 绑定事件监听器
             initEventListeners() {
-                // 刷新按钮
-                const refreshBtn = document.getElementById('refreshBtn');
-                if (refreshBtn) {
-                    refreshBtn.addEventListener('click', () => this.forceUpdate());
-                }
                 
                 // 设置按钮
                 const settingsBtn = document.getElementById('settingsBtn');
@@ -600,9 +590,12 @@
                 this.loadStatus();
                 this.loadStatistics();
                 
-                // 启动定时刷新
+                // 🔥 修复：只刷新状态和统计，不自动重新加载数据
                 setInterval(() => {
-                    this.loadData();
+                    // 只有在非流式分析状态下才更新显示
+                    if (!this.streamingActive) {
+                        this.loadData(); // 仅获取缓存数据，不触发分析
+                    }
                     this.loadStatus();
                     this.loadStatistics();
                 }, 30000); // 每30秒刷新一次
@@ -616,34 +609,7 @@
                 itemsList.classList.add('hidden');
                 
                 try {
-                    // 🔥 新增：尝试增量分析（立即返回缓存数据）
-                    const incrementalResponse = await fetch('/api/analyze_incremental', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ force_refresh: false })
-                    });
-                    
-                    const incrementalResult = await incrementalResponse.json();
-                    
-                    if (incrementalResult.success && incrementalResult.data.cached) {
-                        // 立即显示缓存数据
-                        this.items = incrementalResult.data.items;
-                        document.getElementById('totalCount').textContent = this.items.length;
-                        this.renderItems();
-                        
-                        // 显示缓存提示
-                        this.showAlert('info', '显示缓存数据，正在后台更新全量数据...');
-                        
-                        // 启动流式更新
-                        if (incrementalResult.background_update) {
-                            setTimeout(() => this.startStreamingUpdate(), 1000);
-                        }
-                        
-                        this.calculateStatistics();
-                        return;
-                    }
-                    
-                    // 回退到原有逻辑
+                    // 🔥 修复：只获取缓存数据，不自动触发分析
                     const response = await fetch('/api/data');
                     const result = await response.json();
                     
@@ -652,6 +618,14 @@
                         document.getElementById('totalCount').textContent = this.items.length;
                         this.renderItems();
                         this.calculateStatistics();
+                        
+                        // 如果没有数据，显示提示
+                        if (this.items.length === 0) {
+                            itemsList.innerHTML = `<div class="p-8 text-center text-gray-500">
+                                <div class="text-lg mb-2">📊 暂无价差数据</div>
+                                <div class="text-sm">系统会自动在后台进行增量分析，请稍等片刻</div>
+                            </div>`;
+                        }
                     } else {
                         itemsList.innerHTML = `<div class="p-8 text-center text-red-500">加载失败: ${result.error}</div>`;
                     }
@@ -986,58 +960,6 @@
                 if (margin >= 50) return 'profit-very-high';
                 if (margin >= 30) return 'profit-high';
                 return 'profit-positive';
-            }
-
-            async forceUpdate() {
-                const btn = document.getElementById('refreshBtn');
-                const originalText = btn.innerHTML;
-                
-                btn.innerHTML = '<i class="fas fa-spinner loading mr-1"></i>更新中...';
-                btn.disabled = true;
-                
-                try {
-                    // 🔥 新增：启动流式分析而不是传统的force_update
-                    if (this.streamingActive) {
-                        this.stopStreaming();
-                    }
-                    
-                    // 清空当前数据
-                    this.items = [];
-                    this.renderItems();
-                    
-                    // 启动增量分析（强制刷新）
-                    const response = await fetch('/api/analyze_incremental', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ force_refresh: true })
-                    });
-                    
-                    const result = await response.json();
-                    
-                    if (result.success) {
-                        // 立即显示缓存数据（如果有）
-                        if (result.data.items.length > 0) {
-                            this.items = result.data.items;
-                            document.getElementById('totalCount').textContent = this.items.length;
-                            this.renderItems();
-                            this.calculateStatistics();
-                        }
-                        
-                        // 显示成功消息
-                        this.showAlert('success', '开始强制刷新，正在启动流式分析...');
-                        
-                        // 启动流式更新
-                        setTimeout(() => this.startStreamingUpdate(), 1000);
-                    } else {
-                        this.showAlert('error', '更新失败: ' + (result.error || '未知错误'));
-                    }
-                } catch (error) {
-                    console.error('强制更新失败:', error);
-                    this.showAlert('error', '更新失败: ' + error.message);
-                } finally {
-                    btn.innerHTML = originalText;
-                    btn.disabled = false;
-                }
             }
 
             openSettings() {
