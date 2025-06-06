@@ -336,6 +336,11 @@ class StreamingAnalyzer:
             # 🔥 检查Buff价格是否在筛选范围内
             if not Config.is_buff_price_in_range(buff_item.buff_price):
                 continue
+            
+            # 🔥 新增：检查Buff在售数量是否符合条件
+            if hasattr(buff_item, 'sell_num') and buff_item.sell_num is not None:
+                if not Config.is_buff_sell_num_valid(buff_item.sell_num):
+                    continue
 
             # 查找悠悠有品价格
             youpin_price = None

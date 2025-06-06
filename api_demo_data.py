@@ -89,7 +89,7 @@ async def generate_large_dataset(max_pages: int = 5) -> List[PriceDiffItem]:
                 'buff_price': item.skin_item.buff_price,
                 'youpin_price': item.skin_item.youpin_price,
                 'price_diff': item.price_diff,
-                'profit_margin': item.profit_margin,
+                'profit_margin': item.profit_rate,
                 'buff_buy_url': item.buff_buy_url,
                 'youpin_url': item.skin_item.youpin_url,
                 'image_url': item.skin_item.image_url,
@@ -123,8 +123,8 @@ def print_statistics(diff_items: List[PriceDiffItem]):
     print(f"   平均价差: ¥{stats['avg_price_diff']:.2f}")
     print(f"   最大价差: ¥{stats['max_price_diff']:.2f}")
     print(f"   最小价差: ¥{stats['min_price_diff']:.2f}")
-    print(f"   平均利润率: {stats['avg_profit_margin']:.1f}%")
-    print(f"   最大利润率: {stats['max_profit_margin']:.1f}%")
+    print(f"   平均利润率: {stats['avg_profit_rate']:.1f}%")
+    print(f"   最大利润率: {stats['max_profit_rate']:.1f}%")
     
     # 按类别统计
     categories = {}
@@ -144,7 +144,7 @@ def print_statistics(diff_items: List[PriceDiffItem]):
     print(f"\n💰 价差最高的5个商品:")
     for i, item in enumerate(high_diff_items, 1):
         print(f"   {i}. {item.skin_item.name}")
-        print(f"      价差: ¥{item.price_diff:.2f} ({item.profit_margin:.1f}%)")
+        print(f"      价差: ¥{item.price_diff:.2f} ({item.profit_rate:.1f}%)")
         print(f"      Buff: ¥{item.skin_item.buff_price} → 悠悠有品: ¥{item.skin_item.youpin_price}")
 
 async def save_api_demo_data():

@@ -27,6 +27,56 @@ logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 
+def _clear_hashname_cache():
+    """清理hashname缓存并触发全量更新（回退方案）"""
+    try:
+        update_manager = get_update_manager()
+        if hasattr(update_manager, 'hashname_cache'):
+            update_manager.hashname_cache.hashnames.clear()
+            update_manager.hashname_cache.last_update = None
+            logger.info("🔄 已清理hashname缓存，将重新执行全量分析")
+        else:
+            logger.warning("⚠️ UpdateManager中未找到hashname_cache")
+        
+        # 触发全量更新
+        update_manager.force_full_update()
+        
+    except Exception as e:
+        logger.error(f"❌ 清理hashname缓存失败: {e}")
+
+def _trigger_reprocess_from_saved_data(reason: str = "筛选条件更新"):
+    """🔥 新增：优先从保存数据重新筛选，避免重新调用API"""
+    try:
+        from saved_data_processor import get_saved_data_processor
+        
+        processor = get_saved_data_processor()
+        
+        # 检查是否有有效的全量数据文件
+        if not processor.has_valid_full_data():
+            logger.warning(f"⚠️ {reason}：没有找到有效的全量数据文件，回退到全量更新")
+            _clear_hashname_cache()
+            return
+        
+        # 从保存数据重新筛选
+        logger.info(f"🔄 {reason}：从保存数据重新筛选...")
+        diff_items, stats = processor.reprocess_with_current_filters()
+        
+        if diff_items is not None:
+            # 更新UpdateManager的数据
+            update_manager = get_update_manager()
+            update_manager.current_diff_items = diff_items
+            update_manager._save_current_data()
+            
+            logger.info(f"✅ {reason}：重新筛选完成，找到{len(diff_items)}个符合条件的商品")
+            logger.info(f"📂 使用文件: {stats.get('buff_file', '未知')}, {stats.get('youpin_file', '未知')}")
+        else:
+            logger.warning(f"⚠️ {reason}：重新筛选失败，回退到全量更新")
+            _clear_hashname_cache()
+            
+    except Exception as e:
+        logger.error(f"❌ {reason}：从保存数据重新筛选失败: {e}，回退到全量更新")
+        _clear_hashname_cache()
+
 # 手动添加CORS支持
 @app.after_request
 def after_request(response):
@@ -83,6 +133,24 @@ def api_data():
     try:
         update_manager = get_update_manager()
         diff_items = update_manager.get_current_data()
+        
+        # 🔥 新增：如果数据为空且有hashname缓存，自动触发全量更新
+        if not diff_items:
+            status = update_manager.get_status()
+            if status.get('cached_hashnames_count', 0) > 0:
+                logger.warning("🔄 检测到数据为空但有缓存，自动触发全量更新")
+                update_manager.force_full_update()
+                # 返回提示信息
+                return jsonify({
+                    'success': True,
+                    'data': {
+                        'items': [],
+                        'total_count': 0,
+                        'message': '检测到数据异常，已自动触发全量更新，请稍后刷新页面',
+                        'auto_update_triggered': True,
+                        'last_updated': None
+                    }
+                })
         
         # 转换为字典格式
         items_data = []
@@ -170,6 +238,64 @@ def api_force_update():
             'error': str(e)
         }), 500
 
+@app.route('/api/validate_data', methods=['GET'])
+def api_validate_data():
+    """验证数据状态并自动修复"""
+    try:
+        update_manager = get_update_manager()
+        diff_items = update_manager.get_current_data()
+        status = update_manager.get_status()
+        
+        # 检查是否需要修复数据
+        needs_repair = False
+        repair_action = None
+        
+        if len(diff_items) == 0:
+            if status.get('cached_hashnames_count', 0) > 0:
+                # 有缓存但无数据，需要强制全量更新
+                needs_repair = True
+                repair_action = 'force_full_update'
+                logger.warning("🔧 检测到数据异常：有hashname缓存但无价差数据，将执行强制全量更新")
+                update_manager.force_full_update()
+            elif not status.get('initial_full_update_completed', False):
+                # 未完成初始全量更新
+                needs_repair = True
+                repair_action = 'wait_initial_update'
+                logger.info("⏳ 系统正在执行初始全量更新，请稍候")
+        
+        return jsonify({
+            'success': True,
+            'data': {
+                'has_data': len(diff_items) > 0,
+                'items_count': len(diff_items),
+                'is_running': status['is_running'],
+                'initial_full_update_completed': status.get('initial_full_update_completed', False),
+                'last_full_update': status.get('last_full_update'),
+                'cached_hashnames_count': status.get('cached_hashnames_count', 0),
+                'needs_repair': needs_repair,
+                'repair_action': repair_action,
+                'status_message': _get_status_message(diff_items, status, needs_repair, repair_action)
+            }
+        })
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+def _get_status_message(diff_items, status, needs_repair, repair_action):
+    """获取状态消息"""
+    if len(diff_items) > 0:
+        return f"数据正常，共有{len(diff_items)}个价差商品"
+    elif repair_action == 'force_full_update':
+        return "检测到数据异常，已自动触发全量更新，请2-3分钟后刷新页面"
+    elif repair_action == 'wait_initial_update':
+        return "系统正在执行初始数据收集，请等待2-3分钟后刷新页面"
+    elif not status.get('is_running', False):
+        return "更新管理器未运行，请检查系统状态"
+    else:
+        return "数据收集中，请稍候"
+
 @app.route('/api/settings', methods=['GET', 'POST'])
 def api_settings():
     """获取/更新设置"""
@@ -186,6 +312,9 @@ def api_settings():
                     'buff_price_range': {
                         'min': Config.BUFF_PRICE_MIN,
                         'max': Config.BUFF_PRICE_MAX
+                    },
+                    'buff_sell_num': {
+                        'min': Config.get_buff_sell_num_min()
                     },
                     'max_output_items': Config.MAX_OUTPUT_ITEMS,
                     'update_intervals': {
@@ -208,6 +337,7 @@ def api_settings():
             price_max = data.get('price_max')
             buff_price_min = data.get('buff_price_min')
             buff_price_max = data.get('buff_price_max')
+            buff_sell_num_min = data.get('buff_sell_num_min')
             max_output_items = data.get('max_output_items')
             
             updated_fields = []
@@ -221,11 +351,22 @@ def api_settings():
             if price_min is not None and price_max is not None:
                 Config.update_price_range(float(price_min), float(price_max))
                 updated_fields.append(f'价格区间: {price_min}-{price_max}元')
+                # 🔥 优先从保存数据重新筛选，避免重新调用API
+                _trigger_reprocess_from_saved_data("价格区间更新")
             
             # 更新Buff价格筛选区间
             if buff_price_min is not None and buff_price_max is not None:
                 Config.update_buff_price_range(float(buff_price_min), float(buff_price_max))
                 updated_fields.append(f'Buff价格筛选: {buff_price_min}-{buff_price_max}元')
+                # 🔥 优先从保存数据重新筛选，避免重新调用API
+                _trigger_reprocess_from_saved_data("Buff价格筛选更新")
+            
+            # 更新Buff最小在售数量
+            if buff_sell_num_min is not None:
+                Config.update_buff_sell_num_min(int(buff_sell_num_min))
+                updated_fields.append(f'Buff最小在售数量: {buff_sell_num_min}个')
+                # 🔥 优先从保存数据重新筛选，避免重新调用API
+                _trigger_reprocess_from_saved_data("Buff在售数量筛选更新")
             
             # 更新最大输出数量
             if max_output_items is not None:
@@ -387,6 +528,61 @@ def api_buff_price_range():
                 'error': str(e)
             }), 500
 
+@app.route('/api/buff_sell_num', methods=['GET', 'POST'])
+def api_buff_sell_num():
+    """Buff在售数量筛选API"""
+    if request.method == 'GET':
+        return jsonify({
+            'success': True,
+            'data': {
+                'min_sell_num': Config.get_buff_sell_num_min()
+            }
+        })
+    
+    # POST方法：更新在售数量筛选
+    try:
+        data = request.get_json() or {}
+        min_sell_num = data.get('min_sell_num')
+        
+        if min_sell_num is None:
+            return jsonify({
+                'success': False,
+                'error': '需要提供min_sell_num参数'
+            }), 400
+        
+        min_sell_num = int(min_sell_num)
+        
+        if min_sell_num < 0:
+            return jsonify({
+                'success': False,
+                'error': '在售数量不能为负数'
+            }), 400
+        
+        # 更新Buff在售数量筛选
+        Config.update_buff_sell_num_min(min_sell_num)
+        
+        # 🔥 关键：更新配置后清理hashname缓存
+        _clear_hashname_cache()
+        
+        return jsonify({
+            'success': True,
+            'message': f'Buff最小在售数量已更新为 {min_sell_num}个',
+            'data': {
+                'min_sell_num': Config.get_buff_sell_num_min()
+            }
+        })
+        
+    except ValueError:
+        return jsonify({
+            'success': False,
+            'error': '在售数量参数必须是有效整数'
+        }), 400
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
 @app.route('/api/force_incremental_update', methods=['POST'])
 def api_force_incremental_update():
     """强制增量更新"""
@@ -398,6 +594,31 @@ def api_force_incremental_update():
             'success': True,
             'message': '增量更新任务已启动'
         })
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@app.route('/api/clear_cache', methods=['POST'])
+def api_clear_cache():
+    """清理hashname缓存"""
+    try:
+        update_manager = get_update_manager()
+        if hasattr(update_manager, 'hashname_cache'):
+            update_manager.hashname_cache.hashnames.clear()
+            update_manager.hashname_cache.last_update = None
+            logger.info("🔄 手动清理hashname缓存完成")
+            
+            return jsonify({
+                'success': True,
+                'message': 'hashname缓存已清理，下次分析将重新构建'
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'error': 'UpdateManager中未找到hashname_cache'
+            }), 400
     except Exception as e:
         return jsonify({
             'success': False,
@@ -806,6 +1027,54 @@ def streaming_demo():
         <h1>演示页面不存在</h1>
         <p>请确保 static/stream_demo.html 文件存在</p>
         """
+
+@app.route('/api/reprocess_from_saved', methods=['POST'])
+def api_reprocess_from_saved():
+    """🔥 新增：从已保存数据重新筛选API"""
+    try:
+        from saved_data_processor import get_saved_data_processor
+        
+        processor = get_saved_data_processor()
+        
+        # 检查是否有有效的全量数据文件
+        if not processor.has_valid_full_data():
+            return jsonify({
+                'success': False,
+                'error': '没有找到有效的全量数据文件，请先执行全量更新'
+            }), 404
+        
+        # 重新筛选
+        diff_items, stats = processor.reprocess_with_current_filters()
+        
+        if diff_items is not None:
+            # 更新UpdateManager的数据
+            update_manager = get_update_manager()
+            update_manager.current_diff_items = diff_items
+            update_manager._save_current_data()
+            
+            return jsonify({
+                'success': True,
+                'message': f'重新筛选完成，找到 {len(diff_items)} 个符合条件的商品',
+                'data': {
+                    'items_count': len(diff_items),
+                    'buff_file': stats.get('buff_file'),
+                    'youpin_file': stats.get('youpin_file'),
+                    'statistics': stats,
+                    'filters_applied': stats.get('filters_applied', {})
+                }
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'error': '重新筛选失败'
+            }), 500
+            
+    except Exception as e:
+        logger.error(f"从保存数据重新筛选失败: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
 
 if __name__ == '__main__':
     # 🔥 启动更新管理器 - 只启动一次

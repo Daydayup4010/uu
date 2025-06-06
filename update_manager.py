@@ -9,6 +9,7 @@
 import asyncio
 import json
 import logging
+import os
 import time
 from datetime import datetime, timedelta
 from typing import List, Dict, Set, Optional
@@ -173,12 +174,46 @@ class UpdateManager:
         # 🔥 修复：无论是否需要初始更新，都不在这里立即执行
         # 让定时循环来处理，避免重复执行
         if not needs_initial_update:
-            # 如果有缓存数据，加载当前数据
+            # 🔥 优先尝试从保存的full data文件重新筛选
             try:
-                self._load_latest_data()
-                self.initial_full_update_completed = True  # 标记为已完成
+                from saved_data_processor import get_saved_data_processor
+                processor = get_saved_data_processor()
+                
+                if processor.has_valid_full_data():
+                    logger.info("📂 发现已保存的全量数据文件，从文件重新筛选...")
+                    diff_items, stats = processor.reprocess_with_current_filters()
+                    
+                    if diff_items is not None:
+                        self.current_diff_items = diff_items
+                        self._save_current_data()
+                        self.initial_full_update_completed = True
+                        logger.info(f"✅ 从保存数据重新筛选成功: {len(diff_items)}个商品")
+                        logger.info(f"📂 使用文件: {stats.get('buff_file')}, {stats.get('youpin_file')}")
+                    else:
+                        raise Exception("从保存数据重新筛选失败")
+                else:
+                    raise Exception("没有找到有效的全量数据文件")
+                    
             except Exception as e:
-                logger.warning(f"加载缓存数据失败: {e}")
+                logger.warning(f"⚠️ 从保存数据重新筛选失败: {e}")
+                logger.info("🔄 尝试加载缓存数据...")
+                
+                # 回退到原来的加载缓存数据逻辑
+                try:
+                    self._load_latest_data()
+                    if self.current_diff_items:
+                        self.initial_full_update_completed = True
+                        logger.info(f"✅ 成功加载缓存数据: {len(self.current_diff_items)}个商品")
+                    else:
+                        logger.warning("⚠️ 缓存数据为空，将强制执行全量更新")
+                        self.initial_full_update_completed = False
+                        self.hashname_cache.hashnames.clear()
+                        self.hashname_cache.last_full_update = None
+                except Exception as e2:
+                    logger.error(f"❌ 加载缓存数据失败: {e2}，将强制执行全量更新")
+                    self.initial_full_update_completed = False
+                    self.hashname_cache.hashnames.clear()
+                    self.hashname_cache.last_full_update = None
         
         logger.info("🎯 启动完成，定时循环将处理更新任务")
     
@@ -256,8 +291,9 @@ class UpdateManager:
                 else:
                     logger.debug("没有缓存的hashname，跳过增量更新")
                 
-                # 等待1分钟或直到停止
-                if self.stop_event.wait(timeout=60):  # 1分钟 = 60秒
+                # 使用配置的增量更新间隔
+                interval_seconds = Config.INCREMENTAL_UPDATE_INTERVAL_MINUTES * 60
+                if self.stop_event.wait(timeout=interval_seconds):
                     break
                     
             except Exception as e:
@@ -457,6 +493,11 @@ class UpdateManager:
                 if not Config.is_buff_price_in_range(buff_item.price):
                     continue
                 
+                # 🔥 新增：检查Buff在售数量是否符合条件
+                if hasattr(buff_item, 'sell_num') and buff_item.sell_num is not None:
+                    if not Config.is_buff_sell_num_valid(buff_item.sell_num):
+                        continue
+                
                 price_diff = youpin_item.price - buff_item.price
                 
                 # 检查价差是否符合要求
@@ -539,6 +580,7 @@ class UpdateManager:
     def _load_latest_data(self):
         """加载最新的价差数据"""
         try:
+            import os  # 🔥 确保os模块可用
             # 尝试加载保存的价差数据
             if os.path.exists(Config.LATEST_DATA_FILE):
                 with open(Config.LATEST_DATA_FILE, 'r', encoding='utf-8') as f:

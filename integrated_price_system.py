@@ -237,6 +237,9 @@ class BuffAPIClient:
             if buff_price <= 0:
                 buff_price = float(item_data.get('sell_reference_price', 0))
             
+            # 🔥 新增：提取在售数量
+            sell_num = int(item_data.get('sell_num', 0))
+            
             # 提取图片信息
             goods_info = item_data.get('goods_info', {})
             image_url = goods_info.get('icon_url', '')
@@ -252,6 +255,9 @@ class BuffAPIClient:
             elif 'type' in tags:
                 category = tags['type'].get('localized_name', '未知')
             
+            # 🔥 新增：提取在售数量
+            sell_num = int(item_data.get('sell_num', 0))
+            
             return SkinItem(
                 id=f"buff_{goods_id}",
                 name=name,
@@ -260,6 +266,7 @@ class BuffAPIClient:
                 image_url=image_url,
                 category=category,
                 hash_name=market_hash_name,  # 🔥 新增：保存hash名称
+                sell_num=sell_num,  # 🔥 新增：保存在售数量
                 last_updated=datetime.now()
             )
             
@@ -534,6 +541,11 @@ class IntegratedPriceAnalyzer:
             # 🔥 检查Buff价格是否在筛选范围内
             if not Config.is_buff_price_in_range(buff_item.buff_price):
                 continue
+            
+            # 🔥 新增：检查Buff在售数量是否符合条件
+            if hasattr(buff_item, 'sell_num') and buff_item.sell_num is not None:
+                if not Config.is_buff_sell_num_valid(buff_item.sell_num):
+                    continue
             
             # 🔥 只使用Hash精确匹配 - 移除模糊匹配
             youpin_price = None

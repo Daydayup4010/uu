@@ -151,7 +151,7 @@ def save_demo_data():
         print(f"{i}. {item.skin_item.name}")
         print(f"   Buff价格: ¥{item.skin_item.buff_price}")
         print(f"   悠悠价格: ¥{item.skin_item.youpin_price}")
-        print(f"   价差: ¥{item.price_diff:.2f} ({item.profit_margin:.1f}%)")
+        print(f"   价差: ¥{item.price_diff:.2f} ({item.profit_rate:.1f}%)")
         print()
 
 if __name__ == "__main__":

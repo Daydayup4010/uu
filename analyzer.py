@@ -41,7 +41,7 @@ class PriceDiffAnalyzer:
                 price_diff = item.youpin_price - item.buff_price
                 
                 # 计算利润率
-                profit_margin = (price_diff / item.buff_price) * 100 if item.buff_price > 0 else 0
+                profit_rate = (price_diff / item.buff_price) * 100 if item.buff_price > 0 else 0
                 
                 # 检查是否满足阈值条件
                 if price_diff >= self.config.threshold:
@@ -51,7 +51,7 @@ class PriceDiffAnalyzer:
                     diff_item = PriceDiffItem(
                         skin_item=item,
                         price_diff=price_diff,
-                        profit_margin=profit_margin,
+                        profit_rate=profit_rate,
                         buff_buy_url=buff_buy_url
                     )
                     
@@ -98,7 +98,7 @@ class PriceDiffAnalyzer:
                         'buff_price': item.skin_item.buff_price,
                         'youpin_price': item.skin_item.youpin_price,
                         'price_diff': item.price_diff,
-                        'profit_margin': item.profit_margin,
+                        'profit_margin': item.profit_rate,
                         'buff_buy_url': item.buff_buy_url,
                         'image_url': item.skin_item.image_url,
                         'category': item.skin_item.category
@@ -140,7 +140,7 @@ class PriceDiffAnalyzer:
                 diff_item = PriceDiffItem(
                     skin_item=skin_item,
                     price_diff=item_data['price_diff'],
-                    profit_margin=item_data['profit_margin'],
+                    profit_rate=item_data['profit_margin'],  # 从文件中读取的仍是profit_margin字段
                     buff_buy_url=item_data['buff_buy_url']
                 )
                 
@@ -174,24 +174,24 @@ class PriceDiffAnalyzer:
             return {
                 'total_count': 0,
                 'avg_price_diff': 0,
-                'avg_profit_margin': 0,
+                'avg_profit_rate': 0,
                 'max_price_diff': 0,
-                'max_profit_margin': 0,
+                'max_profit_rate': 0,
                 'min_price_diff': 0,
-                'min_profit_margin': 0
+                'min_profit_rate': 0
             }
         
         price_diffs = [item.price_diff for item in diff_items]
-        profit_margins = [item.profit_margin for item in diff_items]
+        profit_rates = [item.profit_rate for item in diff_items]
         
         return {
             'total_count': len(diff_items),
             'avg_price_diff': sum(price_diffs) / len(price_diffs),
-            'avg_profit_margin': sum(profit_margins) / len(profit_margins),
+            'avg_profit_rate': sum(profit_rates) / len(profit_rates),
             'max_price_diff': max(price_diffs),
-            'max_profit_margin': max(profit_margins),
+            'max_profit_rate': max(profit_rates),
             'min_price_diff': min(price_diffs),
-            'min_profit_margin': min(profit_margins),
+            'min_profit_rate': min(profit_rates),
             'threshold': self.config.threshold,
             'categories_distribution': self._get_category_distribution(diff_items)
         }

@@ -23,6 +23,9 @@ class Config:
     BUFF_PRICE_MIN: float = float(os.getenv('BUFF_PRICE_MIN', 1.0))   # Buff最小价格
     BUFF_PRICE_MAX: float = float(os.getenv('BUFF_PRICE_MAX', 100.0)) # Buff最大价格
     
+    # 🔥 Buff在售数量筛选
+    BUFF_SELL_NUM_MIN: int = int(os.getenv('BUFF_SELL_NUM_MIN', 100))   # Buff最小在售数量
+    
     # 兼容性：保留原来的阈值配置
     PRICE_DIFF_THRESHOLD: float = float(os.getenv('PRICE_DIFF_THRESHOLD', 3.0))
     
@@ -47,8 +50,8 @@ class Config:
     
     # 请求间隔（秒）
     REQUEST_DELAY: float = 2.0          # 请求延迟（秒）
-    BUFF_API_DELAY: float = 8.0         # Buff API单次请求延迟（秒）
-    YOUPIN_API_DELAY: float = 8.0       # 🔥 新增：悠悠有品API延迟（秒），可调节
+    BUFF_API_DELAY: float = 6.0         # Buff API单次请求延迟（秒）
+    YOUPIN_API_DELAY: float = 6.0       # 🔥 新增：悠悠有品API延迟（秒），可调节
     RETRY_DELAY: float = 2.0             # 重试延迟
     
     # 数据存储
@@ -94,6 +97,11 @@ class Config:
         return (cls.BUFF_PRICE_MIN, cls.BUFF_PRICE_MAX)
     
     @classmethod
+    def get_buff_sell_num_min(cls) -> int:
+        """获取Buff最小在售数量"""
+        return cls.BUFF_SELL_NUM_MIN
+    
+    @classmethod
     def is_price_diff_in_range(cls, price_diff: float) -> bool:
         """检查价差是否在指定区间内"""
         return cls.PRICE_DIFF_MIN <= price_diff <= cls.PRICE_DIFF_MAX
@@ -102,6 +110,11 @@ class Config:
     def is_buff_price_in_range(cls, buff_price: float) -> bool:
         """检查Buff价格是否在筛选区间内"""
         return cls.BUFF_PRICE_MIN <= buff_price <= cls.BUFF_PRICE_MAX
+    
+    @classmethod
+    def is_buff_sell_num_valid(cls, sell_num: int) -> bool:
+        """检查Buff在售数量是否符合条件"""
+        return sell_num >= cls.BUFF_SELL_NUM_MIN
     
     @classmethod
     def get_processing_limits(cls) -> dict:
@@ -114,7 +127,8 @@ class Config:
             'buff_page_size': cls.BUFF_PAGE_SIZE,
             'youpin_page_size': cls.YOUPIN_PAGE_SIZE,
             'price_range': cls.get_price_range(),
-            'buff_price_range': cls.get_buff_price_range()
+            'buff_price_range': cls.get_buff_price_range(),
+            'buff_sell_num_min': cls.get_buff_sell_num_min()
         }
     
     @classmethod
@@ -138,6 +152,12 @@ class Config:
         cls.BUFF_PRICE_MAX = max_price
         print(f"🔄 Buff价格筛选区间已更新: {min_price}元 - {max_price}元")
     
+    @classmethod
+    def update_buff_sell_num_min(cls, min_sell_num: int):
+        """更新Buff最小在售数量"""
+        cls.BUFF_SELL_NUM_MIN = min_sell_num
+        print(f"🔄 Buff最小在售数量已更新: {min_sell_num}个")
+    
     # 环境配置
     DEBUG: bool = os.getenv("DEBUG", "False").lower() == "true"
     LOG_LEVEL: str = os.getenv("LOG_LEVEL", "INFO")
@@ -149,4 +169,4 @@ class Config:
     @classmethod
     def update_threshold(cls, new_threshold: float):
         """更新价差阈值（兼容性方法）"""
-        cls.PRICE_DIFF_THRESHOLD = new_threshold 
+        cls.PRICE_DIFF_THRESHOLD = new_threshold

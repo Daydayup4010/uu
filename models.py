@@ -15,13 +15,14 @@ class SkinItem(BaseModel):
     image_url: Optional[str] = None
     category: Optional[str] = None
     hash_name: Optional[str] = None  # 对应Buff的market_hash_name和悠悠有品的commodityHashName
+    sell_num: Optional[int] = None  # Buff在售数量
     last_updated: Optional[datetime] = None
 
 class PriceDiffItem(BaseModel):
     """价差饰品模型"""
     skin_item: SkinItem
     price_diff: float
-    profit_margin: float  # 利润率
+    profit_rate: float  # 利润率，与integrated_price_system.py保持一致
     buff_buy_url: str
     
     @property

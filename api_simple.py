@@ -104,7 +104,7 @@ async def get_diff_items(
         
         # 排序
         if sort_by == "profit_margin":
-            diff_items.sort(key=lambda x: x.profit_margin, reverse=True)
+            diff_items.sort(key=lambda x: x.profit_rate, reverse=True)
         else:
             diff_items.sort(key=lambda x: x.price_diff, reverse=True)
         
@@ -120,7 +120,7 @@ async def get_diff_items(
                 "buff_price": item.skin_item.buff_price,
                 "youpin_price": item.skin_item.youpin_price,
                 "price_diff": item.price_diff,
-                "profit_margin": item.profit_margin,
+                "profit_margin": item.profit_rate,
                 "buff_buy_url": item.buff_buy_url,
                 "image_url": item.skin_item.image_url,
                 "category": getattr(item.skin_item, 'category', '未知')
@@ -232,7 +232,7 @@ async def get_item_detail(item_id: str):
             "buff_price": target_item.skin_item.buff_price,
             "youpin_price": target_item.skin_item.youpin_price,
             "price_diff": target_item.price_diff,
-            "profit_margin": target_item.profit_margin,
+            "profit_margin": target_item.profit_rate,
             "buff_buy_url": target_item.buff_buy_url,
             "youpin_url": getattr(target_item.skin_item, 'youpin_url', ''),
             "image_url": target_item.skin_item.image_url,

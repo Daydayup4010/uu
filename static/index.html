@@ -972,6 +972,7 @@
             }
 
             async loadConfig() {
+                console.log('🔄 开始加载配置...');
                 try {
                     // 加载设置
                     const settingsResponse = await fetch('/api/settings');
@@ -988,8 +989,19 @@
                         }
                         
                         if (data.buff_price_range) {
-                            document.getElementById('buffPriceMin').value = data.buff_price_range.min || '';
-                            document.getElementById('buffPriceMax').value = data.buff_price_range.max || '';
+                            const buffMinEl = document.getElementById('buffPriceMin');
+                            const buffMaxEl = document.getElementById('buffPriceMax');
+                            
+                            if (buffMinEl && data.buff_price_range.min !== null && data.buff_price_range.min !== undefined) {
+                                buffMinEl.value = data.buff_price_range.min;
+                            }
+                            if (buffMaxEl && data.buff_price_range.max !== null && data.buff_price_range.max !== undefined) {
+                                buffMaxEl.value = data.buff_price_range.max;
+                            }
+                            
+                            console.log('🔧 Buff价格区间已设置:', data.buff_price_range);
+                        } else {
+                            console.warn('⚠️ 未收到buff_price_range数据');
                         }
                         
                         if (data.update_intervals) {
@@ -1457,7 +1469,14 @@
 
         // 初始化应用
         document.addEventListener('DOMContentLoaded', () => {
-            new BuffMonitor();
+            console.log('📱 DOM已加载，初始化BuffMonitor...');
+            const monitor = new BuffMonitor();
+            
+            // 延迟加载配置确保元素已渲染
+            setTimeout(() => {
+                console.log('⏰ 延迟加载配置...');
+                monitor.loadConfig();
+            }, 100);
         });
     </script>
 </body>
