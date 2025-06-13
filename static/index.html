@@ -33,116 +33,373 @@
         .profit-very-high {
             background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
         }
+
+        /* 移动端适配样式 */
+        @media (max-width: 768px) {
+            .mobile-hidden {
+                display: none !important;
+            }
+            
+            .mobile-text-sm {
+                font-size: 0.875rem !important;
+            }
+            
+            .mobile-p-2 {
+                padding: 0.5rem !important;
+            }
+            
+            .mobile-card {
+                margin-bottom: 1rem;
+                padding: 1rem;
+                border-radius: 0.5rem;
+                background: white;
+                box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            }
+            
+            .mobile-flex-col {
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 0.5rem !important;
+            }
+            
+            .mobile-w-full {
+                width: 100% !important;
+            }
+            
+            .mobile-text-center {
+                text-align: center !important;
+            }
+            
+            /* 移动端表格优化 */
+            .mobile-table-responsive {
+                display: block;
+                width: 100%;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+            
+            .mobile-table-responsive table {
+                width: 100%;
+                min-width: 800px;
+            }
+            
+            /* 移动端按钮优化 */
+            .mobile-btn {
+                padding: 0.75rem 1rem;
+                font-size: 0.875rem;
+                width: 100%;
+                margin-bottom: 0.5rem;
+            }
+            
+            /* 移动端导航优化 */
+            .mobile-nav {
+                padding: 0.5rem 1rem;
+            }
+            
+            .mobile-nav h1 {
+                font-size: 1.125rem;
+            }
+            
+            /* 移动端模态框优化 */
+            .mobile-modal {
+                margin: 1rem;
+                max-height: calc(100vh - 2rem);
+                border-radius: 0.5rem;
+            }
+            
+            /* 移动端统计卡片优化 */
+            .mobile-stat-card {
+                text-align: center;
+                padding: 1rem;
+            }
+            
+            .mobile-stat-card .stat-icon {
+                margin: 0 auto 0.5rem;
+            }
+            
+            /* 移动端筛选面板优化 */
+            .mobile-filter {
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .mobile-filter > div {
+                width: 100%;
+            }
+            
+            .mobile-filter input,
+            .mobile-filter select {
+                width: 100%;
+            }
+        }
+        
+        /* 小屏幕特殊优化 */
+        @media (max-width: 480px) {
+            .xs-hidden {
+                display: none !important;
+            }
+            
+            .xs-text-xs {
+                font-size: 0.75rem !important;
+            }
+            
+            .xs-p-1 {
+                padding: 0.25rem !important;
+            }
+            
+            /* 超小屏幕的表格卡片模式 */
+            .xs-card-mode {
+                display: block !important;
+            }
+            
+            .xs-card-mode table,
+            .xs-card-mode thead,
+            .xs-card-mode tbody,
+            .xs-card-mode th,
+            .xs-card-mode td,
+            .xs-card-mode tr {
+                display: block !important;
+            }
+            
+            .xs-card-mode thead tr {
+                position: absolute !important;
+                top: -9999px !important;
+                left: -9999px !important;
+            }
+            
+            .xs-card-mode tr {
+                border: 1px solid #e5e7eb !important;
+                margin-bottom: 1rem !important;
+                padding: 1rem !important;
+                border-radius: 0.5rem !important;
+                background: white !important;
+            }
+            
+            .xs-card-mode td {
+                border: none !important;
+                position: relative !important;
+                padding-left: 50% !important;
+                padding-top: 0.5rem !important;
+                padding-bottom: 0.5rem !important;
+            }
+            
+            .xs-card-mode td:before {
+                content: attr(data-label) ": " !important;
+                position: absolute !important;
+                left: 0.5rem !important;
+                width: 45% !important;
+                padding-right: 10px !important;
+                white-space: nowrap !important;
+                font-weight: 600 !important;
+                color: #374151 !important;
+            }
+        }
+        
+        /* 触摸优化 */
+        @media (hover: none) and (pointer: coarse) {
+            .touch-target {
+                min-height: 44px !important;
+                min-width: 44px !important;
+            }
+            
+            .touch-btn {
+                padding: 0.75rem 1.5rem !important;
+                font-size: 1rem !important;
+            }
+        }
+
+        /* 设备特定样式 */
+        .is-mobile {
+            /* 移动端特定样式 */
+        }
+
+        .is-desktop {
+            /* 桌面端特定样式 */
+        }
+
+        .is-touch {
+            /* 触摸设备特定样式 */
+        }
+
+        /* 移动端优化的加载动画 */
+        @media (max-width: 768px) {
+            .loading {
+                animation: spin 0.8s linear infinite;
+            }
+            
+            /* 移动端模态框全屏优化 */
+            @media (max-height: 600px) {
+                .mobile-modal {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    margin: 0;
+                    border-radius: 0;
+                    max-height: 100vh;
+                }
+            }
+            
+            /* 移动端表单优化 */
+            .mobile-form-group {
+                margin-bottom: 1rem;
+            }
+            
+            .mobile-form-group label {
+                display: block;
+                margin-bottom: 0.5rem;
+                font-weight: 600;
+                color: #374151;
+            }
+            
+            .mobile-form-group input,
+            .mobile-form-group select,
+            .mobile-form-group textarea {
+                width: 100%;
+                padding: 0.75rem;
+                border: 1px solid #d1d5db;
+                border-radius: 0.375rem;
+                font-size: 1rem;
+                line-height: 1.5;
+            }
+            
+            /* 移动端网格优化 */
+            .mobile-grid {
+                display: grid;
+                gap: 1rem;
+                grid-template-columns: 1fr;
+            }
+            
+            .mobile-grid-2 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* 横屏优化 */
+        @media (max-width: 768px) and (orientation: landscape) {
+            .landscape-optimize {
+                max-height: 80vh;
+                overflow-y: auto;
+            }
+        }
+
+        /* iOS Safari 特殊优化 */
+        @supports (-webkit-touch-callout: none) {
+            .ios-safe-area {
+                padding-top: env(safe-area-inset-top);
+                padding-bottom: env(safe-area-inset-bottom);
+            }
+        }
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen">
     <!-- 顶部导航 -->
     <nav class="gradient-bg shadow-lg">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16">
-                <div class="flex items-center">
-                    <i class="fas fa-chart-line text-white text-2xl mr-3"></i>
-                    <h1 class="text-white text-xl font-bold">Buff差价监控系统</h1>
+        <div class="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8">
+            <div class="flex justify-between items-center h-14 sm:h-16">
+                <div class="flex items-center min-w-0 flex-1">
+                    <i class="fas fa-chart-line text-white text-lg sm:text-2xl mr-2 sm:mr-3 flex-shrink-0"></i>
+                    <h1 class="text-white text-sm sm:text-xl font-bold truncate">Buff差价监控系统</h1>
                 </div>
-                <div class="flex items-center space-x-4">
-                    <button id="settingsBtn" class="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-4 py-2 rounded-lg transition duration-200">
-                        <i class="fas fa-cog mr-2"></i>
-                        设置
+                <div class="flex items-center">
+                    <button id="settingsBtn" class="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-2 sm:px-4 py-2 rounded-lg transition duration-200 text-sm sm:text-base touch-target">
+                        <i class="fas fa-cog sm:mr-2"></i>
+                        <span class="hidden sm:inline">设置</span>
                     </button>
                 </div>
             </div>
         </div>
     </nav>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 py-4 sm:py-8">
         <!-- 统计面板 -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <div class="bg-white rounded-lg shadow p-6">
-                <div class="flex items-center">
-                    <div class="p-3 rounded-full bg-blue-100 text-blue-600">
-                        <i class="fas fa-gem text-xl"></i>
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-6 sm:mb-8">
+            <div class="bg-white rounded-lg shadow p-3 sm:p-6">
+                <div class="flex flex-col sm:flex-row items-center sm:items-center">
+                    <div class="p-2 sm:p-3 rounded-full bg-blue-100 text-blue-600 mb-2 sm:mb-0">
+                        <i class="fas fa-gem text-sm sm:text-xl"></i>
                     </div>
-                    <div class="ml-4">
-                        <p class="text-sm font-medium text-gray-600">总饰品数</p>
-                        <p class="text-2xl font-semibold text-gray-900" id="totalCount">-</p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="bg-white rounded-lg shadow p-6">
-                <div class="flex items-center">
-                    <div class="p-3 rounded-full bg-green-100 text-green-600">
-                        <i class="fas fa-coins text-xl"></i>
-                    </div>
-                    <div class="ml-4">
-                        <p class="text-sm font-medium text-gray-600">平均价差</p>
-                        <p class="text-2xl font-semibold text-gray-900" id="avgDiff">-</p>
+                    <div class="sm:ml-4 text-center sm:text-left">
+                        <p class="text-xs sm:text-sm font-medium text-gray-600">总饰品数</p>
+                        <p class="text-lg sm:text-2xl font-semibold text-gray-900" id="totalCount">-</p>
                     </div>
                 </div>
             </div>
             
-            <div class="bg-white rounded-lg shadow p-6">
-                <div class="flex items-center">
-                    <div class="p-3 rounded-full bg-yellow-100 text-yellow-600">
-                        <i class="fas fa-chart-bar text-xl"></i>
+            <div class="bg-white rounded-lg shadow p-3 sm:p-6">
+                <div class="flex flex-col sm:flex-row items-center sm:items-center">
+                    <div class="p-2 sm:p-3 rounded-full bg-green-100 text-green-600 mb-2 sm:mb-0">
+                        <i class="fas fa-coins text-sm sm:text-xl"></i>
                     </div>
-                    <div class="ml-4">
-                        <p class="text-sm font-medium text-gray-600">最大价差</p>
-                        <p class="text-2xl font-semibold text-gray-900" id="maxDiff">-</p>
+                    <div class="sm:ml-4 text-center sm:text-left">
+                        <p class="text-xs sm:text-sm font-medium text-gray-600">平均价差</p>
+                        <p class="text-lg sm:text-2xl font-semibold text-gray-900" id="avgDiff">-</p>
                     </div>
                 </div>
             </div>
             
-            <div class="bg-white rounded-lg shadow p-6">
-                <div class="flex items-center">
-                    <div class="p-3 rounded-full bg-purple-100 text-purple-600">
-                        <i class="fas fa-clock text-xl"></i>
+            <div class="bg-white rounded-lg shadow p-3 sm:p-6">
+                <div class="flex flex-col sm:flex-row items-center sm:items-center">
+                    <div class="p-2 sm:p-3 rounded-full bg-yellow-100 text-yellow-600 mb-2 sm:mb-0">
+                        <i class="fas fa-chart-bar text-sm sm:text-xl"></i>
                     </div>
-                    <div class="ml-4">
-                        <p class="text-sm font-medium text-gray-600">更新时间</p>
-                        <p class="text-sm font-semibold text-gray-900" id="lastUpdate">-</p>
+                    <div class="sm:ml-4 text-center sm:text-left">
+                        <p class="text-xs sm:text-sm font-medium text-gray-600">最大价差</p>
+                        <p class="text-lg sm:text-2xl font-semibold text-gray-900" id="maxDiff">-</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-lg shadow p-3 sm:p-6 col-span-2 lg:col-span-1">
+                <div class="flex flex-col sm:flex-row items-center sm:items-center">
+                    <div class="p-2 sm:p-3 rounded-full bg-purple-100 text-purple-600 mb-2 sm:mb-0">
+                        <i class="fas fa-clock text-sm sm:text-xl"></i>
+                    </div>
+                    <div class="sm:ml-4 text-center sm:text-left">
+                        <p class="text-xs sm:text-sm font-medium text-gray-600">更新时间</p>
+                        <p class="text-xs sm:text-sm font-semibold text-gray-900" id="lastUpdate">-</p>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- 过滤和排序 -->
-        <div class="bg-white rounded-lg shadow p-6 mb-8">
-            <div class="flex flex-wrap items-center gap-4">
-                <div>
+        <div class="bg-white rounded-lg shadow p-3 sm:p-6 mb-6 sm:mb-8">
+            <div class="flex flex-col sm:flex-row sm:flex-wrap sm:items-end gap-3 sm:gap-4">
+                <div class="flex-1 min-w-0">
                     <label class="block text-sm font-medium text-gray-700 mb-1">价格区间（元）</label>
                     <div class="flex items-center space-x-2">
                         <input type="number" id="minPriceFilter" placeholder="最小价差" 
-                               class="border border-gray-300 rounded-md px-3 py-2 w-24" step="0.1" min="0">
-                        <span class="text-gray-500">-</span>
+                               class="border border-gray-300 rounded-md px-3 py-2 w-full sm:w-24 touch-target text-sm sm:text-base" step="0.1" min="0">
+                        <span class="text-gray-500 flex-shrink-0">-</span>
                         <input type="number" id="maxPriceFilter" placeholder="最大价差" 
-                               class="border border-gray-300 rounded-md px-3 py-2 w-24" step="0.1" min="0">
+                               class="border border-gray-300 rounded-md px-3 py-2 w-full sm:w-24 touch-target text-sm sm:text-base" step="0.1" min="0">
                     </div>
                 </div>
-                <div>
+                <div class="flex-1 min-w-0 sm:min-w-32">
                     <label class="block text-sm font-medium text-gray-700 mb-1">排序方式</label>
-                    <select id="sortBy" class="border border-gray-300 rounded-md px-3 py-2">
+                    <select id="sortBy" class="border border-gray-300 rounded-md px-3 py-2 w-full touch-target text-sm sm:text-base">
                         <option value="price_diff">按价差排序</option>
                         <option value="profit_margin">按利润率排序</option>
                     </select>
                 </div>
-                <div>
+                <div class="flex-1 min-w-0 sm:min-w-24">
                     <label class="block text-sm font-medium text-gray-700 mb-1">显示数量</label>
-                    <select id="limitCount" class="border border-gray-300 rounded-md px-3 py-2">
+                    <select id="limitCount" class="border border-gray-300 rounded-md px-3 py-2 w-full touch-target text-sm sm:text-base">
                         <option value="50">50个</option>
                         <option value="100" selected>100个</option>
                         <option value="200">200个</option>
                         <option value="500">500个</option>
                     </select>
                 </div>
-                <div class="flex items-end">
-                    <button id="applyFilter" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition duration-200">
+                <div class="flex flex-col sm:flex-row gap-2 sm:gap-2 w-full sm:w-auto">
+                    <button id="applyFilter" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition duration-200 touch-btn text-sm sm:text-base">
                         <i class="fas fa-filter mr-2"></i>
                         应用筛选
                     </button>
-                </div>
-                <div class="flex items-end">
-                    <button id="resetFilter" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md transition duration-200 ml-2">
+                    <button id="resetFilter" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md transition duration-200 touch-btn text-sm sm:text-base">
                         <i class="fas fa-undo mr-2"></i>
                         重置
                     </button>
@@ -174,21 +431,21 @@
 
     <!-- 设置模态框 -->
     <div id="settingsModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
-        <div class="flex items-center justify-center min-h-screen p-4">
-            <div class="bg-white rounded-lg max-w-4xl w-full p-6 max-h-screen overflow-y-auto">
-                <div class="flex justify-between items-center mb-6">
-                    <h3 class="text-xl font-semibold">系统设置</h3>
-                    <button id="closeSettings" class="text-gray-400 hover:text-gray-600">
-                        <i class="fas fa-times text-xl"></i>
+        <div class="flex items-center justify-center min-h-screen p-2 sm:p-4">
+            <div class="bg-white rounded-lg max-w-4xl w-full max-w-none sm:max-w-4xl p-3 sm:p-6 max-h-screen overflow-y-auto m-2 sm:m-0">
+                <div class="flex justify-between items-center mb-4 sm:mb-6">
+                    <h3 class="text-lg sm:text-xl font-semibold">系统设置</h3>
+                    <button id="closeSettings" class="text-gray-400 hover:text-gray-600 touch-target">
+                        <i class="fas fa-times text-lg sm:text-xl"></i>
                     </button>
                 </div>
                 
                 <!-- 设置标签页 -->
-                <div class="flex border-b mb-6">
-                    <button id="generalTab" class="px-4 py-2 font-medium text-blue-600 border-b-2 border-blue-600">
+                <div class="flex border-b mb-4 sm:mb-6 overflow-x-auto">
+                    <button id="generalTab" class="px-3 sm:px-4 py-2 font-medium text-blue-600 border-b-2 border-blue-600 whitespace-nowrap touch-target text-sm sm:text-base">
                         常规设置
                     </button>
-                    <button id="tokensTab" class="px-4 py-2 font-medium text-gray-600 hover:text-blue-600 ml-4">
+                    <button id="tokensTab" class="px-3 sm:px-4 py-2 font-medium text-gray-600 hover:text-blue-600 ml-2 sm:ml-4 whitespace-nowrap touch-target text-sm sm:text-base">
                         Token管理
                     </button>
                 </div>
@@ -309,13 +566,13 @@
                 </div>
                 
                 <!-- Token管理面板 -->
-                <div id="tokensPanel" class="hidden space-y-6">
+                <div id="tokensPanel" class="hidden space-y-4 sm:space-y-6">
                     <!-- Token状态概览 -->
-                    <div class="bg-gray-50 p-4 rounded-lg">
-                        <h4 class="font-medium text-gray-900 mb-3">Token状态</h4>
-                        <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-gray-50 p-3 sm:p-4 rounded-lg">
+                        <h4 class="font-medium text-gray-900 mb-3 text-sm sm:text-base">Token状态</h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                             <div>
-                                <p class="text-sm text-gray-600">Buff API</p>
+                                <p class="text-xs sm:text-sm text-gray-600">Buff API</p>
                                 <div id="buffTokenStatus" class="mt-1">
                                     <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-800">
                                         检查中...
@@ -323,7 +580,7 @@
                                 </div>
                             </div>
                             <div>
-                                <p class="text-sm text-gray-600">悠悠有品 API</p>
+                                <p class="text-xs sm:text-sm text-gray-600">悠悠有品 API</p>
                                 <div id="youpinTokenStatus" class="mt-1">
                                     <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-800">
                                         检查中...
@@ -334,33 +591,39 @@
                     </div>
                     
                     <!-- Buff Token设置 -->
-                    <div class="border border-gray-200 rounded-lg p-4">
-                        <div class="flex justify-between items-center mb-4">
-                            <h4 class="font-medium text-gray-900">Buff Token 配置</h4>
-                            <button id="testBuffConnection" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm">
-                                <i class="fas fa-plug mr-1"></i>
-                                测试连接
-                            </button>
+                    <div class="border border-gray-200 rounded-lg p-3 sm:p-4">
+                        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 gap-3">
+                            <h4 class="font-medium text-gray-900 text-sm sm:text-base">Buff Token 配置</h4>
+                            <div class="flex flex-col sm:flex-row gap-2 sm:space-x-2">
+                                <button id="validateBuffToken" class="bg-green-600 hover:bg-green-700 text-white px-3 py-2 sm:py-1 rounded text-sm touch-target">
+                                    <i class="fas fa-check-circle mr-1"></i>
+                                    验证Token
+                                </button>
+                                <button id="testBuffConnection" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 sm:py-1 rounded text-sm touch-target">
+                                    <i class="fas fa-plug mr-1"></i>
+                                    测试连接
+                                </button>
+                            </div>
                         </div>
                         
-                        <div class="space-y-3">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Session Cookie</label>
+                        <div class="space-y-3 sm:space-y-4">
+                            <div class="mobile-form-group">
+                                <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Session Cookie</label>
                                 <input type="text" id="buffSession" placeholder="session值..." 
-                                       class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm">
+                                       class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm sm:text-base touch-target">
                             </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">CSRF Token</label>
+                            <div class="mobile-form-group">
+                                <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">CSRF Token</label>
                                 <input type="text" id="buffCsrfToken" placeholder="csrf_token值..." 
-                                       class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm">
+                                       class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm sm:text-base touch-target">
                             </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">其他Cookies (JSON格式)</label>
+                            <div class="mobile-form-group">
+                                <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">其他Cookies (JSON格式)</label>
                                 <textarea id="buffOtherCookies" placeholder='{"Device-Id": "xxx", "remember_me": "xxx"}'
-                                          class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm h-20"></textarea>
+                                          class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm sm:text-base h-16 sm:h-20 touch-target resize-none"></textarea>
                                 <p class="text-xs text-gray-500 mt-1">可选：其他cookies，JSON格式</p>
                             </div>
-                            <button id="updateBuffToken" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">
+                            <button id="updateBuffToken" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded w-full sm:w-auto touch-btn">
                                 <i class="fas fa-save mr-2"></i>
                                 更新 Buff Token
                             </button>
@@ -404,10 +667,16 @@
                                        class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm">
                                 <p class="text-xs text-gray-500 mt-1">认证Token，通常以Bearer开头</p>
                             </div>
-                            <button id="updateYoupinToken" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">
-                                <i class="fas fa-save mr-2"></i>
-                                更新悠悠有品 Token
-                            </button>
+                            <div class="flex space-x-2">
+                                <button id="validateYoupinToken" class="bg-orange-600 hover:bg-orange-700 text-white px-3 py-2 rounded text-sm">
+                                    <i class="fas fa-check-circle mr-1"></i>
+                                    验证Token
+                                </button>
+                                <button id="updateYoupinToken" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">
+                                    <i class="fas fa-save mr-2"></i>
+                                    更新悠悠有品 Token
+                                </button>
+                            </div>
                         </div>
                     </div>
                     
@@ -527,6 +796,17 @@
                     testYoupinConnection.addEventListener('click', () => this.testYoupinConnection());
                 }
 
+                // 验证Token按钮
+                const validateBuffToken = document.getElementById('validateBuffToken');
+                if (validateBuffToken) {
+                    validateBuffToken.addEventListener('click', () => this.validateSingleToken('buff'));
+                }
+
+                const validateYoupinToken = document.getElementById('validateYoupinToken');
+                if (validateYoupinToken) {
+                    validateYoupinToken.addEventListener('click', () => this.validateSingleToken('youpin'));
+                }
+
                 // 🔥 新增：强制更新按钮
                 const forceFullUpdate = document.getElementById('forceFullUpdate');
                 if (forceFullUpdate) {
@@ -625,6 +905,7 @@
             }
 
             async init() {
+                this.initMobileSupport();
                 this.loadConfig();
                 this.loadData();
                 this.loadStatus();
@@ -639,6 +920,78 @@
                     this.loadStatus();
                     this.loadStatistics();
                 }, 30000); // 每30秒刷新一次
+            }
+
+            initMobileSupport() {
+                // 检测设备类型
+                this.isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                this.isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+                
+                // 添加设备类型到body
+                document.body.classList.add(this.isMobile ? 'is-mobile' : 'is-desktop');
+                if (this.isTouch) {
+                    document.body.classList.add('is-touch');
+                }
+                
+                // 移动端特殊处理
+                if (this.isMobile) {
+                    this.setupMobileEvents();
+                    this.adjustMobileLayout();
+                }
+            }
+
+            setupMobileEvents() {
+                // 移动端下拉刷新
+                let startY = 0;
+                let isScrolling = false;
+                
+                document.addEventListener('touchstart', (e) => {
+                    startY = e.touches[0].clientY;
+                    isScrolling = window.scrollY === 0;
+                }, { passive: true });
+                
+                document.addEventListener('touchmove', (e) => {
+                    if (!isScrolling) return;
+                    
+                    const currentY = e.touches[0].clientY;
+                    const diffY = currentY - startY;
+                    
+                    if (diffY > 100 && window.scrollY === 0) {
+                        // 下拉刷新
+                        this.showAlert('info', '🔄 正在刷新数据...');
+                        this.loadData();
+                    }
+                }, { passive: true });
+                
+                // 移动端键盘适配
+                const viewport = document.querySelector('meta[name=viewport]');
+                document.addEventListener('focusin', () => {
+                    if (viewport) {
+                        viewport.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
+                    }
+                });
+                
+                document.addEventListener('focusout', () => {
+                    if (viewport) {
+                        viewport.content = 'width=device-width, initial-scale=1.0';
+                    }
+                });
+            }
+
+            adjustMobileLayout() {
+                // 调整移动端布局
+                const container = document.querySelector('.max-w-7xl');
+                if (container) {
+                    container.classList.add('mobile-optimized');
+                }
+                
+                // 优化按钮大小
+                const buttons = document.querySelectorAll('button');
+                buttons.forEach(btn => {
+                    if (!btn.classList.contains('touch-target')) {
+                        btn.classList.add('touch-target');
+                    }
+                });
             }
 
             async loadData() {
@@ -891,7 +1244,7 @@
                         const items = result.data.items;
                         const totalDiff = items.reduce((sum, item) => sum + item.price_diff, 0);
                         const avgDiff = totalDiff / items.length;
-                        const maxDiff = Math.max(...items.map(item => item.price_diff));
+                        const maxDiff = Math.max(...items.map(item => item.price_diff || 0));
                         
                         const avgDiffElement = document.getElementById('avgDiff');
                         const maxDiffElement = document.getElementById('maxDiff');
@@ -965,8 +1318,9 @@
                 const imageUrl = item.image_url || '/static/placeholder.png';
                 
                 return `
-                    <div class="border-b border-gray-200 p-6 card-hover">
-                        <div class="flex items-center justify-between">
+                    <div class="border-b border-gray-200 p-3 sm:p-6 card-hover">
+                        <!-- 桌面端布局 -->
+                        <div class="hidden sm:flex items-center justify-between">
                             <div class="flex items-center space-x-4">
                                 <img src="${imageUrl}" alt="${item.name}" 
                                      class="w-16 h-16 rounded-lg object-cover bg-gray-100"
@@ -995,6 +1349,42 @@
                                         class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition duration-200 flex items-center">
                                     <i class="fas fa-external-link-alt mr-2"></i>
                                     立即购买
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 移动端布局 -->
+                        <div class="sm:hidden">
+                            <div class="flex items-start space-x-3 mb-3">
+                                <img src="${imageUrl}" alt="${item.name}" 
+                                     class="w-12 h-12 rounded-lg object-cover bg-gray-100 flex-shrink-0"
+                                     onerror="this.src='/static/placeholder.png'">
+                                <div class="flex-1 min-w-0">
+                                    <h3 class="text-sm font-semibold text-gray-900 mb-1 truncate" title="${item.name}">${item.name}</h3>
+                                    <div class="flex flex-wrap gap-1 text-xs text-gray-600">
+                                        <span class="bg-red-50 text-red-700 px-2 py-1 rounded">Buff: ¥${item.buff_price}</span>
+                                        <span class="bg-green-50 text-green-700 px-2 py-1 rounded">悠悠: ¥${item.youpin_price}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-3">
+                                    <div class="text-center">
+                                        <div class="text-lg font-bold text-green-600">
+                                            +¥${(item.price_diff || 0).toFixed(2)}
+                                        </div>
+                                        <div class="text-xs text-gray-500">价差</div>
+                                    </div>
+                                    <span class="text-xs ${profitClass} text-white px-2 py-1 rounded-full">
+                                        ${(item.profit_rate || 0).toFixed(1)}%
+                                    </span>
+                                </div>
+                                
+                                <button onclick="window.open('${item.buff_url || '#'}', '_blank')" 
+                                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition duration-200 flex items-center text-sm touch-target">
+                                    <i class="fas fa-external-link-alt mr-1"></i>
+                                    购买
                                 </button>
                             </div>
                         </div>
@@ -1377,7 +1767,12 @@
             showAlert(type, message) {
                 // 🔥 优化：每次创建新的提示框，支持多个提示同时显示
                 const alertDiv = document.createElement('div');
-                alertDiv.className = 'fixed top-4 right-4 z-50 max-w-sm mb-2';
+                
+                // 移动端适配：调整位置和宽度
+                const isMobile = window.innerWidth <= 768;
+                alertDiv.className = isMobile 
+                    ? 'fixed top-4 left-2 right-2 z-50 mb-2' 
+                    : 'fixed top-4 right-4 z-50 max-w-sm mb-2';
                 
                 // 🔥 优化：根据类型设置不同的样式和动画
                 const alertClass = type === 'success' ? 'bg-green-500 text-white border-green-600 shadow-lg' : 
@@ -1390,13 +1785,20 @@
                             type === 'info' ? 'info-circle' :
                             'times-circle';
                 
+                // 移动端优化：调整字体大小和间距
+                const textSize = isMobile ? 'text-sm' : 'text-base';
+                const iconSize = isMobile ? 'text-base' : 'text-lg';
+                const padding = isMobile ? 'p-3' : 'p-4';
+                const translateX = isMobile ? 'translate-y-full' : 'translate-x-full';
+                
                 alertDiv.innerHTML = `
-                    <div class="border ${alertClass} rounded-lg p-4 transform transition-all duration-300 translate-x-full opacity-0" id="alertContent">
+                    <div class="border ${alertClass} rounded-lg ${padding} transform transition-all duration-300 ${translateX} opacity-0" id="alertContent">
                         <div class="flex items-center">
-                            <i class="fas fa-${icon} mr-3 text-lg"></i>
-                            <span class="font-medium">${message}</span>
-                            <button onclick="this.parentElement.parentElement.parentElement.remove()" class="ml-auto pl-3 text-white hover:text-gray-200">
-                                <i class="fas fa-times"></i>
+                            <i class="fas fa-${icon} mr-2 sm:mr-3 ${iconSize} flex-shrink-0"></i>
+                            <span class="font-medium ${textSize} flex-1 min-w-0 pr-2">${message}</span>
+                            <button onclick="this.parentElement.parentElement.parentElement.remove()" 
+                                    class="flex-shrink-0 text-white hover:text-gray-200 touch-target p-1">
+                                <i class="fas fa-times text-sm"></i>
                             </button>
                         </div>
                     </div>
@@ -1407,18 +1809,30 @@
                 // 🔥 添加滑入动画
                 setTimeout(() => {
                     const content = alertDiv.querySelector('#alertContent');
-                    content.classList.remove('translate-x-full', 'opacity-0');
-                    content.classList.add('translate-x-0', 'opacity-100');
+                    if (isMobile) {
+                        content.classList.remove('translate-y-full', 'opacity-0');
+                        content.classList.add('translate-y-0', 'opacity-100');
+                    } else {
+                        content.classList.remove('translate-x-full', 'opacity-0');
+                        content.classList.add('translate-x-0', 'opacity-100');
+                    }
                 }, 100);
                 
-                // 🔥 优化：成功提示显示更长时间
-                const hideDelay = type === 'success' ? 4000 : type === 'error' ? 6000 : 3000;
+                // 🔥 优化：成功提示显示更长时间，移动端时间稍短
+                const baseDelay = isMobile ? 3000 : 4000;
+                const hideDelay = type === 'success' ? baseDelay : 
+                                 type === 'error' ? baseDelay + 2000 : 
+                                 baseDelay - 1000;
                 
                 // 自动隐藏
                 setTimeout(() => {
                     if (alertDiv.parentNode) {
                         const content = alertDiv.querySelector('#alertContent');
-                        content.classList.add('translate-x-full', 'opacity-0');
+                        if (isMobile) {
+                            content.classList.add('translate-y-full', 'opacity-0');
+                        } else {
+                            content.classList.add('translate-x-full', 'opacity-0');
+                        }
                         setTimeout(() => alertDiv.remove(), 300);
                     }
                 }, hideDelay);
@@ -1452,14 +1866,465 @@
                         
                         // 更新Buff状态
                         const buffStatus = document.getElementById('buffTokenStatus');
-                        buffStatus.innerHTML = this.getStatusBadge(buff.status, buff.has_cookies && buff.has_csrf);
+                        const buffValidationStatus = this.getValidationStatusBadge(buff);
+                        buffStatus.innerHTML = buffValidationStatus;
                         
                         // 更新悠悠有品状态
                         const youpinStatus = document.getElementById('youpinTokenStatus');
-                        youpinStatus.innerHTML = this.getStatusBadge(youpin.status, youpin.has_device_id && youpin.has_uk);
+                        const youpinValidationStatus = this.getValidationStatusBadge(youpin);
+                        youpinStatus.innerHTML = youpinValidationStatus;
+                        
+                        // 检查是否有失效的token
+                        this.checkTokenValidity(buff, youpin);
                     }
                 } catch (error) {
                     console.error('加载Token状态失败:', error);
+                }
+            }
+
+            getValidationStatusBadge(tokenInfo) {
+                const configured = tokenInfo.configured || (tokenInfo.has_cookies && tokenInfo.has_csrf) || (tokenInfo.has_device_id && tokenInfo.has_uk);
+                const cachedValid = tokenInfo.cached_valid;
+                const lastValidation = tokenInfo.last_validation;
+                const cachedError = tokenInfo.cached_error;
+                
+                let statusClass = 'bg-gray-100 text-gray-800';
+                let statusText = '未配置';
+                let statusIcon = '❓';
+                
+                if (configured) {
+                    if (cachedValid === true) {
+                        statusClass = 'bg-green-100 text-green-800';
+                        statusText = '已验证';
+                        statusIcon = '✅';
+                    } else if (cachedValid === false && cachedError) {
+                        if (cachedError.includes('失效') || cachedError.includes('登录') || cachedError.includes('401') || cachedError.includes('403')) {
+                            statusClass = 'bg-red-100 text-red-800';
+                            statusText = 'Token已失效';
+                            statusIcon = '❌';
+                        } else {
+                            statusClass = 'bg-yellow-100 text-yellow-800';
+                            statusText = '验证失败';
+                            statusIcon = '⚠️';
+                        }
+                    } else {
+                        statusClass = 'bg-blue-100 text-blue-800';
+                        statusText = '已配置';
+                        statusIcon = '🔑';
+                    }
+                }
+                
+                let tooltipText = '';
+                if (lastValidation) {
+                    const validationTime = new Date(lastValidation).toLocaleString();
+                    tooltipText = `最后验证: ${validationTime}`;
+                    if (cachedError) {
+                        tooltipText += `\n错误: ${cachedError}`;
+                    }
+                }
+                
+                return `
+                    <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium ${statusClass}" 
+                          title="${tooltipText}">
+                        ${statusIcon} ${statusText}
+                    </span>
+                `;
+            }
+
+            checkTokenValidity(buff, youpin) {
+                const invalidTokens = [];
+                
+                console.log('🔍 检查Token有效性...', { buff, youpin });
+                
+                // 🔥 修复：只有在Token确实失效时才显示警报
+                // 检查Buff Token - 只有cached_valid明确为false才检查
+                if (buff.configured && buff.cached_valid === false && buff.cached_error) {
+                    // 只有真正的Token失效错误才显示警报
+                    if (this.isTokenExpiredError(buff.cached_error)) {
+                        console.log('❌ Buff Token失效');
+                        invalidTokens.push({
+                            platform: 'Buff', 
+                            error: buff.cached_error
+                        });
+                    } else {
+                        console.log('⚠️ Buff Token验证失败（非失效）:', buff.cached_error);
+                    }
+                } else if (buff.configured && buff.cached_valid === null) {
+                    console.log('🔄 Buff Token状态未知（可能是网络问题）:', buff.cached_error);
+                }
+                
+                // 检查悠悠有品Token - 只有cached_valid明确为false才检查
+                if (youpin.configured && youpin.cached_valid === false && youpin.cached_error) {
+                    // 只有真正的Token失效错误才显示警报
+                    if (this.isTokenExpiredError(youpin.cached_error)) {
+                        console.log('❌ 悠悠有品Token失效');
+                        invalidTokens.push({
+                            platform: '悠悠有品', 
+                            error: youpin.cached_error
+                        });
+                    } else {
+                        console.log('⚠️ 悠悠有品Token验证失败（非失效）:', youpin.cached_error);
+                    }
+                } else if (youpin.configured && youpin.cached_valid === null) {
+                    console.log('🔄 悠悠有品Token状态未知（可能是网络问题）:', youpin.cached_error);
+                }
+                
+                console.log('🚨 发现失效Token:', invalidTokens);
+                
+                if (invalidTokens.length > 0) {
+                    this.showTokenExpiredAlert(invalidTokens);
+                } else {
+                    console.log('✅ 所有Token状态正常');
+                }
+            }
+
+            showTokenExpiredAlert(invalidTokens) {
+                const platforms = invalidTokens.map(t => t.platform).join('、');
+                const errors = invalidTokens.map(t => t.error).join('\n');
+                
+                const alertHtml = `
+                    <div class="fixed top-4 right-4 bg-red-50 border-l-4 border-red-400 p-4 rounded-md shadow-lg z-50 max-w-md" id="tokenExpiredAlert">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <svg class="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                                </svg>
+                            </div>
+                            <div class="ml-3">
+                                <h3 class="text-sm font-medium text-red-800">
+                                    🚨 API Token已失效
+                                </h3>
+                                <div class="mt-2 text-sm text-red-700">
+                                    <p><strong>${platforms}</strong> 的API Token已失效，请重新配置：</p>
+                                    <ul class="list-disc list-inside mt-1">
+                                        ${invalidTokens.map(t => `<li>${t.platform}: ${t.error}</li>`).join('')}
+                                    </ul>
+                                </div>
+                                <div class="mt-4">
+                                    <div class="flex space-x-2">
+                                        <button onclick="app.showConfigPanel()" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm">
+                                            立即配置
+                                        </button>
+                                        <button onclick="app.validateAllTokens()" class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded text-sm">
+                                            重新验证
+                                        </button>
+                                        <button onclick="document.getElementById('tokenExpiredAlert').remove()" class="text-gray-500 hover:text-gray-700 text-sm">
+                                            忽略
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                // 移除旧的警报
+                const oldAlert = document.getElementById('tokenExpiredAlert');
+                if (oldAlert) {
+                    oldAlert.remove();
+                }
+                
+                // 添加新的警报
+                document.body.insertAdjacentHTML('beforeend', alertHtml);
+                
+                // 10秒后自动消失
+                setTimeout(() => {
+                    const alert = document.getElementById('tokenExpiredAlert');
+                    if (alert) {
+                        alert.style.opacity = '0';
+                        alert.style.transform = 'translateX(100%)';
+                        setTimeout(() => alert.remove(), 300);
+                    }
+                }, 10000);
+            }
+
+            async validateAllTokens() {
+                try {
+                    // 🔥 优化：显示带进度的验证提示
+                    this.showAlert('info', '🔍 正在验证所有Token...', 0); // 不自动消失
+                    
+                    // 🔥 优化：添加20秒超时控制
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 20000);
+                    
+                    const response = await fetch(BASE_PATH + '/api/tokens/validate', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ force_check: true }),
+                        signal: controller.signal
+                    });
+                    
+                    clearTimeout(timeoutId);
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        const { buff, youpin, overall_valid, validation_time } = result.data;
+                        
+                        // 显示验证时间
+                        const timeInfo = validation_time ? ` (耗时: ${validation_time}秒)` : '';
+                        
+                        if (overall_valid) {
+                            this.showAlert('success', `✅ 所有Token验证通过！${timeInfo}`);
+                        } else {
+                            let message = `❌ Token验证失败${timeInfo}:\n`;
+                            if (!buff.valid) {
+                                message += `• Buff: ${buff.error}\n`;
+                            }
+                            if (!youpin.valid) {
+                                message += `• 悠悠有品: ${youpin.error}`;
+                            }
+                            this.showAlert('error', message);
+                        }
+                        
+                        // 刷新状态显示
+                        this.loadTokenStatus();
+                    } else {
+                        this.showAlert('error', `❌ Token验证失败: ${result.error}`);
+                    }
+                } catch (error) {
+                    if (error.name === 'AbortError') {
+                        this.showAlert('warning', '⚠️ Token验证超时，请检查网络连接或稍后重试');
+                    } else {
+                        console.error('验证Token失败:', error);
+                        this.showAlert('error', `❌ Token验证失败: ${error.message}`);
+                    }
+                }
+            }
+
+            showConfigPanel() {
+                // 显示设置面板并切换到Token配置标签
+                const settingsModal = document.getElementById('settingsModal');
+                const tokensTab = document.querySelector('[data-tab="tokens"]');
+                
+                if (settingsModal) {
+                    settingsModal.classList.remove('hidden');
+                }
+                
+                if (tokensTab) {
+                    tokensTab.click();
+                }
+            }
+
+            // 🔥 新增：初始化Token状态检查
+            async initTokenStatusCheck() {
+                try {
+                    console.log('🔍 开始检查Token状态...');
+                    
+                    // 1. 启动Token验证服务
+                    await this.startTokenValidationService();
+                    
+                    // 2. 立即检查一次Token状态
+                    await this.checkInitialTokenStatus();
+                    
+                    // 3. 设置定期检查（每5分钟）
+                    this.setupPeriodicTokenCheck();
+                    
+                    console.log('✅ Token状态检查初始化完成');
+                } catch (error) {
+                    console.error('❌ Token状态检查初始化失败:', error);
+                }
+            }
+
+            async startTokenValidationService() {
+                try {
+                    console.log('🚀 启动Token验证服务...');
+                    const response = await fetch(BASE_PATH + '/api/tokens/validation-service', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ action: 'start' })
+                    });
+                    
+                    const result = await response.json();
+                    if (result.success) {
+                        console.log('✅ Token验证服务已启动');
+                    } else {
+                        console.warn('⚠️ Token验证服务启动失败:', result.error);
+                    }
+                } catch (error) {
+                    console.error('❌ 启动Token验证服务失败:', error);
+                }
+            }
+
+            async checkInitialTokenStatus() {
+                try {
+                    console.log('🔍 检查初始Token状态...');
+                    const response = await fetch(BASE_PATH + '/api/tokens/status');
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        const { buff, youpin } = result.data;
+                        console.log('📊 Token状态:', { buff, youpin });
+                        
+                        // 🔥 修复：只有在Token明确失效且有错误信息时才显示警报
+                        // 避免在验证未完成时显示误报
+                        const shouldShowAlert = this.shouldShowTokenAlert(buff, youpin);
+                        if (shouldShowAlert.show) {
+                            this.checkTokenValidity(buff, youpin);
+                        } else {
+                            console.log('✅ Token状态正常或验证未完成，不显示警报');
+                        }
+                        
+                        // 🔥 新增：如果Token需要验证但没有明确失效，进行后台验证
+                        if (this.shouldValidateTokensInBackground(buff, youpin)) {
+                            console.log('🔄 后台验证Token状态...');
+                            this.validateTokensInBackground();
+                        }
+                    }
+                } catch (error) {
+                    console.error('❌ 检查初始Token状态失败:', error);
+                }
+            }
+
+            shouldShowTokenAlert(buff, youpin) {
+                // 🔥 修复：只有在以下情况才显示警报：
+                // 1. Token已配置
+                // 2. cached_valid明确为false（不是null）
+                // 3. 有具体的错误信息
+                // 4. 错误信息表明Token确实失效（而不是网络错误等）
+                
+                const buffShouldAlert = buff.configured && 
+                    buff.cached_valid === false && // 明确为false，不是null
+                    buff.cached_error && 
+                    this.isTokenExpiredError(buff.cached_error);
+                    
+                const youpinShouldAlert = youpin.configured && 
+                    youpin.cached_valid === false && // 明确为false，不是null
+                    youpin.cached_error && 
+                    this.isTokenExpiredError(youpin.cached_error);
+                
+                console.log('🔍 Token警报检查:', {
+                    buff: { configured: buff.configured, cached_valid: buff.cached_valid, cached_error: buff.cached_error, shouldAlert: buffShouldAlert },
+                    youpin: { configured: youpin.configured, cached_valid: youpin.cached_valid, cached_error: youpin.cached_error, shouldAlert: youpinShouldAlert }
+                });
+                
+                return {
+                    show: buffShouldAlert || youpinShouldAlert,
+                    buff: buffShouldAlert,
+                    youpin: youpinShouldAlert
+                };
+            }
+
+            isTokenExpiredError(error) {
+                // 🔥 优化：判断错误是否表明Token确实失效
+                const expiredKeywords = [
+                    '失效', '过期', '无效', '登录', '认证失败', 'token已失效', 'token无效',
+                    '401', '403', 'unauthorized', 'forbidden', 'authentication failed',
+                    'expired', 'invalid', 'login', 'auth', 'credential'
+                ];
+                
+                // 排除的关键词（这些通常是网络或其他技术问题，不是Token失效）
+                const excludeKeywords = [
+                    '网络', '超时', '连接', '响应为空', 'timeout', 'network', 'connection',
+                    'api响应为空', '格式异常', 'json', 'parse', '500', '502', '503', '504'
+                ];
+                
+                const errorLower = error.toLowerCase();
+                
+                // 如果包含排除关键词，则不认为是Token失效
+                const hasExcludeKeyword = excludeKeywords.some(keyword => 
+                    errorLower.includes(keyword.toLowerCase())
+                );
+                
+                if (hasExcludeKeyword) {
+                    return false;
+                }
+                
+                // 检查是否包含Token失效关键词
+                const hasExpiredKeyword = expiredKeywords.some(keyword => 
+                    errorLower.includes(keyword.toLowerCase())
+                );
+                
+                return hasExpiredKeyword;
+            }
+
+            shouldValidateTokensInBackground(buff, youpin) {
+                // 需要后台验证的情况：
+                // 1. Token已配置但没有验证缓存
+                // 2. Token已配置但验证时间过久（超过1小时）
+                const oneHourAgo = Date.now() - 60 * 60 * 1000;
+                
+                const buffNeedsValidation = buff.configured && 
+                    (buff.cached_valid === null || 
+                     !buff.last_validation || 
+                     new Date(buff.last_validation).getTime() < oneHourAgo);
+                     
+                const youpinNeedsValidation = youpin.configured && 
+                    (youpin.cached_valid === null || 
+                     !youpin.last_validation || 
+                     new Date(youpin.last_validation).getTime() < oneHourAgo);
+                
+                return buffNeedsValidation || youpinNeedsValidation;
+            }
+
+            async validateTokensInBackground() {
+                // 后台验证，不显示加载提示，不阻塞用户操作
+                try {
+                    console.log('🔄 后台验证Token...');
+                    
+                    const response = await fetch(BASE_PATH + '/api/tokens/validate', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ force_check: false }) // 不强制检查，使用缓存
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        console.log('✅ 后台Token验证完成');
+                        // 刷新状态显示
+                        this.loadTokenStatus();
+                    } else {
+                        console.log('⚠️ 后台Token验证失败:', result.error);
+                    }
+                } catch (error) {
+                    console.log('⚠️ 后台Token验证异常:', error.message);
+                }
+            }
+
+            setupPeriodicTokenCheck() {
+                // 每5分钟检查一次Token状态
+                setInterval(async () => {
+                    try {
+                        console.log('⏰ 定期检查Token状态...');
+                        await this.checkInitialTokenStatus();
+                    } catch (error) {
+                        console.error('❌ 定期Token检查失败:', error);
+                    }
+                }, 5 * 60 * 1000); // 5分钟
+                
+                console.log('⏰ 已设置Token状态定期检查（每5分钟）');
+            }
+
+            async validateSingleToken(platform) {
+                try {
+                    this.showAlert('info', `🔍 正在验证${platform === 'buff' ? 'Buff' : '悠悠有品'}Token...`);
+                    
+                    const response = await fetch(BASE_PATH + `/api/tokens/validate/${platform}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ force_check: true })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        const { valid, error } = result.data;
+                        
+                        if (valid) {
+                            this.showAlert('success', `✅ ${platform === 'buff' ? 'Buff' : '悠悠有品'}Token验证通过！`);
+                        } else {
+                            this.showAlert('error', `❌ ${platform === 'buff' ? 'Buff' : '悠悠有品'}Token验证失败: ${error}`);
+                        }
+                        
+                        // 刷新状态显示
+                        this.loadTokenStatus();
+                    } else {
+                        this.showAlert('error', `❌ 验证${platform === 'buff' ? 'Buff' : '悠悠有品'}Token失败: ${result.error}`);
+                    }
+                } catch (error) {
+                    console.error(`验证${platform}Token失败:`, error);
+                    this.showAlert('error', `❌ 验证${platform === 'buff' ? 'Buff' : '悠悠有品'}Token失败: ${error.message}`);
                 }
             }
             
@@ -1658,15 +2523,77 @@
             }
         }
 
+        // 移动端适配工具函数
+        function detectMobileDevice() {
+            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        }
+
+        function addMobileClasses() {
+            const body = document.body;
+            const isMobile = detectMobileDevice();
+            const isTouch = 'ontouchstart' in window;
+            
+            body.classList.add(isMobile ? 'is-mobile' : 'is-desktop');
+            if (isTouch) body.classList.add('is-touch');
+            
+            // 为iOS设备添加安全区域
+            if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+                body.classList.add('ios-safe-area');
+            }
+            
+            console.log(`📱 设备检测: ${isMobile ? '移动端' : '桌面端'}, 触摸: ${isTouch ? '是' : '否'}`);
+        }
+
+        // 移动端viewport动态调整
+        function setupMobileViewport() {
+            const viewport = document.querySelector('meta[name=viewport]');
+            if (!viewport) {
+                const meta = document.createElement('meta');
+                meta.name = 'viewport';
+                meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes';
+                document.head.appendChild(meta);
+                console.log('📱 已添加移动端viewport标签');
+            }
+        }
+
+        // 移动端性能优化
+        function optimizeForMobile() {
+            if (detectMobileDevice()) {
+                // 减少动画时间
+                const style = document.createElement('style');
+                style.textContent = `
+                    * { 
+                        transition-duration: 0.2s !important; 
+                        animation-duration: 0.2s !important; 
+                    }
+                `;
+                document.head.appendChild(style);
+                
+                // 禁用部分hover效果
+                document.documentElement.classList.add('touch-device');
+            }
+        }
+
         // 初始化应用
         document.addEventListener('DOMContentLoaded', () => {
-            console.log('📱 DOM已加载，初始化BuffMonitor...');
+            console.log('📱 DOM已加载，初始化移动端适配...');
+            
+            // 移动端适配
+            addMobileClasses();
+            setupMobileViewport();
+            optimizeForMobile();
+            
+            console.log('📱 初始化BuffMonitor...');
             const monitor = new BuffMonitor();
             
             // 延迟加载配置确保元素已渲染
             setTimeout(() => {
                 console.log('⏰ 延迟加载配置...');
                 monitor.loadConfig();
+                
+                // 🔥 新增：初始化Token状态检查
+                console.log('🔍 初始化Token状态检查...');
+                monitor.initTokenStatusCheck();
             }, 100);
         });
     </script>

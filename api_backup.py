@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 import os
 import json
-import time
 import asyncio
 import logging
 import threading
@@ -12,6 +11,7 @@ from datetime import datetime, timedelta
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import asdict
 from flask import Flask, jsonify, request, render_template_string, Response
+from flask_cors import CORS
 
 # 🔥 新增：使用增强的日志配置
 try:
@@ -26,7 +26,7 @@ from integrated_price_system import IntegratedPriceAnalyzer, PriceDiffItem, save
 from update_manager import get_update_manager
 from youpin_working_api import YoupinWorkingAPI
 from integrated_price_system import BuffAPIClient
-from token_manager import TokenManager, token_manager  # 🔥 导入全局实例
+from token_manager import TokenManager
 from config import Config
 
 # 导入流式分析器和分析管理器
@@ -60,9 +60,6 @@ import sys
 import os
 import locale
 import platform
-import json
-import asyncio
-from concurrent.futures import ThreadPoolExecutor
 
 # 跨平台编码设置
 def setup_encoding():
@@ -103,9 +100,6 @@ setup_encoding()
 
 def run_subprocess_with_encoding(validation_code, timeout=60):
     """使用跨平台编码设置运行子进程"""
-    import sys
-    import subprocess
-    
     env = create_cross_platform_subprocess_env()
     encoding_setup = create_encoding_setup_code()
     
@@ -924,44 +918,23 @@ def get_tokens_status():
         # 获取详细状态摘要（包含验证缓存）
         detailed_status = token_manager.get_token_status_summary()
         
-        # 🔥 修复：确保数据格式与前端期望一致
-        def format_token_status(basic, detailed):
-            """格式化Token状态数据"""
-            return {
-                # 基本配置信息
-                'configured': detailed.get('configured', False),
-                'last_updated': detailed.get('last_updated'),
-                'status': detailed.get('status', '未配置'),
-                
-                # 验证缓存信息（前端期望的字段）
-                'last_validation': detailed.get('last_validation'),
-                'cached_valid': detailed.get('cached_valid'),
-                'cached_error': detailed.get('cached_error'),
-                
-                # 兼容性字段
-                'has_cookies': basic.get('has_cookies', False),
-                'has_csrf': basic.get('has_csrf', False),
-                'has_device_id': basic.get('has_device_id', False),
-                'has_uk': basic.get('has_uk', False)
-            }
-        
-        # 合并并格式化状态信息
+        # 合并状态信息
         combined_status = {
-            'buff': format_token_status(basic_status['buff'], detailed_status['buff']),
-            'youpin': format_token_status(basic_status['youpin'], detailed_status['youpin'])
+            'buff': {
+                **basic_status['buff'],
+                **detailed_status['buff']
+            },
+            'youpin': {
+                **basic_status['youpin'],
+                **detailed_status['youpin']
+            }
         }
-        
-        logger.info(f"📊 Token状态查询: Buff配置={combined_status['buff']['configured']}, "
-                   f"Buff有效={combined_status['buff']['cached_valid']}, "
-                   f"悠悠有品配置={combined_status['youpin']['configured']}, "
-                   f"悠悠有品有效={combined_status['youpin']['cached_valid']}")
         
         return jsonify({
             'success': True,
             'data': combined_status
         })
     except Exception as e:
-        logger.error(f"❌ 获取Token状态失败: {e}")
         return jsonify({
             'success': False,
             'error': str(e)
@@ -1140,73 +1113,140 @@ def test_youpin_connection():
             'error': f'悠悠有品连接测试失败: {str(e)}'
         }), 500
 
+
 @app.route('/api/tokens/validate', methods=['POST'])
 def validate_tokens():
-    """验证所有Token状态（优化版本）"""
+    """验证所有Token状态"""
     try:
-        # 获取请求参数
+        import subprocess
+        import sys
+        import json
+        
+        # 在主线程中获取请求数据，避免上下文问题
         request_data = request.get_json() or {}
         force_check = request_data.get('force_check', False)
         
-        logger.info(f"🔍 开始Token验证，强制检查: {force_check}")
-        start_time = time.time()
+        # 使用子进程隔离执行Token验证
+        validation_code = f'''
+import asyncio
+import json
+from concurrent.futures import ThreadPoolExecutor
+
+def validate_tokens_isolated(force_check={force_check}):
+    """完全隔离的Token验证"""
+    
+    def run_in_clean_env():
+        async def validate():
+            import importlib
+            
+            # 导入TokenManager
+            token_manager_module = importlib.import_module('token_manager')
+            TokenManager = token_manager_module.TokenManager
+            
+            # 创建新实例
+            tm = TokenManager()
+            
+            # 验证所有Token
+            return await tm.validate_all_tokens(force_check=force_check)
         
-        # 🔥 修复：使用全局token_manager实例
-        tm = token_manager
-        
-        # 检查缓存（除非强制检查）
-        if not force_check and tm.is_cache_valid():
-            cached_result = tm.get_cached_validation_result()
-            if cached_result:
-                elapsed = time.time() - start_time
-                logger.info(f"🚀 使用缓存的Token验证结果，耗时: {elapsed:.2f}秒")
-                return jsonify({
-                    'success': True,
-                    'data': cached_result,
-                    'cached': True,
-                    'validation_time': round(elapsed, 2)
-                })
-        
-        # 执行验证
-        logger.info("🔄 开始执行Token验证...")
-        
+        # 在新的事件循环中运行
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
         try:
-            # 创建新的事件循环
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
-            
+            return loop.run_until_complete(validate())
+        finally:
+            loop.close()
+    
+    # 在线程池中运行
+    with ThreadPoolExecutor() as executor:
+        future = executor.submit(run_in_clean_env)
+        return future.result(timeout=30)
+
+# 执行验证
+try:
+    result = validate_tokens_isolated()
+    print(json.dumps({{"success": True, "data": result}}))
+except Exception as e:
+    print(json.dumps({{"success": False, "error": str(e)}}))
+'''
+        
+        # 在子进程中运行验证，设置UTF-8编码避免emoji字符问题
+        import os
+        # 创建更完整的环境变量设置
+        env = os.environ.copy()
+        env.update({
+            'PYTHONIOENCODING': 'utf-8',
+            'PYTHONLEGACYWINDOWSSTDIO': '0',  # 强制使用新的Windows控制台API
+            'LANG': 'en_US.UTF-8',
+            'LC_ALL': 'en_US.UTF-8'
+        })
+        
+        # 修改验证代码，在开头强制设置编码
+        validation_code_with_encoding = f'''
+import sys
+import os
+import locale
+
+# 强制设置编码
+if sys.platform == 'win32':
+    import codecs
+    sys.stdout = codecs.getwriter('utf-8')(sys.stdout.detach())
+    sys.stderr = codecs.getwriter('utf-8')(sys.stderr.detach())
+    sys.stdin = codecs.getreader('utf-8')(sys.stdin.detach())
+
+# 设置locale
+try:
+    locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
+except:
+    try:
+        locale.setlocale(locale.LC_ALL, 'C.UTF-8')
+    except:
+        pass
+
+{validation_code}
+'''
+        
+        result = subprocess.run([
+            sys.executable, '-c', validation_code_with_encoding
+        ], capture_output=True, text=True, timeout=60, env=env,
+        encoding='utf-8', errors='replace')  # 添加显式编码参数
+        
+        if result.returncode == 0:
             try:
-                result = loop.run_until_complete(tm.validate_all_tokens(force_check))
-                elapsed = time.time() - start_time
-                result['validation_time'] = round(elapsed, 2)
-                
-                logger.info(f"✅ Token验证完成，耗时: {elapsed:.2f}秒")
-                
+                data = json.loads(result.stdout.strip())
+                if data.get('success'):
+                    return jsonify({
+                        'success': True,
+                        'data': data['data']
+                    })
+                else:
+                    return jsonify({
+                        'success': False,
+                        'error': data.get('error', '验证失败')
+                    }), 500
+            except json.JSONDecodeError:
                 return jsonify({
-                    'success': True,
-                    'data': result,
-                    'cached': False
-                })
-                
-            finally:
-                loop.close()
-                
-        except Exception as e:
-            elapsed = time.time() - start_time
-            logger.error(f"❌ Token验证失败，耗时: {elapsed:.2f}秒，错误: {e}")
-            
+                    'success': False,
+                    'error': f'验证结果解析失败: {result.stdout}'
+                }), 500
+        else:
+            error_msg = result.stderr if result.stderr else '子进程执行失败'
             return jsonify({
                 'success': False,
-                'error': f'Token验证失败: {str(e)}',
-                'validation_time': round(elapsed, 2)
+                'error': f'Token验证失败: {error_msg}'
             }), 500
         
-    except Exception as e:
-        logger.error(f"❌ Token验证API异常: {e}")
+    except subprocess.TimeoutExpired:
         return jsonify({
             'success': False,
-            'error': f'验证失败: {str(e)}'
+            'error': 'Token验证超时'
         }), 500
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': f'Token验证失败: {str(e)}'
+        }), 500
+
 
 @app.route('/api/tokens/validate/buff', methods=['POST'])
 def validate_buff_token():
@@ -1264,45 +1304,60 @@ except Exception as e:
     print(json.dumps({{"success": False, "error": str(e)}}))
 '''
         
-        # 使用跨平台编码处理运行子进程验证
+        # 在子进程中运行验证，设置UTF-8编码避免emoji字符问题
+        import os
+        # 创建更完整的环境变量设置
+        env = os.environ.copy()
+        env.update({
+            'PYTHONIOENCODING': 'utf-8',
+            'PYTHONLEGACYWINDOWSSTDIO': '0',  # 强制使用新的Windows控制台API
+            'LANG': 'en_US.UTF-8',
+            'LC_ALL': 'en_US.UTF-8'
+        })
+        
+        # 修改验证代码，在开头强制设置编码
+        validation_code_with_encoding = f'''
+import sys
+import os
+import locale
 
-        result = run_subprocess_with_encoding(validation_code)
+# 强制设置编码
+if sys.platform == 'win32':
+    import codecs
+    sys.stdout = codecs.getwriter('utf-8')(sys.stdout.detach())
+    sys.stderr = codecs.getwriter('utf-8')(sys.stderr.detach())
+    sys.stdin = codecs.getreader('utf-8')(sys.stdin.detach())
+
+# 设置locale
+try:
+    locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
+except:
+    try:
+        locale.setlocale(locale.LC_ALL, 'C.UTF-8')
+    except:
+        pass
+
+{validation_code}
+'''
+        
+        result = subprocess.run([
+            sys.executable, '-c', validation_code_with_encoding
+        ], capture_output=True, text=True, timeout=60, env=env,
+        encoding='utf-8', errors='replace')  # 添加显式编码参数
         
         if result.returncode == 0:
             try:
-                # 🔥 修复：只提取最后一行的JSON数据，忽略日志输出
-                output_lines = result.stdout.strip().split('\n')
-                json_line = None
-                
-                # 从后往前找第一个有效的JSON行
-                for line in reversed(output_lines):
-                    line = line.strip()
-                    if line.startswith('{') and line.endswith('}'):
-                        try:
-                            json.loads(line)  # 验证是否为有效JSON
-                            json_line = line
-                            break
-                        except json.JSONDecodeError:
-                            continue
-                
-                if json_line:
-                    data = json.loads(json_line)
-                    if data.get('success'):
-                        return jsonify({
-                            'success': True,
-                            'data': data['data']
-                        })
-                    else:
-                        return jsonify({
-                            'success': False,
-                            'error': data.get('error', '验证失败')
-                        }), 500
+                data = json.loads(result.stdout.strip())
+                if data.get('success'):
+                    return jsonify({
+                        'success': True,
+                        'data': data['data']
+                    })
                 else:
                     return jsonify({
                         'success': False,
-                        'error': f'未找到有效的JSON响应: {result.stdout}'
+                        'error': data.get('error', '验证失败')
                     }), 500
-                    
             except json.JSONDecodeError:
                 return jsonify({
                     'success': False,
@@ -1325,6 +1380,7 @@ except Exception as e:
             'success': False,
             'error': f'Buff Token验证失败: {str(e)}'
         }), 500
+
 
 @app.route('/api/tokens/validate/youpin', methods=['POST'])
 def validate_youpin_token():
@@ -1382,45 +1438,60 @@ except Exception as e:
     print(json.dumps({{"success": False, "error": str(e)}}))
 '''
         
-        # 使用跨平台编码处理运行子进程验证
+        # 在子进程中运行验证，设置UTF-8编码避免emoji字符问题
+        import os
+        # 创建更完整的环境变量设置
+        env = os.environ.copy()
+        env.update({
+            'PYTHONIOENCODING': 'utf-8',
+            'PYTHONLEGACYWINDOWSSTDIO': '0',  # 强制使用新的Windows控制台API
+            'LANG': 'en_US.UTF-8',
+            'LC_ALL': 'en_US.UTF-8'
+        })
+        
+        # 修改验证代码，在开头强制设置编码
+        validation_code_with_encoding = f'''
+import sys
+import os
+import locale
 
-        result = run_subprocess_with_encoding(validation_code)
+# 强制设置编码
+if sys.platform == 'win32':
+    import codecs
+    sys.stdout = codecs.getwriter('utf-8')(sys.stdout.detach())
+    sys.stderr = codecs.getwriter('utf-8')(sys.stderr.detach())
+    sys.stdin = codecs.getreader('utf-8')(sys.stdin.detach())
+
+# 设置locale
+try:
+    locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
+except:
+    try:
+        locale.setlocale(locale.LC_ALL, 'C.UTF-8')
+    except:
+        pass
+
+{validation_code}
+'''
+        
+        result = subprocess.run([
+            sys.executable, '-c', validation_code_with_encoding
+        ], capture_output=True, text=True, timeout=60, env=env,
+        encoding='utf-8', errors='replace')  # 添加显式编码参数
         
         if result.returncode == 0:
             try:
-                # 🔥 修复：只提取最后一行的JSON数据，忽略日志输出
-                output_lines = result.stdout.strip().split('\n')
-                json_line = None
-                
-                # 从后往前找第一个有效的JSON行
-                for line in reversed(output_lines):
-                    line = line.strip()
-                    if line.startswith('{') and line.endswith('}'):
-                        try:
-                            json.loads(line)  # 验证是否为有效JSON
-                            json_line = line
-                            break
-                        except json.JSONDecodeError:
-                            continue
-                
-                if json_line:
-                    data = json.loads(json_line)
-                    if data.get('success'):
-                        return jsonify({
-                            'success': True,
-                            'data': data['data']
-                        })
-                    else:
-                        return jsonify({
-                            'success': False,
-                            'error': data.get('error', '验证失败')
-                        }), 500
+                data = json.loads(result.stdout.strip())
+                if data.get('success'):
+                    return jsonify({
+                        'success': True,
+                        'data': data['data']
+                    })
                 else:
                     return jsonify({
                         'success': False,
-                        'error': f'未找到有效的JSON响应: {result.stdout}'
+                        'error': data.get('error', '验证失败')
                     }), 500
-                    
             except json.JSONDecodeError:
                 return jsonify({
                     'success': False,
@@ -1443,6 +1514,7 @@ except Exception as e:
             'success': False,
             'error': f'悠悠有品Token验证失败: {str(e)}'
         }), 500
+
 
 @app.route('/api/tokens/alerts', methods=['GET'])
 def get_token_alerts():
@@ -1484,6 +1556,7 @@ def get_token_alerts():
             'error': f'获取Token警报失败: {str(e)}'
         }), 500
 
+
 @app.route('/api/tokens/alerts/clear', methods=['POST'])
 def clear_token_notifications():
     """清除Token通知"""
@@ -1505,6 +1578,7 @@ def clear_token_notifications():
             'success': False,
             'error': f'清除通知失败: {str(e)}'
         }), 500
+
 
 @app.route('/api/tokens/validation-service', methods=['GET', 'POST'])
 def manage_validation_service():

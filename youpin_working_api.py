@@ -67,7 +67,7 @@ class YoupinWorkingAPI:
                 'sec-fetch-mode': 'cors',
                 'sec-fetch-site': 'same-site',
                 'secret-v': 'h5_v1',
-                'traceparent': f'00-{self.b3.split("-")[0]}-{self.b3.split("-")[1]}-01',
+                'traceparent': self._generate_traceparent(self.b3),
                 'uk': self.uk,
                 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36 Edg/136.0.0.0'
             }
@@ -111,11 +111,23 @@ class YoupinWorkingAPI:
                 'sec-fetch-mode': 'cors',
                 'sec-fetch-site': 'same-site',
                 'secret-v': 'h5_v1',
-                'traceparent': f'00-{self.b3.split("-")[0]}-{self.b3.split("-")[1]}-01',
+                'traceparent': self._generate_traceparent(self.b3),
                 'uk': self.uk,
                 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36 Edg/136.0.0.0'
             }
     
+    def _generate_traceparent(self, b3_value: str) -> str:
+        """安全生成traceparent值"""
+        try:
+            if b3_value and '-' in b3_value:
+                parts = b3_value.split('-')
+                if len(parts) >= 2:
+                    return f'00-{parts[0]}-{parts[1]}-01'
+            # 如果解析失败，使用默认值
+            return '00-833f3214b9b04819a399c94ed1fab7af-2a9cab244348658f-01'
+        except Exception:
+            return '00-833f3214b9b04819a399c94ed1fab7af-2a9cab244348658f-01'
+
     def reload_config(self):
         """重新加载配置"""
         self.load_config_from_token_manager()

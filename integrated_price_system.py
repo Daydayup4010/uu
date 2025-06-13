@@ -181,8 +181,8 @@ class BuffAPIClient:
             if page_size != 100:
                 params['page_size'] = page_size
             
-            print(f"   🔗 请求URL: {url}")
-            print(f"   📊 参数: {params}")
+            print(f"   [URL] 请求URL: {url}")
+            print(f"   [INFO] 参数: {params}")
             
             async with self.session.get(url, params=params) as response:
                 print(f"   📡 响应状态: {response.status}")
@@ -194,23 +194,23 @@ class BuffAPIClient:
                     if 'data' in data:
                         items_count = len(data['data'].get('items', []))
                         total_count = data['data'].get('total_count', 0)
-                        print(f"   ✅ 成功获取 {items_count} 个商品 (总计: {total_count})")
+                        print(f"   [SUCCESS] 成功获取 {items_count} 个商品 (总计: {total_count})")
                     else:
-                        print(f"   ⚠️ 响应格式异常: {list(data.keys())}")
+                        print(f"   [WARNING] 响应格式异常: {list(data.keys())}")
                     
                     return data
                     
                 elif response.status == 429:
-                    print(f"   ⚠️ 频率限制 (429) - 可能需要增加 BUFF_API_DELAY")
+                    print(f"   [WARNING] 频率限制 (429) - 可能需要增加 BUFF_API_DELAY")
                     # 频率限制时等待更久
                     await asyncio.sleep(2.0)
                     return None
                 elif response.status == 403:
-                    print(f"   ⚠️ 访问被拒绝 (403)，可能需要更新认证信息")
+                    print(f"   [WARNING] 访问被拒绝 (403)，可能需要更新认证信息")
                     await asyncio.sleep(1.0)
                     return None
                 else:
-                    print(f"   ❌ 请求失败: {response.status}")
+                    print(f"   [ERROR] 请求失败: {response.status}")
                     # 尝试获取错误信息
                     try:
                         error_text = await response.text()
@@ -286,7 +286,7 @@ class BuffAPIClient:
             
             if use_optimized:
                 from optimized_api_client import OptimizedBuffClient
-                print(f"   🚀 使用优化的API客户端")
+                print(f"   [START] 使用优化的API客户端")
                 
                 async with OptimizedBuffClient() as optimized_client:
                     items = await optimized_client.get_all_goods_safe(max_pages=Config.BUFF_MAX_PAGES)
@@ -301,28 +301,28 @@ class BuffAPIClient:
                         first_page = await self.get_goods_list(page_num=1, page_size=Config.BUFF_PAGE_SIZE)
                         if not first_page or 'data' not in first_page:
                             if attempt < max_retries:
-                                print(f"❌ 无法获取Buff第一页数据，重试 {attempt + 1}/{max_retries + 1}")
+                                print(f"[ERROR] 无法获取Buff第一页数据，重试 {attempt + 1}/{max_retries + 1}")
                                 await asyncio.sleep(2 * (attempt + 1))
                                 continue
                             else:
-                                print("❌ 达到最大重试次数，无法获取Buff数据")
+                                print("[ERROR] 达到最大重试次数，无法获取Buff数据")
                                 return []
                         
                         first_data = first_page['data']
                         total_count = first_data.get('total_count', 0)
                         total_pages = first_data.get('total_page', 0)
                         
-                        print(f"   ✅ Buff总商品数: {total_count}")
-                        print(f"   ✅ Buff总页数: {total_pages}")
+                        print(f"   [SUCCESS] Buff总商品数: {total_count}")
+                        print(f"   [SUCCESS] Buff总页数: {total_pages}")
                         
                         all_items = []
                         first_items = first_data.get('items', [])
                         all_items.extend(first_items)
-                        print(f"   ✅ 第1页获取了 {len(first_items)} 个商品")
+                        print(f"   [SUCCESS] 第1页获取了 {len(first_items)} 个商品")
                         
                         # 设置合理的最大页数
                         max_pages = min(total_pages, Config.BUFF_MAX_PAGES)
-                        print(f"   🎯 计划串行获取前 {max_pages} 页数据（降低失败率）")
+                        print(f"   [RESULT] 计划串行获取前 {max_pages} 页数据（降低失败率）")
                         
                         if max_pages > 1:
                             print(f"   🔄 开始串行获取第2-{max_pages}页...")
@@ -336,31 +336,31 @@ class BuffAPIClient:
                                         if items:
                                             all_items.extend(items)
                                             if page_num % 10 == 0:
-                                                print(f"   ✅ 第 {page_num} 页获取了 {len(items)} 个商品")
+                                                print(f"   [SUCCESS] 第 {page_num} 页获取了 {len(items)} 个商品")
                                     
                                     # 串行请求间延迟
                                     await asyncio.sleep(Config.REQUEST_DELAY)
                                     
                                 except Exception as e:
-                                    print(f"   ⚠️ 第 {page_num} 页获取异常: {e}")
+                                    print(f"   [WARNING] 第 {page_num} 页获取异常: {e}")
                                     continue
                         
-                        print(f"   ✅ Buff商品获取完成，总计 {len(all_items)} 个商品")
+                        print(f"   [SUCCESS] Buff商品获取完成，总计 {len(all_items)} 个商品")
                         return all_items
                         
                     except Exception as e:
                         if attempt < max_retries:
-                            print(f"   ❌ 获取Buff商品异常 (尝试 {attempt + 1}/{max_retries + 1}): {e}")
+                            print(f"   [ERROR] 获取Buff商品异常 (尝试 {attempt + 1}/{max_retries + 1}): {e}")
                             await asyncio.sleep(3 * (attempt + 1))
                             continue
                         else:
-                            print(f"   ❌ 获取Buff所有商品最终失败: {e}")
+                            print(f"   [ERROR] 获取Buff所有商品最终失败: {e}")
                             return []
                 
                 return []
             
         except Exception as e:
-            print(f"   ❌ 获取Buff所有商品异常: {e}")
+            print(f"   [ERROR] 获取Buff所有商品异常: {e}")
             return []
 
     async def get_goods_list_with_retry(self, page_num: int, page_size: int = None, max_retries: int = 2) -> Optional[Dict]:
@@ -374,18 +374,18 @@ class BuffAPIClient:
                 if result:
                     return result
                 elif attempt < max_retries:
-                    print(f"   ⚠️ 第 {page_num} 页获取失败，重试 {attempt + 1}/{max_retries + 1}")
+                    print(f"   [WARNING] 第 {page_num} 页获取失败，重试 {attempt + 1}/{max_retries + 1}")
                     await asyncio.sleep(1 * (attempt + 1))  # 递增延迟
                     continue
                 else:
                     return None
             except Exception as e:
                 if attempt < max_retries:
-                    print(f"   ⚠️ 第 {page_num} 页异常，重试 {attempt + 1}/{max_retries + 1}: {e}")
+                    print(f"   [WARNING] 第 {page_num} 页异常，重试 {attempt + 1}/{max_retries + 1}: {e}")
                     await asyncio.sleep(1 * (attempt + 1))
                     continue
                 else:
-                    print(f"   ❌ 第 {page_num} 页最终失败: {e}")
+                    print(f"   [ERROR] 第 {page_num} 页最终失败: {e}")
                     return None
         return None
 
@@ -523,11 +523,11 @@ class ImprovedMatcher:
         """打印匹配统计信息"""
         stats = self.get_statistics()
         
-        print(f"\n📊 改进匹配算法统计:")
+        print(f"\n[INFO] 改进匹配算法统计:")
         print(f"   总处理商品: {stats['total_processed']}")
         print(f"   总匹配数量: {stats['total_matches']}")
         print(f"   匹配成功率: {stats['match_rate']:.1f}%")
-        print(f"\n🎯 匹配类型分布:")
+        print(f"\n[RESULT] 匹配类型分布:")
         print(f"   精确匹配: {stats['exact_matches']} ({stats['exact_matches']/stats['total_processed']*100:.1f}%)")
         print(f"   规范化匹配: {stats['normalized_matches']} ({stats['normalized_matches']/stats['total_processed']*100:.1f}%)")
         print(f"   武器名称匹配: {stats['weapon_matches']} ({stats['weapon_matches']/stats['total_processed']*100:.1f}%)")
@@ -571,9 +571,9 @@ class IntegratedPriceAnalyzer:
         if max_output_items is None:
             max_output_items = Config.MAX_OUTPUT_ITEMS
             
-        print(f"\n🎯 开始分析价差商品 - 区间筛选模式")
-        print(f"📊 价格差异区间: {Config.PRICE_DIFF_MIN}元 - {Config.PRICE_DIFF_MAX}元")
-        print(f"📋 最大输出数量: {max_output_items}个")
+        print(f"\n[RESULT] 开始分析价差商品 - 区间筛选模式")
+        print(f"[INFO] 价格差异区间: {Config.PRICE_DIFF_MIN}元 - {Config.PRICE_DIFF_MAX}元")
+        print(f"[DATA] 最大输出数量: {max_output_items}个")
         print("="*80)
         
         diff_items = []
@@ -581,8 +581,8 @@ class IntegratedPriceAnalyzer:
         found_count = 0
         profitable_count = 0
         
-        # 🚀 并行获取两个平台的数据
-        print(f"\n🚀 并行获取两个平台的数据...")
+        # [START] 并行获取两个平台的数据
+        print(f"\n[START] 并行获取两个平台的数据...")
         start_time = time.time()
         
         # 🔥 使用优化客户端降低失败率
@@ -597,23 +597,23 @@ class IntegratedPriceAnalyzer:
         
         # 检查结果
         if isinstance(buff_data, Exception):
-            print(f"❌ Buff数据获取失败: {buff_data}")
+            print(f"[ERROR] Buff数据获取失败: {buff_data}")
             buff_data = []
         elif not buff_data:
-            print("❌ 无法获取Buff商品数据")
+            print("[ERROR] 无法获取Buff商品数据")
             return []
         
         if isinstance(youpin_items, Exception):
-            print(f"❌ 悠悠有品数据获取失败: {youpin_items}")
+            print(f"[ERROR] 悠悠有品数据获取失败: {youpin_items}")
             youpin_items = []
         elif not youpin_items:
-            print("❌ 无法获取悠悠有品商品数据")
+            print("[ERROR] 无法获取悠悠有品商品数据")
             youpin_items = []
         
         # 🔥 移除回退逻辑，避免重复获取
         # 如果优化客户端失败，直接返回空结果而不是启动第二套获取逻辑
         if not buff_data and not youpin_items:
-            print("❌ 两个平台都无法获取数据，分析终止")
+            print("[ERROR] 两个平台都无法获取数据，分析终止")
             return []
         
         parallel_time = time.time() - start_time
@@ -623,8 +623,8 @@ class IntegratedPriceAnalyzer:
         items = buff_data
         total_items = len(items)
         youpin_count = len(youpin_items) if youpin_items else 0
-        print(f"✅ 成功获取 {total_items} 个Buff商品")
-        print(f"✅ 成功获取 {youpin_count} 个悠悠有品商品")
+        print(f"[SUCCESS] 成功获取 {total_items} 个Buff商品")
+        print(f"[SUCCESS] 成功获取 {youpin_count} 个悠悠有品商品")
         
         # 🔥 新增：保存完整数据为 full data 文件
         await self._save_full_data(buff_data, youpin_items)
@@ -638,7 +638,7 @@ class IntegratedPriceAnalyzer:
         youpin_name_map = {}
         
         if youpin_items:
-            print(f"📊 悠悠有品商品数据样本:")
+            print(f"[INFO] 悠悠有品商品数据样本:")
             for i, item in enumerate(youpin_items[:3]):  # 显示前3个商品的数据结构
                 print(f"   #{i+1}: {item}")
             
@@ -669,7 +669,7 @@ class IntegratedPriceAnalyzer:
         
         # 🔥 显示Hash映射样本
         if len(youpin_hash_map) > 0:
-            print(f"\n🔍 悠悠有品Hash样本:")
+            print(f"\n[DEBUG] 悠悠有品Hash样本:")
             for i, hash_name in enumerate(list(youpin_hash_map.keys())[:5]):
                 print(f"   #{i+1}: {hash_name}")
         
@@ -747,18 +747,18 @@ class IntegratedPriceAnalyzer:
                     # 只在找到符合条件的商品时打印详细信息
                     print(f"   📦 #{len(diff_items)}: {buff_item.name}")
                     print(f"      💰 价差: ¥{price_diff:.2f} ({profit_rate:.1f}%) - {matched_by}")
-                    print(f"      🎯 符合区间要求！")
+                    print(f"      [RESULT] 符合区间要求！")
             
             # 显示进度（每处理1000个商品显示一次）
             if processed_count % 1000 == 0:
-                print(f"\n📊 进度统计 ({processed_count}/{len(items_to_process)}):")
+                print(f"\n[INFO] 进度统计 ({processed_count}/{len(items_to_process)}):")
                 print(f"   已处理: {processed_count} 个商品")
                 print(f"   找到匹配: {found_count} 个商品")
                 print(f"   符合区间: {len(diff_items)} 个商品")
         
         total_time = time.time() - start_time
-        print(f"\n✅ 价差分析完成！总耗时: {total_time:.2f} 秒")
-        print(f"📊 最终统计:")
+        print(f"\n[SUCCESS] 价差分析完成！总耗时: {total_time:.2f} 秒")
+        print(f"[INFO] 最终统计:")
         print(f"   总处理: {processed_count} 个商品")
         print(f"   悠悠有品覆盖率: {(found_count/processed_count)*100:.1f}%")
         print(f"   符合价差区间: {len(diff_items)} 个商品")
@@ -872,10 +872,10 @@ class IntegratedPriceAnalyzer:
                 file_size = os.path.getsize(youpin_filename) / 1024 / 1024  # MB
                 print(f"💾 悠悠有品完整数据已保存: {len(items_data)}个商品 -> {youpin_filename} ({file_size:.1f} MB)")
                 
-            print(f"✅ 完整数据保存完成！")
+            print(f"[SUCCESS] 完整数据保存完成！")
             
         except Exception as e:
-            print(f"❌ 保存完整数据失败: {e}")
+            print(f"[ERROR] 保存完整数据失败: {e}")
             import traceback
             traceback.print_exc()
     
@@ -957,7 +957,7 @@ def load_price_diff_data(filename: str) -> List[PriceDiffItem]:
 # 测试和演示功能
 async def test_integrated_system():
     """测试集成系统"""
-    print("🎯 测试集成价差分析系统")
+    print("[RESULT] 测试集成价差分析系统")
     print("="*80)
     
     async with IntegratedPriceAnalyzer(price_diff_threshold=5.0) as analyzer:
@@ -966,7 +966,7 @@ async def test_integrated_system():
         diff_items = await analyzer.analyze_price_differences(max_output_items=5)
         
         if diff_items:
-            print(f"\n🎯 发现 {len(diff_items)} 个有价差的商品:")
+            print(f"\n[RESULT] 发现 {len(diff_items)} 个有价差的商品:")
             for i, item in enumerate(diff_items[:3], 1):
                 print(f"   #{i}: {item.name}")
                 print(f"       Buff: ¥{item.buff_price} → 悠悠有品: ¥{item.youpin_price}")
@@ -976,11 +976,11 @@ async def test_integrated_system():
             filename = save_price_diff_data(diff_items)
             print(f"\n💾 数据已保存到: {filename}")
         else:
-            print("❌ 未发现有价差的商品")
+            print("[ERROR] 未发现有价差的商品")
 
 async def run_full_analysis():
     """运行完整价差分析"""
-    print("🎯 完整价差分析系统")
+    print("[RESULT] 完整价差分析系统")
     print("="*80)
     
     async with IntegratedPriceAnalyzer(price_diff_threshold=10.0) as analyzer:
@@ -992,7 +992,7 @@ async def run_full_analysis():
             filename = save_price_diff_data(diff_items)
             
             # 显示结果
-            print(f"\n🎯 发现 {len(diff_items)} 个有价差的商品:")
+            print(f"\n[RESULT] 发现 {len(diff_items)} 个有价差的商品:")
             print("="*80)
             
             for i, item in enumerate(diff_items[:10], 1):
@@ -1002,7 +1002,7 @@ async def run_full_analysis():
                 print(f"    Buff链接: {item.buff_url}")
                 print("-" * 40)
         else:
-            print("❌ 未发现有价差的商品")
+            print("[ERROR] 未发现有价差的商品")
 
 if __name__ == "__main__":
     import sys

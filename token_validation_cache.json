@@ -1,0 +1,17 @@
+{
+  "result": {
+    "buff": {
+      "valid": true,
+      "error": null,
+      "cached": true
+    },
+    "youpin": {
+      "valid": false,
+      "error": "Token可能已失效或API异常",
+      "cached": false
+    },
+    "overall_valid": false
+  },
+  "cached_at": 1749818055.436303,
+  "cache_duration": 300
+}

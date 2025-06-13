@@ -263,7 +263,7 @@ class UpdateManager:
             else:
                 logger.info("📊 有缓存数据，可直接启动增量更新")
                 self.initial_full_update_completed = True
-                    
+                
                 # 🔥 尝试加载已有的价差数据
                 try:
                     self._load_latest_data()
@@ -418,7 +418,7 @@ class UpdateManager:
                     else:
                         logger.info("📭 全量更新未发现符合条件的商品")
                         manager.finish_analysis(analysis_id, [])
-                    
+                        
                     self.last_full_update = datetime.now()
                     
                     # 如果是初始全量更新，标记为完成
@@ -644,7 +644,7 @@ class UpdateManager:
                 # 限制搜索数量，避免太多请求
                 limited_keywords = list(hashnames)[:100]  # 只搜索前100个关键词
                 logger.info(f"🔍 限制搜索关键词数量为 {len(limited_keywords)} 个")
-                
+            
                 # 逐个搜索关键词
                 for i, keyword in enumerate(limited_keywords):
                     try:
@@ -696,7 +696,7 @@ class UpdateManager:
         except Exception as e:
             logger.error(f"增量搜索失败: {e}")
             return []
-        
+            
         logger.info(f"📊 增量搜索完成: 获取到 {len(search_results['buff'])} 个Buff商品, {len(search_results['youpin'])} 个悠悠有品商品")
         
         # 🔥 第二步：更新全量数据文件
