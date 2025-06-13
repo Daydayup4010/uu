@@ -507,11 +507,121 @@ class UpdateManager:
         thread.start()
     
     async def _run_full_analysis(self) -> List[PriceDiffItem]:
-        """运行全量分析"""
-        async with IntegratedPriceAnalyzer() as analyzer:
-            return await analyzer.analyze_price_differences(
-                max_output_items=Config.MAX_OUTPUT_ITEMS
-            )
+        """运行全量分析 - 使用与增量更新相同的搜索匹配算法"""
+        logger.info("🔄 开始全量更新分析...")
+        
+        # 🔥 第一步：获取所有商品的hash_name
+        try:
+            # 使用IntegratedPriceAnalyzer获取商品数据，但不做分析
+            async with IntegratedPriceAnalyzer() as analyzer:
+                # 获取Buff和悠悠有品的原始数据
+                buff_data = await analyzer._get_buff_data_optimized()
+                youpin_data = await analyzer._get_youpin_data_optimized()
+                
+                if not buff_data:
+                    logger.error("❌ 无法获取Buff商品数据")
+                    return []
+                
+                # 保存完整数据
+                await analyzer._save_full_data(buff_data, youpin_data)
+                
+                # 提取所有market_hash_name作为搜索关键词
+                search_keywords = set()
+                for item in buff_data:
+                    if isinstance(item, dict) and 'market_hash_name' in item:
+                        search_keywords.add(item['market_hash_name'])
+                    elif hasattr(item, 'market_hash_name'):
+                        search_keywords.add(item.market_hash_name)
+                
+                logger.info(f"🔍 全量更新: 从 {len(buff_data)} 个Buff商品中提取了 {len(search_keywords)} 个搜索关键词")
+                
+        except Exception as e:
+            logger.error(f"❌ 获取商品数据失败: {e}")
+            return []
+        
+        # 🔥 第二步：使用SearchManager搜索所有关键词
+        search_results = {'buff': [], 'youpin': []}
+        
+        # 🔥 修复：直接使用当前事件循环，不创建新的
+        try:
+            from search_api_client import SearchManager
+            
+            # 直接使用异步搜索，不需要创建新的事件循环
+            async with SearchManager() as search_manager:
+                # 全量更新搜索更多关键词
+                limited_keywords = list(search_keywords)[:500]  # 全量更新搜索前500个关键词
+                logger.info(f"🔍 全量搜索关键词数量: {len(limited_keywords)} 个")
+                
+                # 逐个搜索关键词
+                for i, keyword in enumerate(limited_keywords):
+                    try:
+                        logger.debug(f"🔍 开始搜索关键词: {keyword}")
+                        results = await search_manager.search_both_platforms(keyword)
+                        search_results['buff'].extend(results.get('buff', []))
+                        search_results['youpin'].extend(results.get('youpin', []))
+                        
+                        # 🔥 修改：显示价格而不是数量
+                        buff_results = results.get('buff', [])
+                        youpin_results = results.get('youpin', [])
+                        
+                        # 获取最低价格
+                        try:
+                            buff_price = f"¥{min(item.price for item in buff_results):.2f}" if buff_results else "无"
+                            youpin_price = f"¥{min(item.price for item in youpin_results):.2f}" if youpin_results else "无"
+                            
+                            # 🔥 确保一定显示价格信息
+                            logger.info(f"🔍 搜索结果 '{keyword}': Buff={buff_price}, 悠悠有品={youpin_price}")
+                        except Exception as price_error:
+                            # 🔥 如果价格计算失败，显示详细错误信息
+                            logger.error(f"⚠️ 计算价格时出错 '{keyword}': {price_error}")
+                            logger.info(f"🔍 搜索结果 '{keyword}': Buff={len(buff_results)}个, 悠悠有品={len(youpin_results)}个")
+                            
+                            # 显示搜索结果的原始数据用于调试
+                            if buff_results:
+                                logger.debug(f"   Buff样例: {buff_results[0].__dict__ if hasattr(buff_results[0], '__dict__') else buff_results[0]}")
+                            if youpin_results:
+                                logger.debug(f"   悠悠有品样例: {youpin_results[0].__dict__ if hasattr(youpin_results[0], '__dict__') else youpin_results[0]}")
+                        
+                        # 如果没有显示价格，至少显示数量
+                        if not buff_results and not youpin_results:
+                            logger.info(f"🔍 搜索结果 '{keyword}': 两个平台都无结果")
+                        
+                        # 显示进度
+                        if (i + 1) % 10 == 0:
+                            logger.info(f"🔄 搜索进度: {i + 1}/{len(limited_keywords)}")
+                            
+                        # 添加延迟避免API限制
+                        await asyncio.sleep(1)
+                        
+                    except Exception as e:
+                        logger.error(f"搜索关键词失败 {keyword}: {e}")
+                        # 即使搜索失败也显示进度
+                        if (i + 1) % 10 == 0:
+                            logger.info(f"🔄 搜索进度: {i + 1}/{len(limited_keywords)} (包含失败项)")
+                        continue
+                        
+        except Exception as e:
+            logger.error(f"全量搜索失败: {e}")
+            return []
+        
+        logger.info(f"📊 全量搜索完成: 获取到 {len(search_results['buff'])} 个Buff商品, {len(search_results['youpin'])} 个悠悠有品商品")
+        
+        # 🔥 第三步：使用与增量更新相同的匹配算法分析结果
+        diff_items = self._analyze_search_results(search_results)
+        
+        # 🔥 第四步：按利润率排序并限制数量
+        if diff_items:
+            diff_items.sort(key=lambda x: x.profit_rate, reverse=True)
+            
+            # 限制输出数量
+            max_items = getattr(Config, 'MAX_OUTPUT_ITEMS', 1000)
+            if len(diff_items) > max_items:
+                logger.info(f"🔄 限制全量更新输出数量为 {max_items} 个（按利润率排序）")
+                diff_items = diff_items[:max_items]
+        
+        logger.info(f"🎯 全量更新分析完成: 发现 {len(diff_items)} 个符合条件的商品")
+        
+        return diff_items
     
     async def _run_incremental_analysis(self) -> List[PriceDiffItem]:
         """运行真正的增量分析：根据HashName缓存搜索最新数据并更新全量文件"""
@@ -523,80 +633,69 @@ class UpdateManager:
         logger.info(f"🔍 开始增量更新: 搜索 {len(hashnames)} 个商品的最新价格")
         
         # 🔥 第一步：根据HashName缓存搜索最新数据
-        updated_items = []
         search_results = {'buff': [], 'youpin': []}
         
-        async with SearchManager() as search_manager:
-            # 限制并发搜索数量
-            semaphore = asyncio.Semaphore(3)  # 降低并发数，避免API限制
+        # 🔥 修复：直接使用当前事件循环，不创建新的
+        try:
+            from search_api_client import SearchManager
             
-            async def search_and_collect(keyword):
-                async with semaphore:
+            # 直接使用异步搜索，不需要创建新的事件循环
+            async with SearchManager() as search_manager:
+                # 限制搜索数量，避免太多请求
+                limited_keywords = list(hashnames)[:100]  # 只搜索前100个关键词
+                logger.info(f"🔍 限制搜索关键词数量为 {len(limited_keywords)} 个")
+                
+                # 逐个搜索关键词
+                for i, keyword in enumerate(limited_keywords):
                     try:
-                        # 搜索两个平台获取最新数据
-                        logger.info(f"🔍 开始搜索关键词: {keyword}")
+                        logger.debug(f"🔍 开始搜索关键词: {keyword}")
                         results = await search_manager.search_both_platforms(keyword)
+                        search_results['buff'].extend(results.get('buff', []))
+                        search_results['youpin'].extend(results.get('youpin', []))
                         
                         # 🔥 修改：显示价格而不是数量
                         buff_results = results.get('buff', [])
                         youpin_results = results.get('youpin', [])
                         
                         # 获取最低价格
-                        buff_price = f"¥{min(item.price for item in buff_results):.2f}" if buff_results else "无"
-                        youpin_price = f"¥{min(item.price for item in youpin_results):.2f}" if youpin_results else "无"
-                        
-                        logger.info(f"🔍 搜索结果 '{keyword}': Buff={buff_price}, 悠悠有品={youpin_price}")
-                        
-                        # 🔥 如果悠悠有品搜索无结果，输出更详细的调试信息
-                        if not youpin_results:
-                            logger.warning(f"⚠️ 悠悠有品搜索无结果: {keyword}")
-                            logger.info(f"   📊 悠悠有品原始响应数据: {results.get('youpin', [])}")
+                        try:
+                            buff_price = f"¥{min(item.price for item in buff_results):.2f}" if buff_results else "无"
+                            youpin_price = f"¥{min(item.price for item in youpin_results):.2f}" if youpin_results else "无"
                             
-                            # 检查是否是API错误还是真的没有数据
-                            if isinstance(results.get('youpin'), list):
-                                logger.info(f"   ✅ 悠悠有品API调用成功，但商品列表为空")
-                            else:
-                                logger.error(f"   ❌ 悠悠有品API调用可能失败")
+                            # 🔥 确保一定显示价格信息
+                            logger.info(f"🔍 搜索结果 '{keyword}': Buff={buff_price}, 悠悠有品={youpin_price}")
+                        except Exception as price_error:
+                            # 🔥 如果价格计算失败，显示详细错误信息
+                            logger.error(f"⚠️ 计算价格时出错 '{keyword}': {price_error}")
+                            logger.info(f"🔍 搜索结果 '{keyword}': Buff={len(buff_results)}个, 悠悠有品={len(youpin_results)}个")
+                            
+                            # 显示搜索结果的原始数据用于调试
+                            if buff_results:
+                                logger.debug(f"   Buff样例: {buff_results[0].__dict__ if hasattr(buff_results[0], '__dict__') else buff_results[0]}")
+                            if youpin_results:
+                                logger.debug(f"   悠悠有品样例: {youpin_results[0].__dict__ if hasattr(youpin_results[0], '__dict__') else youpin_results[0]}")
                         
-                        # 如果某个平台搜索结果为0，记录警告
-                        if not buff_results:
-                            logger.warning(f"⚠️ Buff搜索无结果: {keyword}")
-                            logger.info(f"   📊 Buff原始响应数据: {results.get('buff', [])}")
+                        # 如果没有显示价格，至少显示数量
+                        if not buff_results and not youpin_results:
+                            logger.info(f"🔍 搜索结果 '{keyword}': 两个平台都无结果")
                         
-                        return keyword, results
+                        # 显示进度
+                        if (i + 1) % 10 == 0:
+                            logger.info(f"🔄 搜索进度: {i + 1}/{len(limited_keywords)}")
+                            
+                        # 添加延迟避免API限制
+                        await asyncio.sleep(1)
                         
                     except Exception as e:
-                        logger.error(f"🔍 增量搜索失败 {keyword}: {e}")
-                        return keyword, {'buff': [], 'youpin': []}
-            
-            # 批量处理，避免过多并发
-            batch_size = 5  # 减小批次大小
-            total_updated = 0
-            
-            for i in range(0, len(hashnames), batch_size):
-                batch_keywords = hashnames[i:i + batch_size]
-                
-                tasks = [search_and_collect(keyword) for keyword in batch_keywords]
-                batch_results = await asyncio.gather(*tasks, return_exceptions=True)
-                
-                # 收集搜索结果
-                for result in batch_results:
-                    if isinstance(result, Exception):
-                        logger.error(f"批量搜索异常: {result}")
+                        logger.error(f"搜索关键词失败 {keyword}: {e}")
+                        # 即使搜索失败也显示进度
+                        if (i + 1) % 10 == 0:
+                            logger.info(f"🔄 搜索进度: {i + 1}/{len(limited_keywords)} (包含失败项)")
                         continue
                         
-                    keyword, results = result
-                    if results:
-                        # 合并搜索结果
-                        search_results['buff'].extend(results.get('buff', []))
-                        search_results['youpin'].extend(results.get('youpin', []))
-                        total_updated += len(results.get('buff', [])) + len(results.get('youpin', []))
-                
-                # 进度报告
-                logger.info(f"🔄 增量搜索进度: {min(i + batch_size, len(hashnames))}/{len(hashnames)}")
-                
-                # 批次间延迟，避免API限制
-                await asyncio.sleep(2)
+        except Exception as e:
+            logger.error(f"增量搜索失败: {e}")
+            return []
         
         logger.info(f"📊 增量搜索完成: 获取到 {len(search_results['buff'])} 个Buff商品, {len(search_results['youpin'])} 个悠悠有品商品")
         
@@ -982,65 +1081,14 @@ class UpdateManager:
     def _regenerate_cache_from_full_data(self) -> bool:
         """
         从full data文件重新生成hash name缓存
+        暂时禁用，避免异步调用问题
         
         Returns:
             bool: 是否成功重新生成缓存
         """
-        try:
-            import os
-            import json
-            
-            buff_file = "data/buff_full.json"
-            youpin_file = "data/youpin_full.json"
-            
-            # 检查文件是否存在
-            if not os.path.exists(buff_file) or not os.path.exists(youpin_file):
-                logger.info("🔍 未找到full data文件，跳过缓存重新生成")
-                return False
-            
-            logger.info("🔍 发现full data文件，开始重新生成hash name缓存...")
-            
-            # 读取数据文件
-            with open(buff_file, 'r', encoding='utf-8') as f:
-                buff_data = json.load(f)
-            
-            with open(youpin_file, 'r', encoding='utf-8') as f:
-                youpin_data = json.load(f)
-            
-            buff_items = buff_data.get('items', [])
-            youpin_items = youpin_data.get('items', [])
-            
-            logger.info(f"📂 加载数据: Buff {len(buff_items)}个商品, 悠悠有品 {len(youpin_items)}个商品")
-            
-            # 使用saved_data_processor进行快速分析
-            from saved_data_processor import get_saved_data_processor
-            processor = get_saved_data_processor()
-            
-            # 分析并筛选有价差的商品
-            diff_items, stats = processor._analyze_with_current_filters(buff_items, youpin_items)
-            
-            if diff_items:
-                logger.info(f"🎯 分析完成: 发现 {len(diff_items)} 个有价差的商品")
-                
-                # 更新缓存和当前数据
-                self.hashname_cache.update_from_full_analysis(diff_items)
-                self.current_diff_items = diff_items
-                self._save_current_data()
-                
-                # 更新时间戳
-                self.last_full_update = datetime.now()
-                
-                logger.info("✅ HashName缓存已从full data文件重新生成")
-                return True
-            else:
-                logger.warning("⚠️ 未发现有价差的商品，无法生成缓存")
-                return False
-                
-        except Exception as e:
-            logger.error(f"❌ 从full data文件重新生成缓存失败: {e}")
-            import traceback
-            traceback.print_exc()
-            return False
+        logger.info("🔍 暂时跳过从full data文件重新生成缓存（避免异步调用问题）")
+        logger.info("   将依赖增量更新逐步建立缓存")
+        return False
 
 # 全局更新管理器实例
 _update_manager_instance = None

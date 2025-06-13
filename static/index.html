@@ -444,6 +444,9 @@
     </div>
 
     <script>
+        // 🔥 设置基础路径，支持子路径部署
+        const BASE_PATH = window.location.pathname.includes('/csgo') ? '/csgo' : '';
+        
         class BuffMonitor {
             constructor() {
                 this.items = [];
@@ -602,7 +605,7 @@
             // 更新价格区间
             async updatePriceRange(min, max) {
                 try {
-                    const response = await fetch('/api/price_range', {
+                    const response = await fetch(BASE_PATH + '/api/price_range', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ min: min, max: max })
@@ -647,7 +650,7 @@
                 
                 try {
                     // 🔥 修复：只获取缓存数据，不自动触发分析
-                    const response = await fetch('/api/data');
+                    const response = await fetch(BASE_PATH + '/api/data');
                     const result = await response.json();
                     
                     if (result.success) {
@@ -689,7 +692,7 @@
                 this.streamingActive = true;
                 this.showStreamingProgress();
                 
-                const eventSource = new EventSource('/api/stream_analyze');
+                const eventSource = new EventSource(BASE_PATH + '/api/stream_analyze');
                 
                 eventSource.onmessage = (event) => {
                     try {
@@ -848,7 +851,7 @@
             async loadStatistics() {
                 try {
                     // 移除统计信息API调用，直接使用status接口的数据
-                    const response = await fetch('/api/status');
+                    const response = await fetch(BASE_PATH + '/api/status');
                     const result = await response.json();
                     
                     if (result.success) {
@@ -881,7 +884,7 @@
 
             async loadDetailedStatistics() {
                 try {
-                    const response = await fetch('/api/data');
+                    const response = await fetch(BASE_PATH + '/api/data');
                     const result = await response.json();
                     
                     if (result.success && result.data.items.length > 0) {
@@ -907,7 +910,7 @@
 
             async loadStatus() {
                 try {
-                    const response = await fetch('/api/status');
+                    const response = await fetch(BASE_PATH + '/api/status');
                     const result = await response.json();
                     
                     if (result.success) {
@@ -1018,7 +1021,7 @@
                 console.log('🔄 开始加载配置...');
                 try {
                     // 加载设置
-                    const settingsResponse = await fetch('/api/settings');
+                    const settingsResponse = await fetch(BASE_PATH + '/api/settings');
                     const settingsResult = await settingsResponse.json();
                     
                     if (settingsResult.success) {
@@ -1070,7 +1073,7 @@
                     }
 
                     // 加载当前价格区间
-                    const rangeResponse = await fetch('/api/price_range');
+                    const rangeResponse = await fetch(BASE_PATH + '/api/price_range');
                     const rangeResult = await rangeResponse.json();
                     
                     if (rangeResult.success) {
@@ -1081,7 +1084,7 @@
                     }
                     
                     // 加载Buff价格筛选区间
-                    const buffRangeResponse = await fetch('/api/buff_price_range');
+                    const buffRangeResponse = await fetch(BASE_PATH + '/api/buff_price_range');
                     const buffRangeResult = await buffRangeResponse.json();
                     
                     if (buffRangeResult.success) {
@@ -1092,7 +1095,7 @@
                     }
                     
                     // 加载Buff在售数量筛选（显示当前值）
-                    const buffSellNumResponse = await fetch('/api/buff_sell_num');
+                    const buffSellNumResponse = await fetch(BASE_PATH + '/api/buff_sell_num');
                     const buffSellNumResult = await buffSellNumResponse.json();
                     
                     if (buffSellNumResult.success) {
@@ -1188,7 +1191,7 @@
                         return;
                     }
                     
-                    const response = await fetch('/api/settings', {
+                    const response = await fetch(BASE_PATH + '/api/settings', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(updateData)
@@ -1228,7 +1231,7 @@
                     btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i>正在更新...';
                     btn.disabled = true;
                     
-                    const response = await fetch('/api/force_update', {
+                    const response = await fetch(BASE_PATH + '/api/force_update', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' }
                     });
@@ -1260,7 +1263,7 @@
                     btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i>正在更新...';
                     btn.disabled = true;
                     
-                    const response = await fetch('/api/force_incremental_update', {
+                    const response = await fetch(BASE_PATH + '/api/force_incremental_update', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' }
                     });
@@ -1295,7 +1298,7 @@
                     
                     this.showAlert('info', '🚀 正在启动增强增量更新...');
                     
-                    const response = await fetch('/api/enhanced_incremental_update', {
+                    const response = await fetch(BASE_PATH + '/api/enhanced_incremental_update', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' }
                     });
@@ -1324,7 +1327,7 @@
             startEnhancedUpdateStatusPolling(btn, originalText) {
                 const pollInterval = setInterval(async () => {
                     try {
-                        const response = await fetch('/api/incremental_update_status');
+                        const response = await fetch(BASE_PATH + '/api/incremental_update_status');
                         const result = await response.json();
                         
                         if (result.success) {
@@ -1441,7 +1444,7 @@
             
             async loadTokenStatus() {
                 try {
-                    const response = await fetch('/api/tokens/status');
+                    const response = await fetch(BASE_PATH + '/api/tokens/status');
                     const result = await response.json();
                     
                     if (result.success) {
@@ -1503,7 +1506,7 @@
                         }
                     }
                     
-                    const response = await fetch('/api/tokens/buff', {
+                    const response = await fetch(BASE_PATH + '/api/tokens/buff', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ cookies })
@@ -1540,7 +1543,7 @@
                         return;
                     }
                     
-                    const response = await fetch('/api/tokens/youpin', {
+                    const response = await fetch(BASE_PATH + '/api/tokens/youpin', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
@@ -1580,7 +1583,7 @@
                 btn.disabled = true;
                 
                 try {
-                    const response = await fetch('/api/test/buff', { method: 'POST' });
+                    const response = await fetch(BASE_PATH + '/api/test/buff', { method: 'POST' });
                     const result = await response.json();
                     
                     if (result.success) {
@@ -1605,7 +1608,7 @@
                 btn.disabled = true;
                 
                 try {
-                    const response = await fetch('/api/test/youpin', { method: 'POST' });
+                    const response = await fetch(BASE_PATH + '/api/test/youpin', { method: 'POST' });
                     const result = await response.json();
                     
                     if (result.success) {

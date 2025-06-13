@@ -1,0 +1,24 @@
+11:24:57 | ERROR    | ❌ 系统启动失败: No module named 'improved_matcher'
+11:24:57 | ERROR    | Traceback (most recent call last):
+  File "D:\PycharmProjects\uu\main.py", line 37, in start_system
+    from update_manager import get_update_manager
+  File "D:\PycharmProjects\uu\update_manager.py", line 26, in <module>
+    from improved_matcher import ImprovedMatcher
+ModuleNotFoundError: No module named 'improved_matcher'
+
+11:26:05 | ERROR    | ❌ 系统启动失败: No module named 'improved_matcher'
+11:26:05 | ERROR    | Traceback (most recent call last):
+  File "D:\PycharmProjects\uu\main.py", line 37, in start_system
+    from update_manager import get_update_manager
+  File "D:\PycharmProjects\uu\update_manager.py", line 26, in <module>
+    from improved_matcher import ImprovedMatcher
+ModuleNotFoundError: No module named 'improved_matcher'
+
+11:31:34 | ERROR    | ❌ 系统启动失败: No module named 'improved_matcher'
+11:31:34 | ERROR    | Traceback (most recent call last):
+  File "D:\PycharmProjects\uu\main.py", line 37, in start_system
+    from update_manager import get_update_manager
+  File "D:\PycharmProjects\uu\update_manager.py", line 26, in <module>
+    from improved_matcher import ImprovedMatcher
+ModuleNotFoundError: No module named 'improved_matcher'
+
