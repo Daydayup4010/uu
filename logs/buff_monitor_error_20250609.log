@@ -1,0 +1,10 @@
+16:22:56 | ERROR    | ❌ 更新Buff数据文件失败: 'str' object has no attribute 'get'
+17:39:31 | ERROR    | ❌ 系统启动失败: expected an indented block (update_manager.py, line 232)
+17:39:31 | ERROR    | Traceback (most recent call last):
+  File "D:\PycharmProjects\uu\main.py", line 37, in start_system
+    from update_manager import get_update_manager
+  File "D:\PycharmProjects\uu\update_manager.py", line 232
+    needs_initial_update = self.hashname_cache.should_full_update()
+    ^
+IndentationError: expected an indented block
+

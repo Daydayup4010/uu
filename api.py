@@ -11,6 +11,14 @@ from flask import Flask, jsonify, request, render_template_string, Response
 import threading
 from queue import Queue
 
+# 🔥 新增：使用增强的日志配置
+try:
+    from log_config import quick_setup
+    logger = quick_setup('INFO')  # 设置日志输出到文件和控制台
+except ImportError:
+    logging.basicConfig(level=logging.INFO)
+    logger = logging.getLogger(__name__)
+
 # 导入系统组件
 from integrated_price_system import IntegratedPriceAnalyzer, PriceDiffItem, save_price_diff_data, load_price_diff_data
 from update_manager import get_update_manager
@@ -23,29 +31,31 @@ from config import Config
 from streaming_analyzer import StreamingAnalyzer
 from analysis_manager import get_analysis_manager
 
-logger = logging.getLogger(__name__)
+# 🔥 导入异步工具以抑制警告
+import asyncio_utils
 
 app = Flask(__name__)
 
 def _clear_hashname_cache():
-    """清理hashname缓存并触发全量更新（回退方案）"""
+    """清理hashname缓存并触发增量更新（优化版本）"""
     try:
         update_manager = get_update_manager()
         if hasattr(update_manager, 'hashname_cache'):
             update_manager.hashname_cache.hashnames.clear()
             update_manager.hashname_cache.last_update = None
-            logger.info("🔄 已清理hashname缓存，将重新执行全量分析")
+            logger.info("🔄 已清理hashname缓存")
         else:
             logger.warning("⚠️ UpdateManager中未找到hashname_cache")
         
-        # 触发全量更新
-        update_manager.force_full_update()
+        # 🔥 优化：触发增量更新而不是全量更新，减少阻塞
+        logger.info("🔄 启动增量更新重新构建缓存")
+        update_manager.force_incremental_update()
         
     except Exception as e:
         logger.error(f"❌ 清理hashname缓存失败: {e}")
 
 def _trigger_reprocess_from_saved_data(reason: str = "筛选条件更新"):
-    """🔥 新增：优先从保存数据重新筛选，避免重新调用API"""
+    """🔥 优先从保存数据重新筛选，避免重新调用API"""
     try:
         from saved_data_processor import get_saved_data_processor
         
@@ -53,8 +63,10 @@ def _trigger_reprocess_from_saved_data(reason: str = "筛选条件更新"):
         
         # 检查是否有有效的全量数据文件
         if not processor.has_valid_full_data():
-            logger.warning(f"⚠️ {reason}：没有找到有效的全量数据文件，回退到全量更新")
-            _clear_hashname_cache()
+            logger.warning(f"⚠️ {reason}：没有找到有效的全量数据文件，回退到增量更新")
+            # 🔥 优化：不调用force_full_update，改为增量更新
+            update_manager = get_update_manager()
+            update_manager.force_incremental_update()
             return
         
         # 从保存数据重新筛选
@@ -70,12 +82,19 @@ def _trigger_reprocess_from_saved_data(reason: str = "筛选条件更新"):
             logger.info(f"✅ {reason}：重新筛选完成，找到{len(diff_items)}个符合条件的商品")
             logger.info(f"📂 使用文件: {stats.get('buff_file', '未知')}, {stats.get('youpin_file', '未知')}")
         else:
-            logger.warning(f"⚠️ {reason}：重新筛选失败，回退到全量更新")
-            _clear_hashname_cache()
+            logger.warning(f"⚠️ {reason}：重新筛选失败，启动增量更新")
+            # 🔥 优化：不调用force_full_update，改为增量更新
+            update_manager = get_update_manager()
+            update_manager.force_incremental_update()
             
     except Exception as e:
-        logger.error(f"❌ {reason}：从保存数据重新筛选失败: {e}，回退到全量更新")
-        _clear_hashname_cache()
+        logger.error(f"❌ {reason}：从保存数据重新筛选失败: {e}，启动增量更新")
+        # 🔥 优化：不调用force_full_update，改为增量更新
+        try:
+            update_manager = get_update_manager()
+            update_manager.force_incremental_update()
+        except Exception as fallback_error:
+            logger.error(f"❌ 增量更新启动也失败: {fallback_error}")
 
 # 手动添加CORS支持
 @app.after_request
@@ -347,26 +366,26 @@ def api_settings():
                 Config.PRICE_DIFF_THRESHOLD = float(threshold)
                 updated_fields.append(f'价差阈值: {threshold}元')
             
+            # 🔥 优化：跟踪是否需要重新处理数据
+            need_reprocess = False
+            
             # 更新价格区间
             if price_min is not None and price_max is not None:
                 Config.update_price_range(float(price_min), float(price_max))
                 updated_fields.append(f'价格区间: {price_min}-{price_max}元')
-                # 🔥 优先从保存数据重新筛选，避免重新调用API
-                _trigger_reprocess_from_saved_data("价格区间更新")
+                need_reprocess = True
             
             # 更新Buff价格筛选区间
             if buff_price_min is not None and buff_price_max is not None:
                 Config.update_buff_price_range(float(buff_price_min), float(buff_price_max))
                 updated_fields.append(f'Buff价格筛选: {buff_price_min}-{buff_price_max}元')
-                # 🔥 优先从保存数据重新筛选，避免重新调用API
-                _trigger_reprocess_from_saved_data("Buff价格筛选更新")
+                need_reprocess = True
             
             # 更新Buff最小在售数量
             if buff_sell_num_min is not None:
                 Config.update_buff_sell_num_min(int(buff_sell_num_min))
                 updated_fields.append(f'Buff最小在售数量: {buff_sell_num_min}个')
-                # 🔥 优先从保存数据重新筛选，避免重新调用API
-                _trigger_reprocess_from_saved_data("Buff在售数量筛选更新")
+                need_reprocess = True
             
             # 更新最大输出数量
             if max_output_items is not None:
@@ -374,10 +393,34 @@ def api_settings():
                 updated_fields.append(f'最大输出数量: {max_output_items}个')
             
             if updated_fields:
-                return jsonify({
+                # 🔥 极速响应：先返回成功，后台处理数据
+                response_data = {
                     'success': True,
                     'message': f'设置已更新: {", ".join(updated_fields)}'
-                })
+                }
+                
+                # 🔥 后台异步重新处理，不阻塞响应
+                if need_reprocess:
+                    response_data['message'] += " (数据将在后台重新筛选)"
+                    
+                    def async_reprocess():
+                        """完全异步的重新处理"""
+                        try:
+                            import time
+                            # 等待响应发送完毕
+                            time.sleep(0.2)
+                            
+                            logger.info("🔄 [后台] 开始数据重新筛选...")
+                            _trigger_reprocess_from_saved_data("筛选条件批量更新")
+                            logger.info("✅ [后台] 数据重新筛选完成")
+                        except Exception as e:
+                            logger.error(f"❌ [后台] 数据重新筛选失败: {e}")
+                    
+                    # 启动异步处理
+                    threading.Thread(target=async_reprocess, daemon=True).start()
+                
+                # 🔥 立即返回响应，不等待任何处理
+                return jsonify(response_data)
             else:
                 return jsonify({
                     'success': False,
@@ -600,6 +643,77 @@ def api_force_incremental_update():
             'error': str(e)
         }), 500
 
+@app.route('/api/enhanced_incremental_update', methods=['POST'])
+def api_enhanced_incremental_update():
+    """🔥 新增：增强增量更新（支持价格更新和完成标识）"""
+    try:
+        from enhanced_update_manager import get_enhanced_updater
+        
+        updater = get_enhanced_updater()
+        
+        # 检查是否已在运行
+        status = updater.get_status()
+        if status['is_running']:
+            return jsonify({
+                'success': False,
+                'message': '增量更新正在进行中，请稍后再试',
+                'data': status
+            }), 409
+        
+        # 在后台执行增强增量更新
+        def run_update():
+            try:
+                loop = asyncio.new_event_loop()
+                asyncio.set_event_loop(loop)
+                result = loop.run_until_complete(updater.run_enhanced_incremental_update())
+                loop.close()
+                logger.info(f"增强增量更新完成: {result['message']}")
+            except Exception as e:
+                logger.error(f"增强增量更新异常: {e}")
+        
+        # 启动后台线程
+        import threading
+        thread = threading.Thread(target=run_update, daemon=True)
+        thread.start()
+        
+        return jsonify({
+            'success': True,
+            'message': '🚀 增强增量更新已启动，可通过状态接口查看进度',
+            'data': {
+                'status': 'started',
+                'timestamp': datetime.now().isoformat()
+            }
+        })
+        
+    except Exception as e:
+        logger.error(f"启动增强增量更新失败: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@app.route('/api/incremental_update_status', methods=['GET'])
+def api_get_incremental_update_status():
+    """🔥 新增：获取增量更新状态"""
+    try:
+        from enhanced_update_manager import get_enhanced_updater
+        
+        updater = get_enhanced_updater()
+        status = updater.get_status()
+        
+        return jsonify({
+            'success': True,
+            'message': '状态获取成功',
+            'data': status
+        })
+        
+    except Exception as e:
+        logger.error(f"获取增量更新状态失败: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
 @app.route('/api/clear_cache', methods=['POST'])
 def api_clear_cache():
     """清理hashname缓存"""
@@ -757,11 +871,21 @@ def manage_buff_token():
     elif request.method == 'POST':
         try:
             data = request.get_json()
-            token_manager.save_buff_config(data)
-            return jsonify({
-                'success': True,
-                'message': 'Buff配置已保存'
-            })
+            # 🔥 修复：使用正确的方法名
+            cookies = data.get('cookies', {})
+            headers = data.get('headers', {})
+            success = token_manager.update_buff_tokens(cookies, headers)
+            
+            if success:
+                return jsonify({
+                    'success': True,
+                    'message': 'Buff配置已保存'
+                })
+            else:
+                return jsonify({
+                    'success': False,
+                    'error': '保存Buff配置失败'
+                })
         except Exception as e:
             return jsonify({
                 'success': False,
@@ -775,9 +899,10 @@ def manage_youpin_token():
     
     if request.method == 'GET':
         try:
-            config = token_manager.load_youpin_config()
+            # 🔥 修复：使用正确的方法名
+            config = token_manager.get_youpin_config()
             # 隐藏敏感信息
-            safe_config = {k: ('***' if any(x in k.lower() for x in ['token', 'cookie', 'authorization']) else v) 
+            safe_config = {k: ('***' if any(x in k.lower() for x in ['token', 'cookie', 'authorization', 'uk', 'device']) else v) 
                           for k, v in config.items()}
             return jsonify({
                 'success': True,
@@ -792,11 +917,27 @@ def manage_youpin_token():
     elif request.method == 'POST':
         try:
             data = request.get_json()
-            token_manager.save_youpin_config(data)
-            return jsonify({
-                'success': True,
-                'message': '悠悠有品配置已保存'
-            })
+            # 🔥 修复：使用正确的方法名
+            device_info = {
+                'device_id': data.get('device_id', ''),
+                'device_uk': data.get('device_uk', ''),
+                'uk': data.get('uk', ''),
+                'b3': data.get('b3', ''),
+                'authorization': data.get('authorization', '')
+            }
+            headers = data.get('headers', {})
+            success = token_manager.update_youpin_tokens(device_info, headers)
+            
+            if success:
+                return jsonify({
+                    'success': True,
+                    'message': '悠悠有品配置已保存'
+                })
+            else:
+                return jsonify({
+                    'success': False,
+                    'error': '保存悠悠有品配置失败'
+                })
         except Exception as e:
             return jsonify({
                 'success': False,

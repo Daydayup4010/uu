@@ -220,6 +220,13 @@
                     </div>
                     
                     <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Buff最小在售数量</label>
+                        <input type="number" id="buffSellNumMin" placeholder="200" 
+                               class="w-full border border-gray-300 rounded-md px-3 py-2" min="0" step="1">
+                        <p class="text-xs text-gray-500 mt-1">只分析在售数量≥此值的Buff商品，过滤流动性差的商品</p>
+                    </div>
+                    
+                    <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">最大输出数量</label>
                         <input type="number" id="maxOutputItems" placeholder="300" 
                                class="w-full border border-gray-300 rounded-md px-3 py-2" min="1" step="1">
@@ -253,6 +260,11 @@
                                 <i class="fas fa-sync mr-1"></i>
                                 强制增量更新
                             </button>
+                            <!-- 🔥 新增：增强增量更新按钮 -->
+                            <button id="enhancedIncrementalUpdate" class="bg-purple-600 hover:bg-purple-700 text-white px-3 py-2 rounded text-sm">
+                                <i class="fas fa-rocket mr-1"></i>
+                                增强增量更新
+                            </button>
                         </div>
                         <p class="text-xs text-gray-500 mt-1">立即执行指定类型的更新</p>
                     </div>
@@ -274,6 +286,13 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">当前Buff价格筛选</label>
                         <div id="currentBuffPriceRange" class="text-sm text-blue-600 font-medium">
+                            加载中...
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">当前Buff在售数量筛选</label>
+                        <div id="currentBuffSellNum" class="text-sm text-blue-600 font-medium">
                             加载中...
                         </div>
                     </div>
@@ -515,6 +534,12 @@
                 if (forceIncrementalUpdate) {
                     forceIncrementalUpdate.addEventListener('click', () => this.forceIncrementalUpdate());
                 }
+                
+                // 🔥 新增：增强增量更新按钮事件
+                const enhancedIncrementalUpdate = document.getElementById('enhancedIncrementalUpdate');
+                if (enhancedIncrementalUpdate) {
+                    enhancedIncrementalUpdate.addEventListener('click', () => this.enhancedIncrementalUpdate());
+                }
             }
 
             // 应用筛选功能
@@ -525,6 +550,9 @@
                     const sortBy = document.getElementById('sortBy').value || 'price_diff';
                     const limit = document.getElementById('limitCount').value || 100;
                     
+                    // 保存排序方式
+                    this.sortBy = sortBy;
+                    
                     // 如果设置了价格区间，先更新后端配置
                     if (minPrice > 0 && maxPrice > 0 && minPrice < maxPrice) {
                         await this.updatePriceRange(parseFloat(minPrice), parseFloat(maxPrice));
@@ -533,7 +561,13 @@
                     // 重新加载数据
                     await this.loadData();
                     
-                    this.showAlert('success', '筛选已应用');
+                    // 🔥 修复：应用排序和限制
+                    this.applySorting();
+                    this.applyLimit(parseInt(limit));
+                    this.renderItems();
+                    this.calculateStatistics();
+                    
+                                            this.showAlert('success', '✅ 筛选已应用');
                 } catch (error) {
                     console.error('应用筛选失败:', error);
                     this.showAlert('error', '筛选失败: ' + error.message);
@@ -549,13 +583,16 @@
                     document.getElementById('sortBy').value = 'price_diff';
                     document.getElementById('limitCount').value = '100';
                     
+                    // 重置排序方式
+                    this.sortBy = 'price_diff';
+                    
                     // 重置为默认价格区间
                     await this.updatePriceRange(3.0, 5.0);
                     
                     // 重新加载数据
                     await this.loadData();
                     
-                    this.showAlert('success', '筛选已重置');
+                                            this.showAlert('success', '✅ 筛选已重置');
                 } catch (error) {
                     console.error('重置筛选失败:', error);
                     this.showAlert('error', '重置失败: ' + error.message);
@@ -616,6 +653,12 @@
                     if (result.success) {
                         this.items = result.data.items;
                         document.getElementById('totalCount').textContent = this.items.length;
+                        
+                        // 🔥 修复：自动应用当前的排序设置
+                        if (this.sortBy) {
+                            this.applySorting();
+                        }
+                        
                         this.renderItems();
                         this.calculateStatistics();
                         
@@ -765,7 +808,7 @@
                     this.calculateStatistics();
                     
                     // 显示增量提示
-                    this.showAlert('success', `新发现 ${newItems.length} 个价差商品！`);
+                                            this.showAlert('success', `🎉 新发现 ${newItems.length} 个价差商品！`);
                 }
             }
 
@@ -774,7 +817,7 @@
                 const totalFound = data.total_found || 0;
                 const totalProcessed = data.total_processed || 0;
                 
-                this.showAlert('success', `分析完成！处理了 ${totalProcessed.toLocaleString()} 个商品，发现 ${totalFound.toLocaleString()} 个价差商品`);
+                                        this.showAlert('success', `🎯 分析完成！处理了 ${totalProcessed.toLocaleString()} 个商品，发现 ${totalFound.toLocaleString()} 个价差商品`);
                 this.stopStreaming();
             }
 
@@ -1004,6 +1047,14 @@
                             console.warn('⚠️ 未收到buff_price_range数据');
                         }
                         
+                        if (data.buff_sell_num) {
+                            const buffSellNumInput = document.getElementById('buffSellNumMin');
+                            if (buffSellNumInput && data.buff_sell_num.min !== null && data.buff_sell_num.min !== undefined) {
+                                buffSellNumInput.value = data.buff_sell_num.min;
+                            }
+                            console.log('🔧 Buff在售数量设置已加载:', data.buff_sell_num.min);
+                        }
+                        
                         if (data.update_intervals) {
                             const fullInterval = document.getElementById('fullUpdateInterval');
                             const incrementalInterval = document.getElementById('incrementalUpdateInterval');
@@ -1039,6 +1090,18 @@
                             currentBuffRange.textContent = buffRangeResult.data.current_range;
                         }
                     }
+                    
+                    // 加载Buff在售数量筛选（显示当前值）
+                    const buffSellNumResponse = await fetch('/api/buff_sell_num');
+                    const buffSellNumResult = await buffSellNumResponse.json();
+                    
+                    if (buffSellNumResult.success) {
+                        const currentBuffSellNum = document.getElementById('currentBuffSellNum');
+                        if (currentBuffSellNum) {
+                            currentBuffSellNum.textContent = `≥ ${buffSellNumResult.data.min_sell_num} 个`;
+                        }
+                        console.log('🔧 Buff在售数量当前值已显示:', buffSellNumResult.data.min_sell_num);
+                    }
                 } catch (error) {
                     console.error('加载配置失败:', error);
                 }
@@ -1051,6 +1114,7 @@
                     const priceMax = document.getElementById('priceRangeMax').value;
                     const buffPriceMin = document.getElementById('buffPriceMin').value;
                     const buffPriceMax = document.getElementById('buffPriceMax').value;
+                    const buffSellNumMin = document.getElementById('buffSellNumMin').value;
                     const maxOutputItems = document.getElementById('maxOutputItems').value;
                     
                     // 验证价格区间
@@ -1085,6 +1149,16 @@
                         }
                     }
                     
+                    // 验证Buff在售数量
+                    if (buffSellNumMin) {
+                        const num = parseInt(buffSellNumMin);
+                        
+                        if (num < 0) {
+                            this.showAlert('error', 'Buff在售数量不能为负数');
+                            return;
+                        }
+                    }
+                    
                     const updateData = {};
                     
                     if (threshold) {
@@ -1101,12 +1175,16 @@
                         updateData.buff_price_max = parseFloat(buffPriceMax);
                     }
                     
+                    if (buffSellNumMin) {
+                        updateData.buff_sell_num_min = parseInt(buffSellNumMin);
+                    }
+                    
                     if (maxOutputItems) {
                         updateData.max_output_items = parseInt(maxOutputItems);
                     }
                     
                     if (Object.keys(updateData).length === 0) {
-                        this.showAlert('warning', '没有设置需要保存');
+                        this.showAlert('warning', '⚠️ 没有设置需要保存');
                         return;
                     }
                     
@@ -1119,16 +1197,21 @@
                     const result = await response.json();
                     
                     if (result.success) {
-                        this.showAlert('success', '设置已保存: ' + result.message);
-                        this.closeSettings();
+                        // 🔥 优化：先显示成功提示，稍后关闭设置窗口
+                        this.showAlert('success', '✅ 设置保存成功！' + result.message);
                         
                         // 重新加载配置显示
                         setTimeout(() => this.loadConfig(), 500);
                         
-                        // 重新加载数据
-                        setTimeout(() => this.loadData(), 1000);
+                        // 🔥 延迟关闭设置窗口，让用户看到成功提示
+                        setTimeout(() => {
+                            this.closeSettings();
+                            // 重新加载数据
+                            this.loadData();
+                        }, 2000);
+                        
                     } else {
-                        this.showAlert('error', '保存失败: ' + result.error);
+                        this.showAlert('error', '❌ 保存失败: ' + result.error);
                     }
                 } catch (error) {
                     console.error('保存设置失败:', error);
@@ -1153,11 +1236,11 @@
                     const result = await response.json();
                     
                     if (result.success) {
-                        this.showAlert('success', result.message);
+                        this.showAlert('success', '🚀 ' + result.message);
                         // 延迟重新加载数据
                         setTimeout(() => this.loadData(), 2000);
                     } else {
-                        this.showAlert('error', '全量更新失败: ' + (result.error || '未知错误'));
+                        this.showAlert('error', '❌ 全量更新失败: ' + (result.error || '未知错误'));
                     }
                 } catch (error) {
                     console.error('强制全量更新失败:', error);
@@ -1185,11 +1268,11 @@
                     const result = await response.json();
                     
                     if (result.success) {
-                        this.showAlert('success', result.message);
+                        this.showAlert('success', '⚡ ' + result.message);
                         // 延迟重新加载数据
                         setTimeout(() => this.loadData(), 1000);
                     } else {
-                        this.showAlert('error', '增量更新失败: ' + (result.error || '未知错误'));
+                        this.showAlert('error', '❌ 增量更新失败: ' + (result.error || '未知错误'));
                     }
                 } catch (error) {
                     console.error('强制增量更新失败:', error);
@@ -1200,20 +1283,104 @@
                 }
             }
 
-            showAlert(type, message) {
-                // 创建或更新提示框
-                let alertDiv = document.getElementById('alertBox');
-                if (!alertDiv) {
-                    alertDiv = document.createElement('div');
-                    alertDiv.id = 'alertBox';
-                    alertDiv.className = 'fixed top-4 right-4 z-50 max-w-sm';
-                    document.body.appendChild(alertDiv);
-                }
+            // 🔥 新增：增强增量更新（支持价格更新和完成标识）
+            async enhancedIncrementalUpdate() {
+                const btn = document.getElementById('enhancedIncrementalUpdate');
+                const originalText = btn.innerHTML;
                 
-                const alertClass = type === 'success' ? 'bg-green-100 text-green-800 border-green-400' : 
-                                  type === 'warning' ? 'bg-yellow-100 text-yellow-800 border-yellow-400' :
-                                  type === 'info' ? 'bg-blue-100 text-blue-800 border-blue-400' :
-                                  'bg-red-100 text-red-800 border-red-400';
+                try {
+                    // 禁用按钮防止重复点击
+                    btn.disabled = true;
+                    btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> 启动中...';
+                    
+                    this.showAlert('info', '🚀 正在启动增强增量更新...');
+                    
+                    const response = await fetch('/api/enhanced_incremental_update', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' }
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        this.showAlert('success', result.message);
+                        
+                        // 开始轮询状态
+                        this.startEnhancedUpdateStatusPolling(btn, originalText);
+                    } else {
+                        this.showAlert('error', `❌ ${result.message}`);
+                        btn.innerHTML = originalText;
+                        btn.disabled = false;
+                    }
+                } catch (error) {
+                    console.error('增强增量更新失败:', error);
+                    this.showAlert('error', '增强增量更新失败: ' + error.message);
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                }
+            }
+
+            // 🔥 新增：开始状态轮询
+            startEnhancedUpdateStatusPolling(btn, originalText) {
+                const pollInterval = setInterval(async () => {
+                    try {
+                        const response = await fetch('/api/incremental_update_status');
+                        const result = await response.json();
+                        
+                        if (result.success) {
+                            const status = result.data;
+                            
+                            if (status.is_running) {
+                                // 更新按钮状态
+                                const progress = status.completion_percentage || 0;
+                                const task = status.current_task || '处理中';
+                                btn.innerHTML = `<i class="fas fa-spinner fa-spin mr-1"></i> ${task} (${progress}%)`;
+                                
+                                // 显示进度信息
+                                if (status.processed_count > 0) {
+                                    this.showAlert('info', 
+                                        `🔄 ${task} - 已处理: ${status.processed_count} 个商品，已更新: ${status.updated_count} 个价格`, 
+                                        false); // 不自动隐藏
+                                }
+                            } else {
+                                // 更新完成
+                                clearInterval(pollInterval);
+                                btn.innerHTML = originalText;
+                                btn.disabled = false;
+                                
+                                // 重新加载数据
+                                await this.loadData();
+                                
+                                // 显示完成通知
+                                const successMsg = status.updated_count > 0 ? 
+                                    `✅ 增强增量更新完成！处理了 ${status.processed_count} 个商品，更新了 ${status.updated_count} 个价格` :
+                                    `✅ 增量更新完成！已检查 ${status.processed_count} 个商品，暂无价格变化`;
+                                
+                                this.showAlert('success', successMsg);
+                            }
+                        } else {
+                            throw new Error(result.message || '获取状态失败');
+                        }
+                    } catch (error) {
+                        console.error('获取更新状态失败:', error);
+                        clearInterval(pollInterval);
+                        btn.innerHTML = originalText;
+                        btn.disabled = false;
+                        this.showAlert('error', '获取更新状态失败: ' + error.message);
+                    }
+                }, 3000); // 每3秒检查一次状态
+            }
+
+            showAlert(type, message) {
+                // 🔥 优化：每次创建新的提示框，支持多个提示同时显示
+                const alertDiv = document.createElement('div');
+                alertDiv.className = 'fixed top-4 right-4 z-50 max-w-sm mb-2';
+                
+                // 🔥 优化：根据类型设置不同的样式和动画
+                const alertClass = type === 'success' ? 'bg-green-500 text-white border-green-600 shadow-lg' : 
+                                  type === 'warning' ? 'bg-yellow-500 text-white border-yellow-600 shadow-lg' :
+                                  type === 'info' ? 'bg-blue-500 text-white border-blue-600 shadow-lg' :
+                                  'bg-red-500 text-white border-red-600 shadow-lg';
                 
                 const icon = type === 'success' ? 'check-circle' : 
                             type === 'warning' ? 'exclamation-triangle' : 
@@ -1221,23 +1388,37 @@
                             'times-circle';
                 
                 alertDiv.innerHTML = `
-                    <div class="border ${alertClass} rounded-lg p-4 shadow-lg">
+                    <div class="border ${alertClass} rounded-lg p-4 transform transition-all duration-300 translate-x-full opacity-0" id="alertContent">
                         <div class="flex items-center">
-                            <i class="fas fa-${icon} mr-2"></i>
-                            <span>${message}</span>
-                            <button onclick="this.parentElement.parentElement.remove()" class="ml-auto pl-2">
+                            <i class="fas fa-${icon} mr-3 text-lg"></i>
+                            <span class="font-medium">${message}</span>
+                            <button onclick="this.parentElement.parentElement.parentElement.remove()" class="ml-auto pl-3 text-white hover:text-gray-200">
                                 <i class="fas fa-times"></i>
                             </button>
                         </div>
                     </div>
                 `;
                 
+                document.body.appendChild(alertDiv);
+                
+                // 🔥 添加滑入动画
+                setTimeout(() => {
+                    const content = alertDiv.querySelector('#alertContent');
+                    content.classList.remove('translate-x-full', 'opacity-0');
+                    content.classList.add('translate-x-0', 'opacity-100');
+                }, 100);
+                
+                // 🔥 优化：成功提示显示更长时间
+                const hideDelay = type === 'success' ? 4000 : type === 'error' ? 6000 : 3000;
+                
                 // 自动隐藏
                 setTimeout(() => {
                     if (alertDiv.parentNode) {
-                        alertDiv.remove();
+                        const content = alertDiv.querySelector('#alertContent');
+                        content.classList.add('translate-x-full', 'opacity-0');
+                        setTimeout(() => alertDiv.remove(), 300);
                     }
-                }, 5000);
+                }, hideDelay);
             }
 
             // Token管理方法
@@ -1302,7 +1483,7 @@
                     const otherCookiesText = document.getElementById('buffOtherCookies').value.trim();
                     
                     if (!session || !csrfToken) {
-                        alert('请输入Session和CSRF Token');
+                        this.showAlert('warning', '⚠️ 请输入Session和CSRF Token');
                         return;
                     }
                     
@@ -1317,7 +1498,7 @@
                             const otherCookies = JSON.parse(otherCookiesText);
                             Object.assign(cookies, otherCookies);
                         } catch (e) {
-                            alert('其他Cookies格式错误，请使用正确的JSON格式');
+                            this.showAlert('warning', '⚠️ 其他Cookies格式错误，请使用正确的JSON格式');
                             return;
                         }
                     }
@@ -1331,18 +1512,18 @@
                     const result = await response.json();
                     
                     if (result.success) {
-                        alert('Buff Token更新成功！');
+                        this.showAlert('success', '🔑 Buff Token更新成功！');
                         this.loadTokenStatus();
                         // 清空输入框
                         document.getElementById('buffSession').value = '';
                         document.getElementById('buffCsrfToken').value = '';
                         document.getElementById('buffOtherCookies').value = '';
                     } else {
-                        alert('更新失败: ' + (result.error || result.detail));
+                        this.showAlert('error', '❌ Buff Token更新失败: ' + (result.error || result.detail));
                     }
                 } catch (error) {
                     console.error('更新Buff Token失败:', error);
-                    alert('更新失败: ' + error.message);
+                    this.showAlert('error', '❌ Buff Token更新失败: ' + error.message);
                 }
             }
             
@@ -1355,7 +1536,7 @@
                     const authorization = document.getElementById('youpinAuthorization').value.trim();
                     
                     if (!deviceId || !uk) {
-                        alert('请至少输入Device ID和UK');
+                        this.showAlert('warning', '⚠️ 请至少输入Device ID和UK');
                         return;
                     }
                     
@@ -1374,7 +1555,7 @@
                     const result = await response.json();
                     
                     if (result.success) {
-                        alert('悠悠有品Token更新成功！');
+                        this.showAlert('success', '🔑 悠悠有品Token更新成功！');
                         this.loadTokenStatus();
                         // 清空输入框
                         document.getElementById('youpinDeviceId').value = '';
@@ -1383,11 +1564,11 @@
                         document.getElementById('youpinB3').value = '';
                         document.getElementById('youpinAuthorization').value = '';
                     } else {
-                        alert('更新失败: ' + (result.error || result.detail));
+                        this.showAlert('error', '❌ 悠悠有品Token更新失败: ' + (result.error || result.detail));
                     }
                 } catch (error) {
                     console.error('更新悠悠有品Token失败:', error);
-                    alert('更新失败: ' + error.message);
+                    this.showAlert('error', '❌ 悠悠有品Token更新失败: ' + error.message);
                 }
             }
             
@@ -1403,13 +1584,13 @@
                     const result = await response.json();
                     
                     if (result.success) {
-                        alert(`Buff连接测试成功！\n${result.message}`);
+                        this.showAlert('success', `🔗 Buff连接测试成功！${result.message}`);
                     } else {
-                        alert(`Buff连接测试失败：\n${result.error}`);
+                        this.showAlert('error', `❌ Buff连接测试失败：${result.error}`);
                     }
                 } catch (error) {
                     console.error('测试Buff连接失败:', error);
-                    alert('测试失败: ' + error.message);
+                    this.showAlert('error', '❌ Buff连接测试失败: ' + error.message);
                 } finally {
                     btn.innerHTML = originalText;
                     btn.disabled = false;
@@ -1428,13 +1609,13 @@
                     const result = await response.json();
                     
                     if (result.success) {
-                        alert(`悠悠有品连接测试成功！\n${result.message}`);
+                        this.showAlert('success', `🔗 悠悠有品连接测试成功！${result.message}`);
                     } else {
-                        alert(`悠悠有品连接测试失败：\n${result.error}`);
+                        this.showAlert('error', `❌ 悠悠有品连接测试失败：${result.error}`);
                     }
                 } catch (error) {
                     console.error('测试悠悠有品连接失败:', error);
-                    alert('测试失败: ' + error.message);
+                    this.showAlert('error', '❌ 悠悠有品连接测试失败: ' + error.message);
                 } finally {
                     btn.innerHTML = originalText;
                     btn.disabled = false;
@@ -1447,6 +1628,13 @@
                     this.items.sort((a, b) => (b.price_diff || 0) - (a.price_diff || 0));
                 } else if (this.sortBy === 'profit_margin') {
                     this.items.sort((a, b) => (b.profit_rate || 0) - (a.profit_rate || 0));
+                }
+            }
+
+            // 🔥 新增：应用数量限制
+            applyLimit(limit) {
+                if (limit > 0 && this.items.length > limit) {
+                    this.items = this.items.slice(0, limit);
                 }
             }
 

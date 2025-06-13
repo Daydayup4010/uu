@@ -16,26 +16,26 @@ class Config:
     """系统配置类"""
     
     # 🔥 价格差异区间筛选（元）- 新功能！
-    PRICE_DIFF_MIN: float = float(os.getenv('PRICE_DIFF_MIN', 2.0))    # 最小价差
-    PRICE_DIFF_MAX: float = float(os.getenv('PRICE_DIFF_MAX', 100.0))    # 最大价差
+    PRICE_DIFF_MIN: float = float(os.getenv('PRICE_DIFF_MIN', 0.1))    # 最小价差（默认0.1元，排除0差价）
+    PRICE_DIFF_MAX: float = float(os.getenv('PRICE_DIFF_MAX', 10000.0))    # 最大价差
     
     # 🔥 Buff饰品价格区间筛选（用于增量更新）
-    BUFF_PRICE_MIN: float = float(os.getenv('BUFF_PRICE_MIN', 1.0))   # Buff最小价格
-    BUFF_PRICE_MAX: float = float(os.getenv('BUFF_PRICE_MAX', 100.0)) # Buff最大价格
+    BUFF_PRICE_MIN: float = float(os.getenv('BUFF_PRICE_MIN', 0.0))   # Buff最小价格
+    BUFF_PRICE_MAX: float = float(os.getenv('BUFF_PRICE_MAX', 1000.0)) # Buff最大价格
     
     # 🔥 Buff在售数量筛选
-    BUFF_SELL_NUM_MIN: int = int(os.getenv('BUFF_SELL_NUM_MIN', 100))   # Buff最小在售数量
+    BUFF_SELL_NUM_MIN: int = int(os.getenv('BUFF_SELL_NUM_MIN', 200))   # Buff最小在售数量
     
     # 兼容性：保留原来的阈值配置
     PRICE_DIFF_THRESHOLD: float = float(os.getenv('PRICE_DIFF_THRESHOLD', 3.0))
     
     # 🔥 更新机制配置
     FULL_UPDATE_INTERVAL_HOURS: int = 10     # 全量更新间隔（小时）
-    INCREMENTAL_UPDATE_INTERVAL_MINUTES: int = 10  # 增量更新间隔（分钟）
+    INCREMENTAL_UPDATE_INTERVAL_MINUTES: int = 10 # 增量更新间隔（分钟）
     INCREMENTAL_CACHE_SIZE: int = 100000       # 增量缓存的hashname数量
     
     # 商品数量配置 - 重新定义语义
-    MAX_OUTPUT_ITEMS: int = 300          # 🔥 修改：最大输出商品数量（筛选后）
+    MAX_OUTPUT_ITEMS: int = 30000          # 🔥 修改：最大输出商品数量（筛选后）
     BUFF_MAX_PAGES: int = 2000            # Buff最大获取页数
     YOUPIN_MAX_PAGES: int = 2000           # 悠悠有品最大获取页数
     MONITOR_MAX_ITEMS: int = 3000         # 监控服务处理的最大商品数量
@@ -50,8 +50,13 @@ class Config:
     
     # 请求间隔（秒）
     REQUEST_DELAY: float = 2.0          # 请求延迟（秒）
-    BUFF_API_DELAY: float = 6.0         # Buff API单次请求延迟（秒）
-    YOUPIN_API_DELAY: float = 6.0       # 🔥 新增：悠悠有品API延迟（秒），可调节
+    BUFF_API_DELAY: float = 8.0         # Buff API单次请求延迟（秒）- 用于全量更新
+    YOUPIN_API_DELAY: float = 6.0       # 🔥 新增：悠悠有品API延迟（秒）- 用于全量更新
+    
+    # 🔥 新增：专门用于搜索的API延迟（增量更新时使用）
+    BUFF_SEARCH_DELAY: float = 5.0      # Buff搜索API延迟（秒）- 搜索相对简单，可以更快
+    YOUPIN_SEARCH_DELAY: float = 4.0    # 悠悠有品搜索API延迟（秒）- 搜索相对简单，可以更快
+    
     RETRY_DELAY: float = 2.0             # 重试延迟
     
     # 数据存储

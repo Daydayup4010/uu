@@ -13,9 +13,10 @@ import json
 import time
 import logging
 import re
-from typing import List, Dict, Optional, Tuple
+from typing import List, Dict, Optional, Tuple, Set
 from dataclasses import dataclass, asdict
 from datetime import datetime
+from difflib import SequenceMatcher
 
 from config import Config
 from models import SkinItem
@@ -29,6 +30,7 @@ class PriceDiffItem:
     """价差商品数据类"""
     id: str
     name: str
+    hash_name: str  # 🔥 新增：英文格式的hash_name字段，用于API搜索
     buff_price: float
     youpin_price: float
     price_diff: float
@@ -387,6 +389,151 @@ class BuffAPIClient:
                     return None
         return None
 
+class ImprovedMatcher:
+    """改进的商品匹配器"""
+    
+    def __init__(self):
+        self.exact_matches = 0
+        self.normalized_matches = 0
+        self.weapon_matches = 0
+        self.fuzzy_matches = 0
+        self.no_matches = 0
+    
+    def normalize_hash_name(self, hash_name: str) -> str:
+        """规范化Hash名称"""
+        if not hash_name:
+            return ""
+        
+        # 1. 移除多余空格
+        normalized = re.sub(r'\s+', ' ', hash_name.strip())
+        
+        # 2. 统一特殊字符
+        # 将全角字符转为半角
+        normalized = normalized.replace('（', '(').replace('）', ')')
+        normalized = normalized.replace('｜', '|')
+        
+        # 3. 统一大小写（保持原有大小写，但用于比较时忽略）
+        return normalized
+    
+    def extract_weapon_name(self, hash_name: str) -> str:
+        """提取武器名称（去除磨损等级）"""
+        if not hash_name:
+            return ""
+        
+        # 移除磨损等级，如 (Factory New), (Field-Tested), (Battle-Scarred) 等
+        weapon_name = re.sub(r'\s*\([^)]*\)\s*$', '', hash_name)
+        
+        # 移除 StatTrak™ 标记进行更广泛的匹配
+        weapon_name_no_stattrak = re.sub(r'StatTrak™?\s*', '', weapon_name)
+        
+        return weapon_name_no_stattrak.strip()
+    
+    def calculate_similarity(self, str1: str, str2: str) -> float:
+        """计算两个字符串的相似度"""
+        if not str1 or not str2:
+            return 0.0
+        
+        return SequenceMatcher(None, str1.lower(), str2.lower()).ratio()
+    
+    def find_best_match(self, buff_hash: str, youpin_hashes: Set[str], 
+                       youpin_price_map: Dict[str, float]) -> Optional[Tuple[float, str, str]]:
+        """
+        为Buff商品找到最佳匹配的悠悠有品商品
+        返回: (price, match_type, matched_hash) 或 None
+        """
+        if not buff_hash or not youpin_hashes:
+            return None
+        
+        # 1. 精确匹配
+        if buff_hash in youpin_hashes and buff_hash in youpin_price_map:
+            self.exact_matches += 1
+            return (youpin_price_map[buff_hash], "精确匹配", buff_hash)
+        
+        # 2. 规范化后精确匹配
+        normalized_buff = self.normalize_hash_name(buff_hash)
+        for youpin_hash in youpin_hashes:
+            normalized_youpin = self.normalize_hash_name(youpin_hash)
+            if normalized_buff == normalized_youpin and youpin_hash in youpin_price_map:
+                self.normalized_matches += 1
+                return (youpin_price_map[youpin_hash], "规范化匹配", youpin_hash)
+        
+        # 3. 武器名称匹配（去除磨损等级）
+        weapon_name_buff = self.extract_weapon_name(buff_hash)
+        if weapon_name_buff:
+            for youpin_hash in youpin_hashes:
+                weapon_name_youpin = self.extract_weapon_name(youpin_hash)
+                if weapon_name_buff.lower() == weapon_name_youpin.lower() and youpin_hash in youpin_price_map:
+                    self.weapon_matches += 1
+                    return (youpin_price_map[youpin_hash], "武器名称匹配", youpin_hash)
+        
+        # 4. 高相似度模糊匹配（90%以上相似度）
+        best_match = None
+        best_similarity = 0.9  # 最低90%相似度
+        
+        for youpin_hash in youpin_hashes:
+            if youpin_hash in youpin_price_map:
+                similarity = self.calculate_similarity(buff_hash, youpin_hash)
+                if similarity > best_similarity:
+                    best_similarity = similarity
+                    best_match = youpin_hash
+        
+        if best_match:
+            self.fuzzy_matches += 1
+            return (youpin_price_map[best_match], f"模糊匹配({best_similarity:.1%})", best_match)
+        
+        # 5. 武器名称模糊匹配（85%以上相似度）
+        weapon_name_buff = self.extract_weapon_name(buff_hash)
+        if weapon_name_buff and len(weapon_name_buff) > 5:  # 只对较长的武器名称进行模糊匹配
+            best_weapon_match = None
+            best_weapon_similarity = 0.85
+            
+            for youpin_hash in youpin_hashes:
+                if youpin_hash in youpin_price_map:
+                    weapon_name_youpin = self.extract_weapon_name(youpin_hash)
+                    if weapon_name_youpin and len(weapon_name_youpin) > 5:
+                        similarity = self.calculate_similarity(weapon_name_buff, weapon_name_youpin)
+                        if similarity > best_weapon_similarity:
+                            best_weapon_similarity = similarity
+                            best_weapon_match = youpin_hash
+            
+            if best_weapon_match:
+                self.fuzzy_matches += 1
+                return (youpin_price_map[best_weapon_match], f"武器模糊匹配({best_weapon_similarity:.1%})", best_weapon_match)
+        
+        # 没有找到匹配
+        self.no_matches += 1
+        return None
+    
+    def get_statistics(self) -> Dict[str, int]:
+        """获取匹配统计信息"""
+        total = self.exact_matches + self.normalized_matches + self.weapon_matches + self.fuzzy_matches + self.no_matches
+        
+        return {
+            'total_processed': total,
+            'exact_matches': self.exact_matches,
+            'normalized_matches': self.normalized_matches,
+            'weapon_matches': self.weapon_matches,
+            'fuzzy_matches': self.fuzzy_matches,
+            'no_matches': self.no_matches,
+            'total_matches': total - self.no_matches,
+            'match_rate': ((total - self.no_matches) / total * 100) if total > 0 else 0
+        }
+    
+    def print_statistics(self):
+        """打印匹配统计信息"""
+        stats = self.get_statistics()
+        
+        print(f"\n📊 改进匹配算法统计:")
+        print(f"   总处理商品: {stats['total_processed']}")
+        print(f"   总匹配数量: {stats['total_matches']}")
+        print(f"   匹配成功率: {stats['match_rate']:.1f}%")
+        print(f"\n🎯 匹配类型分布:")
+        print(f"   精确匹配: {stats['exact_matches']} ({stats['exact_matches']/stats['total_processed']*100:.1f}%)")
+        print(f"   规范化匹配: {stats['normalized_matches']} ({stats['normalized_matches']/stats['total_processed']*100:.1f}%)")
+        print(f"   武器名称匹配: {stats['weapon_matches']} ({stats['weapon_matches']/stats['total_processed']*100:.1f}%)")
+        print(f"   模糊匹配: {stats['fuzzy_matches']} ({stats['fuzzy_matches']/stats['total_processed']*100:.1f}%)")
+        print(f"   未匹配: {stats['no_matches']} ({stats['no_matches']/stats['total_processed']*100:.1f}%)")
+
 class IntegratedPriceAnalyzer:
     """集成价格分析器"""
     
@@ -479,6 +626,9 @@ class IntegratedPriceAnalyzer:
         print(f"✅ 成功获取 {total_items} 个Buff商品")
         print(f"✅ 成功获取 {youpin_count} 个悠悠有品商品")
         
+        # 🔥 新增：保存完整数据为 full data 文件
+        await self._save_full_data(buff_data, youpin_items)
+        
         # 🔥 修正：处理所有商品，不限制数量
         items_to_process = items  # 处理所有商品
         print(f"🔄 将处理所有 {len(items_to_process)} 个商品进行价格匹配...")
@@ -525,9 +675,9 @@ class IntegratedPriceAnalyzer:
         
         print(f"\n🔄 开始处理 {len(items_to_process)} 个商品...")
         
-        # 统计匹配类型
-        hash_match_count = 0
-        name_match_count = 0
+        # 🔥 使用改进的匹配算法
+        improved_matcher = ImprovedMatcher()
+        youpin_hashes = set(youpin_hash_map.keys())
         
         # 处理每个商品
         for i, item_data in enumerate(items_to_process, 1):
@@ -547,52 +697,19 @@ class IntegratedPriceAnalyzer:
                 if not Config.is_buff_sell_num_valid(buff_item.sell_num):
                     continue
             
-            # 🔥 只使用Hash精确匹配 - 移除模糊匹配
-            youpin_price = None
-            matched_by = None
-            matched_name = None
+            # 🔥 使用改进匹配算法找到最佳匹配
+            match_result = improved_matcher.find_best_match(
+                buff_item.hash_name, 
+                youpin_hashes, 
+                youpin_hash_map
+            )
             
-            # 1. 优先使用Hash名称精确匹配
-            if buff_item.hash_name and buff_item.hash_name in youpin_hash_map:
-                youpin_price_raw = youpin_hash_map[buff_item.hash_name]
-                try:
-                    youpin_price = float(youpin_price_raw) if youpin_price_raw else None
-                    if youpin_price:
-                        matched_by = "Hash精确匹配"
-                        matched_name = buff_item.hash_name
-                        found_count += 1
-                        hash_match_count += 1
-                except (ValueError, TypeError):
-                    youpin_price = None
-            
-            # 2. 如果Hash匹配失败，尝试商品名称匹配（备用）
-            if not youpin_price:
-                if buff_item.name in youpin_name_map:
-                    youpin_price_raw = youpin_name_map[buff_item.name]
-                    try:
-                        youpin_price = float(youpin_price_raw) if youpin_price_raw else None
-                        if youpin_price:
-                            matched_by = "名称精确匹配"
-                            matched_name = buff_item.name
-                            found_count += 1
-                            name_match_count += 1
-                    except (ValueError, TypeError):
-                        youpin_price = None
-            
-            # 🔥 移除模糊匹配 - 如果Hash和名称都匹配失败，直接跳过
-            # 注释掉原来的模糊匹配代码：
-            # else:
-            #     # 3. 最后尝试模糊匹配（仅作为最后手段）
-            #     result = self._fuzzy_match_price_with_name(buff_item.name, youpin_name_map)
-            #     if result:
-            #         youpin_price, matched_name = result
-            #         matched_by = "模糊匹配"
-            #         found_count += 1
-            #         fuzzy_match_count += 1
-            
-            # 如果没有找到悠悠有品价格，跳过
-            if not youpin_price:
+            # 如果没有找到匹配，跳过
+            if not match_result:
                 continue
+            
+            youpin_price, matched_by, matched_name = match_result
+            found_count += 1
             
             # 计算价差
             if youpin_price and buff_item.buff_price:
@@ -606,10 +723,14 @@ class IntegratedPriceAnalyzer:
                 if Config.is_price_diff_in_range(price_diff):
                     profitable_count += 1
                     
+                    # 🔥 修复：提取hash_name，优先使用market_hash_name
+                    hash_name = getattr(buff_item, 'market_hash_name', None) or getattr(buff_item, 'hash_name', None) or buff_item.name
+                    
                     # 创建价差商品
                     diff_item = PriceDiffItem(
                         id=buff_item.id,
                         name=buff_item.name,
+                        hash_name=hash_name,  # 🔥 新增hash_name字段
                         buff_price=buff_item.buff_price,
                         youpin_price=youpin_price,
                         price_diff=price_diff,
@@ -642,10 +763,8 @@ class IntegratedPriceAnalyzer:
         print(f"   悠悠有品覆盖率: {(found_count/processed_count)*100:.1f}%")
         print(f"   符合价差区间: {len(diff_items)} 个商品")
         
-        print(f"\n🎯 匹配类型统计:")
-        print(f"   Hash精确匹配: {hash_match_count} 个 ({(hash_match_count/found_count)*100:.1f}%)" if found_count > 0 else "   Hash精确匹配: 0 个")
-        print(f"   名称精确匹配: {name_match_count} 个 ({(name_match_count/found_count)*100:.1f}%)" if found_count > 0 else "   名称精确匹配: 0 个")
-        print(f"   🔥 已禁用模糊匹配 - 只使用精确匹配提高准确性")
+        # 🔥 显示改进匹配算法的详细统计
+        improved_matcher.print_statistics()
         
         # 按利润率排序
         diff_items.sort(key=lambda x: x.profit_rate, reverse=True)
@@ -670,6 +789,95 @@ class IntegratedPriceAnalyzer:
         
         async with OptimizedYoupinClient() as optimized_client:
             return await optimized_client.get_all_items_safe(max_pages=Config.YOUPIN_MAX_PAGES)
+    
+    async def _save_full_data(self, buff_data: List[Dict], youpin_data: List[Dict]):
+        """保存完整数据为 full data 文件（直接覆盖，不使用时间戳）"""
+        try:
+            import json
+            import os
+            from datetime import datetime
+            
+            # 确保数据目录存在
+            data_dir = "data"
+            if not os.path.exists(data_dir):
+                os.makedirs(data_dir)
+            
+            # 保存 Buff 完整数据 - 直接覆盖，不用时间戳
+            if buff_data:
+                buff_filename = os.path.join(data_dir, "buff_full.json")
+                
+                # 计算实际页数
+                actual_pages = len(buff_data) // Config.BUFF_PAGE_SIZE
+                if len(buff_data) % Config.BUFF_PAGE_SIZE > 0:
+                    actual_pages += 1
+                
+                buff_file_data = {
+                    'metadata': {
+                        'platform': 'buff',
+                        'total_count': len(buff_data),
+                        'max_pages': Config.BUFF_MAX_PAGES,
+                        'actual_pages': actual_pages,
+                        'generated_at': datetime.now().isoformat(),
+                        'api_config': {
+                            'delay': Config.BUFF_API_DELAY,
+                            'page_size': Config.BUFF_PAGE_SIZE
+                        },
+                        'collection_type': 'full_integrated_system'
+                    },
+                    'items': buff_data
+                }
+                
+                with open(buff_filename, 'w', encoding='utf-8') as f:
+                    json.dump(buff_file_data, f, ensure_ascii=False, indent=2)
+                
+                file_size = os.path.getsize(buff_filename) / 1024 / 1024  # MB
+                print(f"💾 Buff完整数据已保存: {len(buff_data)}个商品 -> {buff_filename} ({file_size:.1f} MB)")
+            
+            # 保存悠悠有品完整数据 - 直接覆盖，不用时间戳
+            if youpin_data:
+                youpin_filename = os.path.join(data_dir, "youpin_full.json")
+                
+                # 转换为可序列化的格式
+                items_data = []
+                for item in youpin_data:
+                    if isinstance(item, dict):
+                        items_data.append(item)
+                    else:
+                        items_data.append(item.__dict__ if hasattr(item, '__dict__') else str(item))
+                
+                # 计算实际页数
+                actual_pages = len(items_data) // Config.YOUPIN_PAGE_SIZE
+                if len(items_data) % Config.YOUPIN_PAGE_SIZE > 0:
+                    actual_pages += 1
+                
+                youpin_file_data = {
+                    'metadata': {
+                        'platform': 'youpin',
+                        'total_count': len(items_data),
+                        'max_pages': Config.YOUPIN_MAX_PAGES,
+                        'actual_pages': actual_pages,
+                        'generated_at': datetime.now().isoformat(),
+                        'api_config': {
+                            'delay': Config.YOUPIN_API_DELAY,
+                            'page_size': Config.YOUPIN_PAGE_SIZE
+                        },
+                        'collection_type': 'full_integrated_system'
+                    },
+                    'items': items_data
+                }
+                
+                with open(youpin_filename, 'w', encoding='utf-8') as f:
+                    json.dump(youpin_file_data, f, ensure_ascii=False, indent=2)
+                
+                file_size = os.path.getsize(youpin_filename) / 1024 / 1024  # MB
+                print(f"💾 悠悠有品完整数据已保存: {len(items_data)}个商品 -> {youpin_filename} ({file_size:.1f} MB)")
+                
+            print(f"✅ 完整数据保存完成！")
+            
+        except Exception as e:
+            print(f"❌ 保存完整数据失败: {e}")
+            import traceback
+            traceback.print_exc()
     
     # 🔥 以下模糊匹配方法已禁用 - 只使用Hash精确匹配
     # def _fuzzy_match_price_with_name(self, buff_name: str, youpin_price_map: dict) -> Optional[tuple]:
@@ -732,6 +940,10 @@ def load_price_diff_data(filename: str) -> List[PriceDiffItem]:
             # 转换datetime
             if 'last_updated' in item_data:
                 item_data['last_updated'] = datetime.fromisoformat(item_data['last_updated'])
+            
+            # 🔥 兼容处理：如果没有hash_name字段，使用name
+            if 'hash_name' not in item_data:
+                item_data['hash_name'] = item_data.get('name', '')
             
             diff_items.append(PriceDiffItem(**item_data))
         

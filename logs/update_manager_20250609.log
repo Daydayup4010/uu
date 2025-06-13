@@ -1,0 +1,15 @@
+2025-06-09 15:41:44 | INFO     | update_manager | setup_logging:103 | ✅ 日志系统已配置
+2025-06-09 15:41:44 | INFO     | update_manager | setup_logging:104 |    - 日志级别: INFO
+2025-06-09 15:41:44 | INFO     | update_manager | setup_logging:105 |    - 日志文件: logs\update_manager_20250609.log
+2025-06-09 15:41:44 | INFO     | update_manager | setup_logging:106 |    - 错误日志: logs\update_manager_error_20250609.log
+2025-06-09 15:41:44 | INFO     | update_manager | setup_logging:107 |    - 控制台输出: 启用
+2025-06-09 15:41:44 | INFO     | update_manager | load_cache:72 | HashName缓存已加载: 1个
+2025-06-09 15:41:44 | INFO     | update_manager | start:154 | 🚀 启动更新管理器
+2025-06-09 15:41:44 | INFO     | update_manager | start:162 | 📊 有缓存数据，可直接启动增量更新
+2025-06-09 15:41:44 | INFO     | update_manager | _full_update_loop:259 | ✅ 开始全量更新定时循环
+2025-06-09 15:41:44 | INFO     | update_manager | _incremental_update_loop:296 | 🔄 开始增量更新
+2025-06-09 15:41:44 | INFO     | update_manager | start:190 | 📂 发现已保存的全量数据文件，从文件重新筛选...
+2025-06-09 15:41:47 | INFO     | update_manager | start:197 | ✅ 从保存数据重新筛选成功: 644个商品
+2025-06-09 15:41:47 | INFO     | update_manager | start:198 | 📂 使用文件: buff_full.json, youpin_full.json
+2025-06-09 15:41:47 | INFO     | update_manager | start:225 | 🎯 启动完成，定时循环将处理更新任务
+2025-06-09 15:44:18 | INFO     | update_manager | stop:232 | 🛑 停止更新管理器

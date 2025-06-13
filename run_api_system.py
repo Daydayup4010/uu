@@ -18,9 +18,15 @@ from pathlib import Path
 project_root = Path(__file__).parent
 sys.path.insert(0, str(project_root))
 
-# 配置日志
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+# 🔥 使用增强的日志配置
+try:
+    from log_config import quick_setup
+    logger = quick_setup('INFO')
+    logger.info("✅ 日志配置已启用，日志将保存到logs目录")
+except ImportError:
+    logging.basicConfig(level=logging.INFO)
+    logger = logging.getLogger(__name__)
+    logger.warning("⚠️ 未找到log_config模块，使用默认日志配置")
 
 def find_free_port():
     """查找一个空闲端口"""

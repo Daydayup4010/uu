@@ -142,13 +142,19 @@ class YouPinSearchClient:
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         """异步上下文管理器出口"""
         if self.session:
-            await self.session.close()
+            try:
+                await self.session.close()
+                # 🔥 优化：等待连接器完全关闭
+                if hasattr(self.session, 'connector') and self.session.connector:
+                    await asyncio.sleep(0.1)  # 给连接器一点时间清理
+            except Exception as e:
+                logger.debug(f"关闭YouPin session时出错: {e}")
     
     async def search_by_keyword(self, keyword: str, page_index: int = 1, page_size: int = 20) -> List[SearchResult]:
         """根据关键词搜索商品"""
         try:
-            # 🔥 使用统一的全局延迟控制器
-            await GlobalRateLimiter.wait_if_needed(Config.YOUPIN_API_DELAY, "悠悠有品搜索")
+            # 🔥 使用专门的搜索延迟参数
+            await GlobalRateLimiter.wait_if_needed(Config.YOUPIN_SEARCH_DELAY, "悠悠有品搜索")
             
             url = f"{self.base_url}/api/homepage/pc/goods/market/querySaleTemplate"
             
@@ -160,51 +166,104 @@ class YouPinSearchClient:
                 "pageIndex": page_index
             }
             
+            # 🔥 添加调试日志
+            logger.debug(f"🔍 悠悠有品搜索请求: {keyword}")
+            logger.debug(f"   URL: {url}")
+            logger.debug(f"   数据: {json.dumps(data, ensure_ascii=False)}")
+            
             async with self.session.post(url, json=data) as response:
+                logger.debug(f"   响应状态: {response.status}")
+                
                 if response.status == 200:
                     result = await response.json()
-                    return self._parse_search_results(result)
+                    logger.debug(f"   响应数据: {json.dumps(result, ensure_ascii=False)[:500]}...")
+                    
+                    # 🔥 新增：传入搜索关键词用于hash_name匹配过滤
+                    parsed_results = self._parse_search_results(result, search_keyword=keyword)
+                    logger.debug(f"   解析结果: {len(parsed_results)} 个商品")
+                    
+                    return parsed_results
                 elif response.status == 429:
-                    logger.error(f"悠悠有品搜索频率限制 (429): {keyword} - 可能需要增加 YOUPIN_API_DELAY")
+                    logger.error(f"悠悠有品搜索频率限制 (429): {keyword} - 可能需要增加 YOUPIN_SEARCH_DELAY")
                     return []
                 else:
+                    error_text = await response.text()
                     logger.error(f"悠悠有品搜索失败: {response.status} - {keyword}")
+                    logger.debug(f"   错误响应: {error_text[:500]}...")
                     return []
                     
         except Exception as e:
             logger.error(f"悠悠有品搜索出错: {e} - {keyword}")
             return []
     
-    def _parse_search_results(self, data: Dict) -> List[SearchResult]:
+    def _parse_search_results(self, data: Dict, search_keyword: str = None) -> List[SearchResult]:
         """解析搜索结果"""
         results = []
+        all_results = []  # 用于调试，记录所有返回的商品
         
         try:
-            if data.get('code') == 200 and data.get('data'):
-                items = data['data'].get('dataList', [])
+            # 🔥 修复：悠悠有品API使用首字母大写的字段名
+            # 成功的Code是0，不是200；字段名是'Code'不是'code'，'Data'不是'data'
+            api_code = data.get('Code', data.get('code'))  # 兼容大小写
+            api_data = data.get('Data', data.get('data'))  # 兼容大小写
+            
+            if api_code == 0 and api_data:  # 悠悠有品成功code是0
+                # 🔥 修复：悠悠有品直接返回商品数组，不是嵌套在dataList中
+                items = api_data if isinstance(api_data, list) else api_data.get('dataList', [])
+                
+                logger.debug(f"🔍 悠悠有品解析: Code={api_code}, 商品数量={len(items)}")
                 
                 for item in items:
                     try:
+                        # 🔥 修复：使用正确的字段名
                         result = SearchResult(
-                            id=str(item.get('commodityId', '')),
+                            id=str(item.get('id', '')),  # 悠悠有品用'id'不是'commodityId'
                             name=item.get('commodityName', ''),
                             price=float(item.get('price', 0)),
                             hash_name=item.get('commodityHashName', ''),
-                            image_url=item.get('commodityUrl', ''),
-                            market_url=f"https://www.youpin898.com/goodsDetail?id={item.get('commodityId', '')}",
+                            image_url=item.get('iconUrl', ''),  # 悠悠有品用'iconUrl'
+                            market_url=f"https://www.youpin898.com/goodsDetail?id={item.get('id', '')}",
                             platform='youpin'
                         )
                         
+                        # 记录所有商品用于调试
+                        all_results.append(result)
+                        
+                        # 🔥 新增：hash_name精确匹配过滤
                         if result.price > 0:
-                            results.append(result)
+                            # 如果提供了搜索关键词，进行精确匹配
+                            if search_keyword:
+                                if result.hash_name == search_keyword:
+                                    results.append(result)
+                                    logger.debug(f"✅ 精确匹配悠悠有品商品: {result.name} - ¥{result.price}")
+                                    logger.debug(f"   搜索词: {search_keyword}")
+                                    logger.debug(f"   Hash名: {result.hash_name}")
+                                else:
+                                    logger.debug(f"❌ Hash不匹配: 搜索'{search_keyword}' ≠ 商品'{result.hash_name}'")
+                            else:
+                                # 没有提供搜索关键词，返回所有有效商品
+                                results.append(result)
+                                logger.debug(f"✅ 解析悠悠有品商品: {result.name} - ¥{result.price}")
                             
                     except (ValueError, TypeError) as e:
                         logger.warning(f"解析悠悠有品商品失败: {e}")
                         continue
                         
+                # 🔥 调试信息：显示所有返回的商品
+                if search_keyword and all_results:
+                    logger.debug(f"📊 悠悠有品返回的所有商品:")
+                    for i, item in enumerate(all_results):
+                        match_status = "✅匹配" if item.hash_name == search_keyword else "❌不匹配"
+                        logger.debug(f"   {i+1}. {item.name} ({match_status})")
+                        logger.debug(f"      Hash: {item.hash_name}")
+                        
+            else:
+                logger.warning(f"悠悠有品API响应格式异常: Code={api_code}, Data类型={type(api_data)}")
+                        
         except Exception as e:
             logger.error(f"解析悠悠有品搜索结果失败: {e}")
         
+        logger.debug(f"🎯 悠悠有品最终解析结果: {len(results)} 个商品 (总共返回{len(all_results)}个)")
         return results
 
 class BuffSearchClient:
@@ -267,32 +326,54 @@ class BuffSearchClient:
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         """异步上下文管理器出口"""
         if self.session:
-            await self.session.close()
+            try:
+                await self.session.close()
+                # 🔥 优化：等待连接器完全关闭
+                if hasattr(self.session, 'connector') and self.session.connector:
+                    await asyncio.sleep(0.1)  # 给连接器一点时间清理
+            except Exception as e:
+                logger.debug(f"关闭Buff session时出错: {e}")
     
     async def search_by_keyword(self, keyword: str, page_num: int = 1) -> List[SearchResult]:
         """根据关键词搜索商品"""
         try:
-            # 🔥 使用统一的全局延迟控制器
-            await GlobalRateLimiter.wait_if_needed(Config.BUFF_API_DELAY, "Buff搜索")
+            # 🔥 使用专门的搜索延迟参数
+            await GlobalRateLimiter.wait_if_needed(Config.BUFF_SEARCH_DELAY, "Buff搜索")
             
-            # URL编码关键词
-            encoded_keyword = urllib.parse.quote(keyword)
+            # 🔥 修复：根据调试结果，Buff搜索API不需要URL编码，使用原始关键词
+            # 测试显示：quote和quote_plus编码都无法准确搜索，只有raw（不编码）才能找到正确结果
+            
+            # 🔥 添加调试日志
+            logger.debug(f"🔍 Buff搜索关键词(不编码):")
+            logger.debug(f"   原始: {keyword}")
             
             url = f"{self.base_url}/api/market/goods"
             params = {
                 'game': 'csgo',
                 'page_num': page_num,
-                'search': encoded_keyword,
+                'search': keyword,  # 🔥 直接使用原始关键词，不进行URL编码
                 'tab': 'selling',
                 '_': str(int(asyncio.get_event_loop().time() * 1000))
             }
             
+            # 🔥 添加完整请求URL的调试日志
+            param_str = '&'.join([f'{k}={v}' for k, v in params.items()])
+            full_url = f"{url}?{param_str}"
+            logger.debug(f"   完整URL: {full_url}")
+            
             async with self.session.get(url, params=params) as response:
                 if response.status == 200:
                     result = await response.json()
-                    return self._parse_search_results(result)
+                    # 🔥 修复：传入搜索关键词用于hash_name精确匹配
+                    results = self._parse_search_results(result, search_keyword=keyword)
+                    
+                    # 🔥 添加结果统计日志
+                    logger.debug(f"   API返回商品数: {len(result.get('data', {}).get('items', []))}")
+                    logger.debug(f"   解析后商品数: {len(results)}")
+                    
+                    return results
                 elif response.status == 429:
-                    logger.error(f"Buff搜索频率限制 (429): {keyword} - 可能需要增加 BUFF_API_DELAY")
+                    logger.error(f"Buff搜索频率限制 (429): {keyword} - 可能需要增加 BUFF_SEARCH_DELAY")
                     return []
                 else:
                     logger.error(f"Buff搜索失败: {response.status} - {keyword}")
@@ -302,13 +383,16 @@ class BuffSearchClient:
             logger.error(f"Buff搜索出错: {e} - {keyword}")
             return []
     
-    def _parse_search_results(self, data: Dict) -> List[SearchResult]:
+    def _parse_search_results(self, data: Dict, search_keyword: str = None) -> List[SearchResult]:
         """解析搜索结果"""
         results = []
+        all_results = []  # 用于调试，记录所有返回的商品
         
         try:
             if data.get('code') == 'OK' and data.get('data'):
                 items = data['data'].get('items', [])
+                
+                logger.debug(f"🔍 Buff解析: code=OK, 商品数量={len(items)}")
                 
                 for item in items:
                     try:
@@ -329,16 +413,41 @@ class BuffSearchClient:
                             platform='buff'
                         )
                         
+                        # 记录所有商品用于调试
+                        all_results.append(result)
+                        
+                        # 🔥 新增：hash_name精确匹配过滤（与悠悠有品保持一致）
                         if result.price > 0:
-                            results.append(result)
+                            # 如果提供了搜索关键词，进行精确匹配
+                            if search_keyword:
+                                if result.hash_name == search_keyword:
+                                    results.append(result)
+                                    logger.debug(f"✅ 精确匹配Buff商品: {result.name} - ¥{result.price}")
+                                    logger.debug(f"   搜索词: {search_keyword}")
+                                    logger.debug(f"   Hash名: {result.hash_name}")
+                                else:
+                                    logger.debug(f"❌ Hash不匹配: 搜索'{search_keyword}' ≠ 商品'{result.hash_name}'")
+                            else:
+                                # 没有提供搜索关键词，返回所有有效商品
+                                results.append(result)
+                                logger.debug(f"✅ 解析Buff商品: {result.name} - ¥{result.price}")
                             
                     except Exception as e:
                         logger.warning(f"解析Buff商品失败: {e}")
                         continue
                         
+                # 🔥 调试信息：显示所有返回的商品
+                if search_keyword and all_results:
+                    logger.debug(f"📊 Buff返回的所有商品:")
+                    for i, item in enumerate(all_results):
+                        match_status = "✅匹配" if item.hash_name == search_keyword else "❌不匹配"
+                        logger.debug(f"   {i+1}. {item.name} ({match_status})")
+                        logger.debug(f"      Hash: {item.hash_name}")
+                        
         except Exception as e:
             logger.error(f"解析Buff搜索结果失败: {e}")
         
+        logger.debug(f"🎯 Buff最终解析结果: {len(results)} 个商品 (总共返回{len(all_results)}个)")
         return results
 
 class SearchManager:
