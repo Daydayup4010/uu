@@ -19882,3 +19882,192 @@ ModuleNotFoundError: No module named 'flask_cors'
 20:36:07 | INFO     | 127.0.0.1 - - [13/Jun/2025 20:36:07] "GET /api/status HTTP/1.1" 200 -
 20:36:07 | INFO     | 🔍 搜索结果 'Sticker | KSCERATO (Glitter) | Antwerp 2022': Buff=¥0.17, 悠悠有品=¥0.30
 20:36:07 | INFO     | 127.0.0.1 - - [13/Jun/2025 20:36:07] "GET /api/data HTTP/1.1" 200 -
+20:36:08 | INFO     | 悠悠有品搜索全局延迟 2.8秒 (跨平台延迟控制)...
+20:36:11 | INFO     | Buff搜索全局延迟 4.9秒 (跨平台延迟控制)...
+20:36:18 | INFO     | 🔍 搜索结果 'Sealed Graffiti | Piggles (Blood Red)': Buff=¥0.24, 悠悠有品=¥0.45
+20:36:19 | INFO     | 悠悠有品搜索全局延迟 1.3秒 (跨平台延迟控制)...
+20:36:20 | INFO     | Buff搜索全局延迟 4.9秒 (跨平台延迟控制)...
+20:36:26 | INFO     | 🔍 搜索结果 'StatTrak™ USP-S | Stainless (Minimal Wear)': Buff=¥249.00, 悠悠有品=¥256.88
+20:36:26 | INFO     | 🔄 搜索进度: 10/49
+20:36:27 | INFO     | 悠悠有品搜索全局延迟 1.9秒 (跨平台延迟控制)...
+20:36:29 | INFO     | Buff搜索全局延迟 4.9秒 (跨平台延迟控制)...
+20:36:34 | INFO     | 🔍 搜索结果 'M4A1-S | Nightmare (Minimal Wear)': Buff=¥149.50, 悠悠有品=¥155.90
+20:36:35 | INFO     | 悠悠有品搜索全局延迟 2.9秒 (跨平台延迟控制)...
+20:36:37 | INFO     | 127.0.0.1 - - [13/Jun/2025 20:36:37] "GET /api/data HTTP/1.1" 200 -
+20:36:37 | INFO     | 127.0.0.1 - - [13/Jun/2025 20:36:37] "GET /api/status HTTP/1.1" 200 -
+20:36:37 | INFO     | 127.0.0.1 - - [13/Jun/2025 20:36:37] "GET /api/status HTTP/1.1" 200 -
+20:36:37 | INFO     | 127.0.0.1 - - [13/Jun/2025 20:36:37] "GET /api/data HTTP/1.1" 200 -
+20:36:38 | INFO     | Buff搜索全局延迟 4.9秒 (跨平台延迟控制)...
+20:36:42 | INFO     | 🛑 停止更新管理器
+20:36:42 | INFO     | ✅ 更新管理器已停止
+20:44:20 | INFO     | ✅ 日志系统已配置
+20:44:20 | INFO     |    - 日志级别: INFO
+20:44:20 | INFO     |    - 日志文件: logs\buff_monitor_20250613.log
+20:44:20 | INFO     |    - 错误日志: logs\buff_monitor_error_20250613.log
+20:44:20 | INFO     |    - 控制台输出: 启用
+20:44:20 | INFO     | 🚀 系统启动 - 日志配置已启用
+20:44:20 | INFO     | 📁 日志文件将保存到: D:\PycharmProjects\uu\logs 目录
+20:44:20 | INFO     | 🎯 启动Buff价差监控系统
+20:44:20 | INFO     | 🔄 启动更新管理器...
+20:44:21 | INFO     | Token配置已加载: tokens_config.json
+20:44:21 | INFO     | 📂 已从文件加载Token验证缓存
+20:44:21 | INFO     | HashName缓存已加载: 661个（含利润率信息）
+20:44:21 | INFO     | 🚀 启动更新管理器
+20:44:21 | INFO     | 🔍 暂时跳过从full data文件重新生成缓存（避免异步调用问题）
+20:44:21 | INFO     |    将依赖增量更新逐步建立缓存
+20:44:21 | INFO     | 📊 有缓存数据，可直接启动增量更新
+20:44:21 | INFO     | 📊 已加载缓存数据: 737个商品
+20:44:21 | INFO     | ✅ 成功加载缓存数据: 737个商品
+20:44:21 | INFO     | ✅ 开始全量更新定时循环
+20:44:21 | INFO     | 🔄 开始增量更新
+20:44:21 | INFO     | 🎯 启动完成，定时循环将处理更新任务
+20:44:21 | INFO     | 🚀 启动分析: incremental_update (ID: incremental_update_1749818661)
+20:44:21 | INFO     | ✅ 更新管理器已启动
+20:44:21 | INFO     | 🌐 启动API服务器...
+20:44:21 | INFO     | 📂 找到新版全量数据文件: buff_full.json, youpin_full.json
+20:44:21 | INFO     | 🔄 开始从已保存数据重新筛选...
+20:44:21 | INFO     | 📂 找到新版全量数据文件: buff_full.json, youpin_full.json
+20:44:22 | INFO     | ✅ 加载数据文件: buff_full.json (24556个商品)
+20:44:23 | INFO     | ✅ 加载数据文件: youpin_full.json (24250个商品)
+20:44:23 | INFO     | 📊 加载数据: Buff 24556个, 悠悠有品 24250个
+20:44:23 | INFO     | 📈 建立映射表: Hash映射22793个, 名称映射22791个
+20:44:23 | INFO     | 🔥 开始第一步筛选：价格区间 0.0-1000.0元
+20:44:23 | INFO     |    第一步完成：3817个商品被价格筛选过滤，剩余20731个
+20:44:23 | INFO     | 🔥 开始第二步筛选：在售数量 ≥200个
+20:44:23 | INFO     |    第二步完成：16244个商品被在售数量筛选过滤，剩余4487个
+20:44:23 | INFO     | 🚀 性能优化：预建规范化映射表...
+20:44:24 | INFO     | ✅ 映射表建立完成：22793个规范化键
+20:44:24 | INFO     | 🔥 开始匹配阶段：处理4487个通过筛选的商品
+20:44:24 | INFO     |    匹配进度: 1000/4487 (89280个/秒)
+20:44:24 | INFO     |    匹配进度: 2000/4487 (61446个/秒)
+20:44:24 | INFO     |    匹配进度: 3000/4487 (65512个/秒)
+20:44:24 | INFO     |    匹配进度: 4000/4487 (72302个/秒)
+20:44:24 | INFO     | ✅ 匹配阶段完成：耗时 0.07秒，处理速度 63817个/秒
+20:44:24 | INFO     | 📊 筛选统计:
+20:44:24 | INFO     |    处理商品: 24556个
+20:44:24 | INFO     |    🔥 第一步-价格筛选: 过滤3817个 → 剩余20731个
+20:44:24 | INFO     |    🔥 第二步-在售数量筛选: 过滤16244个 → 剩余4487个
+20:44:24 | INFO     |    找到匹配: 3980个 (匹配率:88.7%)
+20:44:24 | INFO     |    🎯 匹配类型分布:
+20:44:24 | INFO     |       精确匹配: 3980个
+20:44:24 | INFO     |       规范化匹配: 0个
+20:44:24 | INFO     |       武器名称匹配: 0个
+20:44:24 | INFO     |       模糊匹配: 0个
+20:44:24 | INFO     |       未匹配: 507个
+20:44:24 | INFO     |    符合价差条件: 737个
+20:44:24 | INFO     | ✅ 重新筛选完成: 符合条件的商品 737个
+20:44:24 | INFO     | 🎯 增量搜索关键词（利润率前25 + 差价前25）:
+20:44:24 | INFO     |    📊 从661个中选择49个
+20:44:24 | INFO     |    📈 利润率范围: 4155.25% ~ 50000.00%
+20:44:24 | INFO     |    🔝 利润率前5个商品:
+20:44:24 | INFO     |       1. Sticker | Techno4K (Glitter) | Antwerp 2022 (50000.00%)
+20:44:24 | INFO     |       2. Sticker | TeSeS | Antwerp 2022 (36666.67%)
+20:44:24 | INFO     |       3. Sticker | buster (Glitter) | Antwerp 2022 (24705.88%)
+20:44:24 | INFO     |       4. Souvenir UMP-45 | Facility Dark (Minimal Wear) (19090.91%)
+20:44:24 | INFO     |       5. Sealed Graffiti | Piggles (Blood Red) (8750.00%)
+20:44:24 | INFO     |    💰 差价前5个商品:
+20:44:24 | INFO     |       1. StatTrak™ AK-47 | Asiimov (Minimal Wear) (差价: ¥22.50)
+20:44:24 | INFO     |       2. Glock-18 | Gamma Doppler (Minimal Wear) (差价: ¥14.00)
+20:44:24 | INFO     |       3. StatTrak™ Desert Eagle | Crimson Web (Field-Tested) (差价: ¥11.82)
+20:44:24 | INFO     |       4. Patch | Health (差价: ¥9.62)
+20:44:24 | INFO     |       5. StatTrak™ AK-47 | Blue Laminate (Minimal Wear) (差价: ¥9.15)
+20:44:24 | INFO     | 🔍 开始增量更新: 搜索 49 个商品的最新价格
+20:44:24 | INFO     | 🔍 限制搜索关键词数量为 49 个
+20:44:24 | INFO     | 🚀 API服务器启动在 http://localhost:5000
+20:44:25 | WARNING  |  * Running on all addresses.
+   WARNING: This is a development server. Do not use it in a production deployment.
+20:44:25 | INFO     |  * Running on http://10.30.240.23:5000/ (Press CTRL+C to quit)
+20:44:25 | INFO     | 127.0.0.1 - - [13/Jun/2025 20:44:25] "GET /api/data HTTP/1.1" 200 -
+20:44:26 | INFO     | Buff搜索全局延迟 3.3秒 (跨平台延迟控制)...
+20:44:26 | INFO     | 127.0.0.1 - - [13/Jun/2025 20:44:26] "GET / HTTP/1.1" 200 -
+20:44:26 | INFO     | 127.0.0.1 - - [13/Jun/2025 20:44:26] "GET /api/status HTTP/1.1" 200 -
+20:44:26 | INFO     | 127.0.0.1 - - [13/Jun/2025 20:44:26] "GET /api/status HTTP/1.1" 200 -
+20:44:27 | INFO     | 127.0.0.1 - - [13/Jun/2025 20:44:27] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+20:44:27 | INFO     | 127.0.0.1 - - [13/Jun/2025 20:44:27] "GET /api/settings HTTP/1.1" 200 -
+20:44:27 | INFO     | 127.0.0.1 - - [13/Jun/2025 20:44:27] "GET /api/data HTTP/1.1" 200 -
+20:44:27 | INFO     | 127.0.0.1 - - [13/Jun/2025 20:44:27] "GET /api/status HTTP/1.1" 200 -
+20:44:27 | INFO     | 127.0.0.1 - - [13/Jun/2025 20:44:27] "GET /api/price_range HTTP/1.1" 200 -
+20:44:27 | INFO     | 127.0.0.1 - - [13/Jun/2025 20:44:27] "GET /api/status HTTP/1.1" 200 -
+20:44:28 | INFO     | 127.0.0.1 - - [13/Jun/2025 20:44:28] "GET /api/settings HTTP/1.1" 200 -
+20:44:28 | INFO     | [START] Token验证服务已启动
+20:44:28 | INFO     | 127.0.0.1 - - [13/Jun/2025 20:44:28] "POST /api/tokens/validation-service HTTP/1.1" 200 -
+20:44:28 | INFO     | [DEBUG] Token验证服务开始运行
+20:44:28 | INFO     | 127.0.0.1 - - [13/Jun/2025 20:44:28] "GET /api/buff_price_range HTTP/1.1" 200 -
+20:44:28 | INFO     | 127.0.0.1 - - [13/Jun/2025 20:44:28] "GET /api/data HTTP/1.1" 200 -
+20:44:28 | INFO     | 127.0.0.1 - - [13/Jun/2025 20:44:28] "GET /api/price_range HTTP/1.1" 200 -
+20:44:28 | INFO     | 📊 Token状态查询: Buff配置=True, Buff有效=False, 悠悠有品配置=True, 悠悠有品有效=False
+20:44:28 | INFO     | 127.0.0.1 - - [13/Jun/2025 20:44:28] "GET /api/tokens/status HTTP/1.1" 200 -
+20:44:28 | INFO     | 127.0.0.1 - - [13/Jun/2025 20:44:28] "GET /api/buff_sell_num HTTP/1.1" 200 -
+20:44:28 | INFO     | 🔍 开始Token验证，强制检查: False
+20:44:28 | INFO     | 🔄 开始执行Token验证...
+20:44:28 | INFO     | 127.0.0.1 - - [13/Jun/2025 20:44:28] "GET /api/buff_price_range HTTP/1.1" 200 -
+20:44:28 | INFO     | 127.0.0.1 - - [13/Jun/2025 20:44:28] "GET /api/buff_sell_num HTTP/1.1" 200 -
+20:44:29 | INFO     | [DEBUG] buff Token验证结果: valid=True, error=None
+20:44:30 | INFO     | 🔍 搜索结果 'Sticker | Astralis (Gold) | Antwerp 2022': Buff=¥60.96, 悠悠有品=¥64.99
+20:44:30 | INFO     | [DEBUG] youpin Token验证结果: valid=True, error=None
+20:44:31 | INFO     | 悠悠有品搜索全局延迟 1.9秒 (跨平台延迟控制)...
+20:44:33 | INFO     | Buff搜索全局延迟 4.5秒 (跨平台延迟控制)...
+20:44:37 | INFO     | 💾 已保存Token验证缓存到文件
+20:44:37 | INFO     | ✅ Token验证完成，耗时: 8.92秒
+20:44:37 | INFO     | 127.0.0.1 - - [13/Jun/2025 20:44:37] "POST /api/tokens/validate HTTP/1.1" 200 -
+20:44:37 | INFO     | 📊 Token状态查询: Buff配置=True, Buff有效=True, 悠悠有品配置=True, 悠悠有品有效=True
+20:44:37 | INFO     | 127.0.0.1 - - [13/Jun/2025 20:44:37] "GET /api/tokens/status HTTP/1.1" 200 -
+20:44:40 | INFO     | 🔍 搜索结果 'StatTrak™ AK-47 | Asiimov (Minimal Wear)': Buff=¥885.00, 悠悠有品=¥894.98
+20:44:41 | INFO     | 悠悠有品搜索全局延迟 0.6秒 (跨平台延迟控制)...
+20:44:42 | INFO     | Buff搜索全局延迟 4.5秒 (跨平台延迟控制)...
+20:44:49 | INFO     | 🔍 搜索结果 'M4A1-S | Atomic Alloy (Minimal Wear)': Buff=¥419.00, 悠悠有品=¥422.00
+20:44:50 | INFO     | 悠悠有品搜索全局延迟 0.9秒 (跨平台延迟控制)...
+20:44:51 | INFO     | Buff搜索全局延迟 4.5秒 (跨平台延迟控制)...
+20:44:57 | INFO     | 🔍 搜索结果 'Souvenir Sawed-Off | Brake Light (Factory New)': Buff=¥2.25, 悠悠有品=¥3.99
+20:44:58 | INFO     | 悠悠有品搜索全局延迟 2.4秒 (跨平台延迟控制)...
+20:44:58 | INFO     | 127.0.0.1 - - [13/Jun/2025 20:44:58] "GET /api/status HTTP/1.1" 200 -
+20:44:58 | INFO     | 127.0.0.1 - - [13/Jun/2025 20:44:58] "GET /api/status HTTP/1.1" 200 -
+20:44:58 | INFO     | 127.0.0.1 - - [13/Jun/2025 20:44:58] "GET /api/data HTTP/1.1" 200 -
+20:44:58 | INFO     | 127.0.0.1 - - [13/Jun/2025 20:44:58] "GET /api/data HTTP/1.1" 200 -
+20:45:00 | INFO     | Buff搜索全局延迟 4.5秒 (跨平台延迟控制)...
+20:45:07 | INFO     | 🔍 搜索结果 'Sticker | boltz | Rio 2022': Buff=¥0.78, 悠悠有品=¥1.20
+20:45:08 | INFO     | 悠悠有品搜索全局延迟 0.9秒 (跨平台延迟控制)...
+20:45:09 | INFO     | Buff搜索全局延迟 4.5秒 (跨平台延迟控制)...
+20:45:17 | INFO     | 🔍 搜索结果 'Sticker | Summer | Berlin 2019': Buff=¥2.18, 悠悠有品=¥3.10
+20:45:19 | INFO     | Buff搜索全局延迟 4.5秒 (跨平台延迟控制)...
+20:45:26 | INFO     | 🔍 搜索结果 'Sticker | Good Sports': Buff=¥0.52, 悠悠有品=¥0.77
+20:45:27 | INFO     | 悠悠有品搜索全局延迟 0.9秒 (跨平台延迟控制)...
+20:45:28 | INFO     | 127.0.0.1 - - [13/Jun/2025 20:45:28] "GET /api/data HTTP/1.1" 200 -
+20:45:28 | INFO     | 127.0.0.1 - - [13/Jun/2025 20:45:28] "GET /api/status HTTP/1.1" 200 -
+20:45:28 | INFO     | 127.0.0.1 - - [13/Jun/2025 20:45:28] "GET /api/status HTTP/1.1" 200 -
+20:45:28 | INFO     | Buff搜索全局延迟 4.6秒 (跨平台延迟控制)...
+20:45:29 | INFO     | 127.0.0.1 - - [13/Jun/2025 20:45:29] "GET /api/data HTTP/1.1" 200 -
+20:45:36 | INFO     | 🔍 搜索结果 'Sticker | Xyp9x (Glitter) | Antwerp 2022': Buff=¥0.17, 悠悠有品=¥0.30
+20:45:37 | INFO     | Buff搜索全局延迟 4.5秒 (跨平台延迟控制)...
+20:45:44 | INFO     | 🔍 搜索结果 'StatTrak™ AK-47 | Nightwish (Minimal Wear)': Buff=¥275.00, 悠悠有品=¥275.00
+20:45:45 | INFO     | 悠悠有品搜索全局延迟 0.5秒 (跨平台延迟控制)...
+20:45:46 | INFO     | Buff搜索全局延迟 4.5秒 (跨平台延迟控制)...
+20:45:53 | INFO     | 🔍 搜索结果 'Souvenir P250 | Bone Mask (Minimal Wear)': Buff=¥3.42, 悠悠有品=¥5.79
+20:45:53 | INFO     | 🔄 搜索进度: 10/49
+20:45:54 | INFO     | 悠悠有品搜索全局延迟 0.9秒 (跨平台延迟控制)...
+20:45:55 | INFO     | Buff搜索全局延迟 4.5秒 (跨平台延迟控制)...
+20:45:58 | INFO     | 127.0.0.1 - - [13/Jun/2025 20:45:58] "GET /api/data HTTP/1.1" 200 -
+20:45:58 | INFO     | 127.0.0.1 - - [13/Jun/2025 20:45:58] "GET /api/status HTTP/1.1" 200 -
+20:45:58 | INFO     | 127.0.0.1 - - [13/Jun/2025 20:45:58] "GET /api/status HTTP/1.1" 200 -
+20:45:58 | INFO     | 127.0.0.1 - - [13/Jun/2025 20:45:58] "GET /api/data HTTP/1.1" 200 -
+20:46:01 | INFO     | 🔍 搜索结果 'R8 Revolver | Fade (Factory New)': Buff=¥109.78, 悠悠有品=¥117.00
+20:46:02 | INFO     | 悠悠有品搜索全局延迟 2.3秒 (跨平台延迟控制)...
+20:46:04 | INFO     | Buff搜索全局延迟 4.5秒 (跨平台延迟控制)...
+20:46:10 | INFO     | 🔍 搜索结果 'StatTrak™ AK-47 | Blue Laminate (Minimal Wear)': Buff=¥273.28, 悠悠有品=¥283.00
+20:46:11 | INFO     | 悠悠有品搜索全局延迟 2.4秒 (跨平台延迟控制)...
+20:46:13 | INFO     | Buff搜索全局延迟 4.5秒 (跨平台延迟控制)...
+20:46:19 | INFO     | 🔍 搜索结果 'StatTrak™ SSG 08 | Abyss (Factory New)': Buff=¥83.27, 悠悠有品=¥91.80
+20:46:20 | INFO     | 悠悠有品搜索全局延迟 2.4秒 (跨平台延迟控制)...
+20:46:22 | INFO     | Buff搜索全局延迟 4.5秒 (跨平台延迟控制)...
+20:46:28 | INFO     | 127.0.0.1 - - [13/Jun/2025 20:46:28] "GET /api/data HTTP/1.1" 200 -
+20:46:28 | INFO     | 127.0.0.1 - - [13/Jun/2025 20:46:28] "GET /api/status HTTP/1.1" 200 -
+20:46:28 | INFO     | 127.0.0.1 - - [13/Jun/2025 20:46:28] "GET /api/status HTTP/1.1" 200 -
+20:46:28 | INFO     | 127.0.0.1 - - [13/Jun/2025 20:46:28] "GET /api/data HTTP/1.1" 200 -
+20:46:30 | INFO     | 🔍 搜索结果 'Sticker | Techno4K (Glitter) | Antwerp 2022': Buff=¥0.06, 悠悠有品=¥0.36
+20:46:32 | INFO     | Buff搜索全局延迟 4.5秒 (跨平台延迟控制)...
+20:46:38 | INFO     | 🔍 搜索结果 'StatTrak™ USP-S | Stainless (Minimal Wear)': Buff=¥249.00, 悠悠有品=¥256.88
+20:46:39 | INFO     | 悠悠有品搜索全局延迟 1.4秒 (跨平台延迟控制)...
+20:46:41 | INFO     | Buff搜索全局延迟 4.5秒 (跨平台延迟控制)...
+20:46:46 | INFO     | 🔍 搜索结果 'Sticker | buster (Glitter) | Antwerp 2022': Buff=¥0.34, 悠悠有品=¥1.18
+20:46:47 | INFO     | 🛑 停止更新管理器
+20:46:47 | INFO     | ✅ 更新管理器已停止

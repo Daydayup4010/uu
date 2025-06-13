@@ -3,15 +3,15 @@
     "buff": {
       "valid": true,
       "error": null,
-      "cached": true
-    },
-    "youpin": {
-      "valid": false,
-      "error": "Token可能已失效或API异常",
       "cached": false
     },
-    "overall_valid": false
+    "youpin": {
+      "valid": true,
+      "error": null,
+      "cached": false
+    },
+    "overall_valid": true
   },
-  "cached_at": 1749818055.436303,
+  "cached_at": 1749818677.580503,
   "cache_duration": 300
 }

@@ -141,6 +141,31 @@ def main():
         def demo():
             return api.streaming_demo()
         
+        # 🔥 添加缺少的Token验证API路由
+        @csgo_bp.route('/api/tokens/validate', methods=['POST'])
+        def api_tokens_validate():
+            return api.validate_tokens()
+            
+        @csgo_bp.route('/api/tokens/validate/buff', methods=['POST'])
+        def api_tokens_validate_buff():
+            return api.validate_buff_token()
+            
+        @csgo_bp.route('/api/tokens/validate/youpin', methods=['POST'])
+        def api_tokens_validate_youpin():
+            return api.validate_youpin_token()
+            
+        @csgo_bp.route('/api/tokens/alerts', methods=['GET'])
+        def api_tokens_alerts():
+            return api.get_token_alerts()
+            
+        @csgo_bp.route('/api/tokens/alerts/clear', methods=['POST'])
+        def api_tokens_alerts_clear():
+            return api.clear_token_notifications()
+            
+        @csgo_bp.route('/api/tokens/validation-service', methods=['GET', 'POST'])
+        def api_tokens_validation_service():
+            return api.manage_validation_service()
+        
         # 注册蓝图
         app.register_blueprint(csgo_bp)
         
