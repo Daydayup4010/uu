@@ -324,17 +324,20 @@ class UpdateManager:
                 if self.stop_event.wait(timeout=5):
                     return
         
-        logger.info("✅ 开始全量更新定时循环")
+        logger.info(f"✅ 开始全量更新定时循环（间隔: {Config.FULL_UPDATE_INTERVAL_HOURS}小时）")
         
         while self.is_running and not self.stop_event.is_set():
             try:
-                # 检查是否需要定时全量更新
-                if self.hashname_cache.should_full_update():
-                    logger.info("⏰ 开始定时全量更新")
+                # 🔥 简化逻辑：只有在没有缓存数据时才执行定时全量更新
+                if not self.current_diff_items:
+                    logger.info("⏰ 开始定时全量更新（无缓存数据）")
                     self._trigger_full_update()
+                else:
+                    logger.debug("📊 检测到缓存数据，跳过定时全量更新")
                 
-                # 等待1小时或直到停止
-                if self.stop_event.wait(timeout=3600):  # 1小时 = 3600秒
+                # 等待配置的全量更新间隔时间或直到停止
+                timeout_seconds = Config.FULL_UPDATE_INTERVAL_HOURS * 3600
+                if self.stop_event.wait(timeout=timeout_seconds):
                     break
                     
             except Exception as e:
