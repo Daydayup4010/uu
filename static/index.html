@@ -1275,8 +1275,8 @@
             }
 
             updateStatus(status) {
-                const lastUpdate = status.last_update ? 
-                    new Date(status.last_update).toLocaleString('zh-CN') : '未知';
+                const lastUpdate = status.last_full_update ? 
+                    new Date(status.last_full_update).toLocaleString('zh-CN') : '未知';
                 document.getElementById('lastUpdate').textContent = lastUpdate;
                 
                 // 更新监控状态
