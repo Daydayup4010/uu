@@ -234,10 +234,17 @@ def api_data():
         update_manager = get_update_manager()
         diff_items = update_manager.get_current_data()
         
-        # 🔥 新增：如果数据为空且有hashname缓存，自动触发全量更新
+        # 🔥 修改：更温和的处理方式，避免频繁触发全量更新
         if not diff_items:
             status = update_manager.get_status()
-            if status.get('cached_hashnames_count', 0) > 0:
+            # 只有在以下情况才触发全量更新：
+            # 1. 有hashname缓存但没有数据
+            # 2. 且初始全量更新未完成
+            # 3. 且不是正在运行分析
+            if (status.get('cached_hashnames_count', 0) > 0 and 
+                not status.get('initial_full_update_completed', False) and
+                not status.get('is_running', False)):
+                
                 logger.warning("🔄 检测到数据为空但有缓存，自动触发全量更新")
                 update_manager.force_full_update()
                 # 返回提示信息
@@ -249,6 +256,19 @@ def api_data():
                         'message': '检测到数据异常，已自动触发全量更新，请稍后刷新页面',
                         'auto_update_triggered': True,
                         'last_updated': None
+                    }
+                })
+            else:
+                # 返回空数据但不触发更新
+                message = "数据收集中，请稍候" if status.get('is_running', False) else "暂无数据"
+                return jsonify({
+                    'success': True,
+                    'data': {
+                        'items': [],
+                        'total_count': 0,
+                        'message': message,
+                        'auto_update_triggered': False,
+                        'last_updated': status.get('last_full_update')
                     }
                 })
         

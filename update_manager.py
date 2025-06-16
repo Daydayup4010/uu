@@ -255,30 +255,31 @@ class UpdateManager:
             logger.info("✅ 从full data文件重新生成缓存成功")
             self.initial_full_update_completed = True
         else:
-            # 🔥 原有逻辑：检查是否需要初始全量更新
-            needs_initial_update = self.hashname_cache.should_full_update()
-            if needs_initial_update:
-                logger.info("📊 需要初始全量更新，将等待完成后再启动增量更新")
-                self.initial_full_update_completed = False
-            else:
-                logger.info("📊 有缓存数据，可直接启动增量更新")
-                self.initial_full_update_completed = True
-                
-                # 🔥 尝试加载已有的价差数据
-                try:
-                    self._load_latest_data()
-                    if self.current_diff_items:
-                        logger.info(f"✅ 成功加载缓存数据: {len(self.current_diff_items)}个商品")
-                    else:
-                        logger.warning("⚠️ 缓存数据为空，将强制执行全量更新")
+            # 🔥 修复：无论数据是否过期，都先尝试加载现有数据，避免前端触发不必要的全量更新
+            logger.info("📊 尝试加载现有价差数据...")
+            try:
+                self._load_latest_data()
+                if self.current_diff_items:
+                    logger.info(f"✅ 成功加载缓存数据: {len(self.current_diff_items)}个商品")
+                    
+                    # 检查是否需要更新
+                    needs_initial_update = self.hashname_cache.should_full_update()
+                    if needs_initial_update:
+                        logger.info("📊 数据已过期，将在后台执行全量更新")
                         self.initial_full_update_completed = False
-                        self.hashname_cache.hashname_profits.clear()
-                        self.hashname_cache.last_full_update = None
-                except Exception as e:
-                    logger.error(f"❌ 加载缓存数据失败: {e}，将强制执行全量更新")
+                    else:
+                        logger.info("📊 数据未过期，可直接启动增量更新")
+                        self.initial_full_update_completed = True
+                else:
+                    logger.warning("⚠️ 缓存数据为空，将强制执行全量更新")
                     self.initial_full_update_completed = False
                     self.hashname_cache.hashname_profits.clear()
                     self.hashname_cache.last_full_update = None
+            except Exception as e:
+                logger.error(f"❌ 加载缓存数据失败: {e}，将强制执行全量更新")
+                self.initial_full_update_completed = False
+                self.hashname_cache.hashname_profits.clear()
+                self.hashname_cache.last_full_update = None
         
         # 启动全量更新线程
         self.full_update_thread = threading.Thread(
@@ -514,9 +515,24 @@ class UpdateManager:
         try:
             # 使用IntegratedPriceAnalyzer获取商品数据，但不做分析
             async with IntegratedPriceAnalyzer() as analyzer:
-                # 获取Buff和悠悠有品的原始数据
-                buff_data = await analyzer._get_buff_data_optimized()
-                youpin_data = await analyzer._get_youpin_data_optimized()
+                # 🔥 修复：并行获取Buff和悠悠有品的原始数据
+                logger.info("🚀 并行获取两个平台的数据...")
+                buff_task = asyncio.create_task(analyzer._get_buff_data_optimized())
+                youpin_task = asyncio.create_task(analyzer._get_youpin_data_optimized())
+                
+                # 等待两个任务完成
+                buff_data, youpin_data = await asyncio.gather(buff_task, youpin_task, return_exceptions=True)
+                
+                # 检查结果
+                if isinstance(buff_data, Exception):
+                    logger.error(f"❌ Buff数据获取失败: {buff_data}")
+                    buff_data = []
+                
+                if isinstance(youpin_data, Exception):
+                    logger.error(f"❌ 悠悠有品数据获取失败: {youpin_data}")
+                    youpin_data = []
+                    
+                logger.info(f"✅ 并行获取完成: Buff={len(buff_data)}个, 悠悠有品={len(youpin_data)}个")
                 
                 if not buff_data:
                     logger.error("❌ 无法获取Buff商品数据")
