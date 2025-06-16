@@ -255,21 +255,14 @@ class UpdateManager:
             logger.info("✅ 从full data文件重新生成缓存成功")
             self.initial_full_update_completed = True
         else:
-            # 🔥 修复：无论数据是否过期，都先尝试加载现有数据，避免前端触发不必要的全量更新
+            # 🔥 简化逻辑：只要有缓存数据就不启动全量更新
             logger.info("📊 尝试加载现有价差数据...")
             try:
                 self._load_latest_data()
                 if self.current_diff_items:
                     logger.info(f"✅ 成功加载缓存数据: {len(self.current_diff_items)}个商品")
-                    
-                    # 检查是否需要更新
-                    needs_initial_update = self.hashname_cache.should_full_update()
-                    if needs_initial_update:
-                        logger.info("📊 数据已过期，将在后台执行全量更新")
-                        self.initial_full_update_completed = False
-                    else:
-                        logger.info("📊 数据未过期，可直接启动增量更新")
-                        self.initial_full_update_completed = True
+                    logger.info("📊 检测到缓存数据，跳过全量更新，直接启动增量更新")
+                    self.initial_full_update_completed = True
                 else:
                     logger.warning("⚠️ 缓存数据为空，将强制执行全量更新")
                     self.initial_full_update_completed = False
@@ -317,9 +310,9 @@ class UpdateManager:
     
     def _full_update_loop(self):
         """全量更新循环"""
-        # 🔥 修复死锁：如果需要初始更新，立即执行一次
-        if not self.initial_full_update_completed and self.hashname_cache.should_full_update():
-            logger.info("🔄 立即执行初始全量更新...")
+        # 🔥 简化逻辑：只有在没有缓存数据时才立即执行初始全量更新
+        if not self.initial_full_update_completed:
+            logger.info("🔄 立即执行初始全量更新（无缓存数据）...")
             self._trigger_full_update(is_initial=True)
             
             # 等待初始更新完成
