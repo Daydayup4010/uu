@@ -514,9 +514,24 @@ class UpdateManager:
         try:
             # 使用IntegratedPriceAnalyzer获取商品数据，但不做分析
             async with IntegratedPriceAnalyzer() as analyzer:
-                # 获取Buff和悠悠有品的原始数据
-                buff_data = await analyzer._get_buff_data_optimized()
-                youpin_data = await analyzer._get_youpin_data_optimized()
+                # 🔥 修复：并行获取Buff和悠悠有品的原始数据
+                logger.info("🚀 并行获取两个平台的数据...")
+                buff_task = asyncio.create_task(analyzer._get_buff_data_optimized())
+                youpin_task = asyncio.create_task(analyzer._get_youpin_data_optimized())
+                
+                # 等待两个任务完成
+                buff_data, youpin_data = await asyncio.gather(buff_task, youpin_task, return_exceptions=True)
+                
+                # 检查结果
+                if isinstance(buff_data, Exception):
+                    logger.error(f"❌ Buff数据获取失败: {buff_data}")
+                    buff_data = []
+                
+                if isinstance(youpin_data, Exception):
+                    logger.error(f"❌ 悠悠有品数据获取失败: {youpin_data}")
+                    youpin_data = []
+                    
+                logger.info(f"✅ 并行获取完成: Buff={len(buff_data)}个, 悠悠有品={len(youpin_data)}个")
                 
                 if not buff_data:
                     logger.error("❌ 无法获取Buff商品数据")
