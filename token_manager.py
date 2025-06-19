@@ -440,7 +440,7 @@ class TokenManager:
                 from integrated_price_system import BuffAPIClient
                 async with BuffAPIClient() as client:
                     # 尝试获取第一页数据
-                    result = await client.get_goods_list(page_num=1, page_size=1)
+                    result = await client.get_goods_list(page_num=10, page_size=20)
                     
                     if result and 'data' in result:
                         validation_result = {"valid": True, "error": None, "cached": False}
@@ -513,7 +513,7 @@ class TokenManager:
                 from youpin_working_api import YoupinWorkingAPI
                 async with YoupinWorkingAPI() as client:
                     # 尝试获取第一页数据
-                    result = await client.get_market_goods(page_index=1, page_size=1)
+                    result = await client.get_market_goods(page_index=10, page_size=20)
                     
                     if result and len(result) > 0:
                         validation_result = {"valid": True, "error": None, "cached": False}
