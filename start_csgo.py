@@ -165,6 +165,11 @@ def main():
         @csgo_bp.route('/api/tokens/validation-service', methods=['GET', 'POST'])
         def api_tokens_validation_service():
             return api.manage_validation_service()
+            
+        # 🔥 新增：Token配置重载API路由
+        @csgo_bp.route('/api/tokens/reload', methods=['POST'])
+        def api_tokens_reload():
+            return api.reload_token_config()
         
         # 注册蓝图
         app.register_blueprint(csgo_bp)
