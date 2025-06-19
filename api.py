@@ -1572,6 +1572,42 @@ def manage_validation_service():
             'error': f'管理验证服务失败: {str(e)}'
         }), 500
 
+@app.route('/api/tokens/reload', methods=['POST'])
+def reload_token_config():
+    """🔥 新增：重新加载Token配置"""
+    try:
+        from token_manager import TokenManager
+        
+        # 获取TokenManager实例
+        tm = TokenManager()
+        
+        # 强制重新加载配置
+        updated_config = tm.reload_config()
+        
+        # 获取更新后的状态
+        status = tm.get_token_status_summary()
+        
+        return jsonify({
+            'success': True,
+            'message': 'Token配置已重新加载',
+            'data': {
+                'buff': {
+                    'configured': status['buff']['configured'],
+                    'last_updated': status['buff']['last_updated']
+                },
+                'youpin': {
+                    'configured': status['youpin']['configured'], 
+                    'last_updated': status['youpin']['last_updated']
+                }
+            }
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': f'重新加载配置失败: {str(e)}'
+        }), 500
+
 @app.route('/api/stream_analyze', methods=['POST'])
 def api_stream_analyze():
     """

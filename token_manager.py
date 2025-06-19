@@ -101,6 +101,22 @@ class TokenManager:
         
         return self.tokens_config
     
+    def reload_config(self) -> Dict[str, Any]:
+        """🔥 新增：强制重新加载配置"""
+        logger.info("🔄 强制重新加载Token配置...")
+        
+        # 清除验证缓存
+        self._buff_validation_cache = {"valid": False, "checked_at": None, "error": None}
+        self._youpin_validation_cache = {"valid": False, "checked_at": None, "error": None}
+        self._global_validation_cache = {
+            "result": None,
+            "cached_at": None,
+            "cache_duration": 300
+        }
+        
+        # 重新加载配置文件
+        return self.load_config()
+    
     def get_default_config(self) -> Dict[str, Any]:
         """获取默认配置"""
         return {
