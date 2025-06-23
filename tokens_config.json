@@ -14,8 +14,8 @@
       "game": "csgo",
       "qr_code_verify_ticket": "",
       "remember_me": "",
-      "session": "1-26kH9-SFdmYW1G1Y3NHb35GAuRxhMeKkeQJ3R2Hd2GrM2044457754",
-      "csrf_token": "ImUwMWUwOGJmYTQxNjk2ZWQ4YWU5NmRkMmNjMjkzMDExZjJiMDJiYmQi.aEeQDw.Kelr4ZZA-IAB0CtYbri6vGCbTz4"
+      "session": "1-v6c57p3AxMjpbcFc60CprSuxttNWFGwWKN0APzBr6VfW2044457754",
+      "csrf_token": "IjRjYWI0NmEyODYyYzY4NjNlMzY4ZWE1YzRhNTU1OWVmNjUxNWNkNjki.aFjJpQ.G3JqN3QJ0H2AcTnQT71lIXeyk3s"
     },
     "headers": {
       "Accept": "application/json, text/javascript, */*; q=0.01",
@@ -36,7 +36,7 @@
   },
   "youpin": {
     "device_id": "5b38ebeb-5a5b-4b1a-afe9-b51edbbb8e01",
-    "device_uk": "5FLHKtQ41o4Uk9E5vp6bEGSm0PLc8ZMbWEnoQbqGPfbHNFN0bgpXQjS4azhpaoP1J",
+    "device_uk": "5FLLZU0s6briQcSlAJZN5XjSMauzFWlWTcTHd22Dn7PDPRs8gBwUVvJBiY753qH1I",
     "uk": "5FEvkZD2PSMLMTtE0BqOfidTtuoaX9HWBIze4zzFxfdXrsajaPWS4yY5ay96BuX1M",
     "b3": "b75be2c602134065b29192d74b22ba3d-dbf90dfde642502f-1",
     "headers": {
@@ -52,14 +52,14 @@
       "secret-v": "h5_v1",
       "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36 Edg/136.0.0.0",
       "deviceid": "5b38ebeb-5a5b-4b1a-afe9-b51edbbb8e01",
-      "deviceuk": "5FLHKtQ41o4Uk9E5vp6bEGSm0PLc8ZMbWEnoQbqGPfbHNFN0bgpXQjS4azhpaoP1J",
+      "deviceuk": "5FLLZU0s6briQcSlAJZN5XjSMauzFWlWTcTHd22Dn7PDPRs8gBwUVvJBiY753qH1I",
       "uk": "5FEvkZD2PSMLMTtE0BqOfidTtuoaX9HWBIze4zzFxfdXrsajaPWS4yY5ay96BuX1M",
-      "b3": "b75be2c602134065b29192d74b22ba3d-dbf90dfde642502f-1",
+      "b3": "8541581321bd4125813b58b73aadb703-d364076b5d6dd58c-1",
       "traceparent": "00-b75be2c602134065b29192d74b22ba3d-dbf90dfde642502f-01",
-      "authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJhNjRiYmY5N2Q1OTY0NDJiOTgzZmVjN2Y3OWM4YjUyNCIsIm5hbWVpZCI6IjE2MjU2MDIiLCJJZCI6IjE2MjU2MDIiLCJ1bmlxdWVfbmFtZSI6IllQMDAwMTYyNTYwMiIsIk5hbWUiOiJZUDAwMDE2MjU2MDIiLCJ2ZXJzaW9uIjoiOHZ1IiwibmJmIjoxNzUwMzEzMTAxLCJleHAiOjE3NTExNzcxMDEsImlzcyI6InlvdXBpbjg5OC5jb20iLCJkZXZpY2VJZCI6IjViMzhlYmViLTVhNWItNGIxYS1hZmU5LWI1MWVkYmJiOGUwMSIsImF1ZCI6InVzZXIifQ.ONXy9lYSagE8qQTON1aNr7iRez1gl6yjn07quwYiNWc"
+      "authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiI3ZWNiMGJjZjZiNGE0Mzg4OWE5MGMxMWZiMWZjY2NmZiIsIm5hbWVpZCI6IjM2ODkyMzMiLCJJZCI6IjM2ODkyMzMiLCJ1bmlxdWVfbmFtZSI6IuenkuWPkeenkuWPkSIsIk5hbWUiOiLnp5Llj5Hnp5Llj5EiLCJ2ZXJzaW9uIjoiUkVwIiwibmJmIjoxNzUwNjQ4OTc5LCJleHAiOjE3NTE1MTI5NzksImlzcyI6InlvdXBpbjg5OC5jb20iLCJkZXZpY2VJZCI6IjViMzhlYmViLTVhNWItNGIxYS1hZmU5LWI1MWVkYmJiOGUwMSIsImF1ZCI6InVzZXIifQ.Cnj1A3qfaKW3MeqkVt9fKFOA3BdOoVb7p0fWe1WzqJo"
     },
     "last_updated": "2025-06-19T14:10:56.984739",
     "status": "已配置",
-    "authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJhNjRiYmY5N2Q1OTY0NDJiOTgzZmVjN2Y3OWM4YjUyNCIsIm5hbWVpZCI6IjE2MjU2MDIiLCJJZCI6IjE2MjU2MDIiLCJ1bmlxdWVfbmFtZSI6IllQMDAwMTYyNTYwMiIsIk5hbWUiOiJZUDAwMDE2MjU2MDIiLCJ2ZXJzaW9uIjoiOHZ1IiwibmJmIjoxNzUwMzEzMTAxLCJleHAiOjE3NTExNzcxMDEsImlzcyI6InlvdXBpbjg5OC5jb20iLCJkZXZpY2VJZCI6IjViMzhlYmViLTVhNWItNGIxYS1hZmU5LWI1MWVkYmJiOGUwMSIsImF1ZCI6InVzZXIifQ.ONXy9lYSagE8qQTON1aNr7iRez1gl6yjn07quwYiNWc"
+    "authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiI3ZWNiMGJjZjZiNGE0Mzg4OWE5MGMxMWZiMWZjY2NmZiIsIm5hbWVpZCI6IjM2ODkyMzMiLCJJZCI6IjM2ODkyMzMiLCJ1bmlxdWVfbmFtZSI6IuenkuWPkeenkuWPkSIsIk5hbWUiOiLnp5Llj5Hnp5Llj5EiLCJ2ZXJzaW9uIjoiUkVwIiwibmJmIjoxNzUwNjQ4OTc5LCJleHAiOjE3NTE1MTI5NzksImlzcyI6InlvdXBpbjg5OC5jb20iLCJkZXZpY2VJZCI6IjViMzhlYmViLTVhNWItNGIxYS1hZmU5LWI1MWVkYmJiOGUwMSIsImF1ZCI6InVzZXIifQ.Cnj1A3qfaKW3MeqkVt9fKFOA3BdOoVb7p0fWe1WzqJo"
   }
 }
