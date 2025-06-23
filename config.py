@@ -51,11 +51,11 @@ class Config:
     # 请求间隔（秒）
     REQUEST_DELAY: float = 2.0          # 请求延迟（秒）
     BUFF_API_DELAY: float = 8.0         # Buff API单次请求延迟（秒）- 用于全量更新
-    YOUPIN_API_DELAY: float = 6.0       # 🔥 新增：悠悠有品API延迟（秒）- 用于全量更新
+    YOUPIN_API_DELAY: float = 8.0       # 🔥 新增：悠悠有品API延迟（秒）- 用于全量更新
     
     # 🔥 新增：专门用于搜索的API延迟（增量更新时使用）
     BUFF_SEARCH_DELAY: float = 5.0      # Buff搜索API延迟（秒）- 搜索相对简单，可以更快
-    YOUPIN_SEARCH_DELAY: float = 4.0    # 悠悠有品搜索API延迟（秒）- 搜索相对简单，可以更快
+    YOUPIN_SEARCH_DELAY: float = 5.0    # 悠悠有品搜索API延迟（秒）- 搜索相对简单，可以更快
     
     RETRY_DELAY: float = 2.0             # 重试延迟
     
