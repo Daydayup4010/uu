@@ -2,8 +2,14 @@
   "metadata": {
     "last_full_update": "2025-06-13T14:54:45.622307",
     "last_incremental_update": "2025-06-13T14:44:34.823204",
-    "total_count": 737,
-    "generated_at": "2025-06-13T14:54:45.622307"
+    "total_count": 667,
+    "generated_at": "2025-06-13T14:54:45.622307",
+    "deduplication_info": {
+      "original_count": 737,
+      "removed_duplicates": 70,
+      "deduplicated_at": "2025-06-30T16:01:18.971140"
+    },
+    "last_updated": "2025-06-30T16:01:18.971140"
   },
   "items": [
     {
@@ -1015,20 +1021,6 @@
       "last_updated": "2025-06-13T14:54:45.433801"
     },
     {
-      "id": "37905",
-      "name": "P250（纪念品） | 沙丘之黄 (久经沙场)",
-      "hash_name": "P250（纪念品） | 沙丘之黄 (久经沙场)",
-      "buff_price": 4.38,
-      "youpin_price": 5.38,
-      "price_diff": 1.0,
-      "profit_rate": 22.831050228310502,
-      "buff_url": "https://buff.163.com/goods/37905",
-      "youpin_url": "https://www.youpin898.com/search?keyword=P250（纪念品） | 沙丘之黄 (久经沙场)",
-      "image_url": "https://market.fp.ps.netease.com/file/65f5c486b1876cca607a53e4bSAxlRdz05?fop=imageView/6/f/webp/q/75",
-      "category": "重新筛选",
-      "last_updated": "2025-06-13T14:54:45.433801"
-    },
-    {
       "id": "878843",
       "name": "印花 | b1t （全息） | 2021年斯德哥尔摩锦标赛",
       "hash_name": "印花 | b1t （全息） | 2021年斯德哥尔摩锦标赛",
@@ -1053,20 +1045,6 @@
       "buff_url": "https://buff.163.com/goods/39537",
       "youpin_url": "https://www.youpin898.com/search?keyword=SSG 08（StatTrak™） | 无尽深海 (久经沙场)",
       "image_url": "https://market.fp.ps.netease.com/file/65f585c68ee3fc1a3b410220fzP9UFCN05?fop=imageView/6/f/webp/q/75",
-      "category": "重新筛选",
-      "last_updated": "2025-06-13T14:54:45.435590"
-    },
-    {
-      "id": "847305",
-      "name": "印花 | Astralis（闪亮）| 2020 RMR",
-      "hash_name": "印花 | Astralis（闪亮）| 2020 RMR",
-      "buff_price": 9.98,
-      "youpin_price": 12.1,
-      "price_diff": 2.119999999999999,
-      "profit_rate": 21.24248496993987,
-      "buff_url": "https://buff.163.com/goods/847305",
-      "youpin_url": "https://www.youpin898.com/search?keyword=印花 | Astralis（闪亮）| 2020 RMR",
-      "image_url": "https://g.fp.ps.netease.com/market/file/60120645143cfa4d909ea92exjNPs4Yf03?fop=imageView/6/f/webp/q/75",
       "category": "重新筛选",
       "last_updated": "2025-06-13T14:54:45.435590"
     },
@@ -1279,20 +1257,6 @@
       "image_url": "https://market.fp.ps.netease.com/file/65f581ddbb9ba13200db9191sxitwMVw05?fop=imageView/6/f/webp/q/75",
       "category": "重新筛选",
       "last_updated": "2025-06-13T14:54:45.430288"
-    },
-    {
-      "id": "37982",
-      "name": "SCAR-20（纪念品） | 暴风呼啸 (久经沙场)",
-      "hash_name": "SCAR-20（纪念品） | 暴风呼啸 (久经沙场)",
-      "buff_price": 3.8,
-      "youpin_price": 4.5,
-      "price_diff": 0.7000000000000002,
-      "profit_rate": 18.421052631578952,
-      "buff_url": "https://buff.163.com/goods/37982",
-      "youpin_url": "https://www.youpin898.com/search?keyword=SCAR-20（纪念品） | 暴风呼啸 (久经沙场)",
-      "image_url": "https://market.fp.ps.netease.com/file/65f59b946372a3cd10a9fb5cXDybusSJ05?fop=imageView/6/f/webp/q/75",
-      "category": "重新筛选",
-      "last_updated": "2025-06-13T14:54:45.417225"
     },
     {
       "id": "37982",
@@ -1561,20 +1525,6 @@
       "last_updated": "2025-06-13T14:54:45.428312"
     },
     {
-      "id": "38753",
-      "name": "格洛克 18 型（StatTrak™） | 幻影冥魂 (久经沙场)",
-      "hash_name": "格洛克 18 型（StatTrak™） | 幻影冥魂 (久经沙场)",
-      "buff_price": 4.39,
-      "youpin_price": 5.07,
-      "price_diff": 0.6800000000000006,
-      "profit_rate": 15.489749430523933,
-      "buff_url": "https://buff.163.com/goods/38753",
-      "youpin_url": "https://www.youpin898.com/search?keyword=格洛克 18 型（StatTrak™） | 幻影冥魂 (久经沙场)",
-      "image_url": "https://market.fp.ps.netease.com/file/65f578b2a35ac7231744c5a0c3PPiDKT05?fop=imageView/6/f/webp/q/75",
-      "category": "重新筛选",
-      "last_updated": "2025-06-13T14:54:45.428312"
-    },
-    {
       "id": "37623",
       "name": "FN57（纪念品） | 暮色森林 (略有磨损)",
       "hash_name": "FN57（纪念品） | 暮色森林 (略有磨损)",
@@ -1587,20 +1537,6 @@
       "image_url": "https://market.fp.ps.netease.com/file/65f59ab58d0bd0f6bbdcc7d03pfL5hPa05?fop=imageView/6/f/webp/q/75",
       "category": "重新筛选",
       "last_updated": "2025-06-13T14:54:45.433801"
-    },
-    {
-      "id": "781607",
-      "name": "MAC-10 | 魅惑 (战痕累累)",
-      "hash_name": "MAC-10 | 魅惑 (战痕累累)",
-      "buff_price": 2.08,
-      "youpin_price": 2.4,
-      "price_diff": 0.31999999999999984,
-      "profit_rate": 15.384615384615378,
-      "buff_url": "https://buff.163.com/goods/781607",
-      "youpin_url": "https://www.youpin898.com/search?keyword=MAC-10 | 魅惑 (战痕累累)",
-      "image_url": "https://market.fp.ps.netease.com/file/65f581e8374026704fd7e5a5PYQTGdyC05?fop=imageView/6/f/webp/q/75",
-      "category": "重新筛选",
-      "last_updated": "2025-06-13T14:54:45.432800"
     },
     {
       "id": "781607",
@@ -1685,20 +1621,6 @@
       "image_url": "https://g.fp.ps.netease.com/market/file/5d54477ba7f252bce9de6964zefgGUN002?fop=imageView/6/f/webp/q/75",
       "category": "重新筛选",
       "last_updated": "2025-06-13T14:54:45.444348"
-    },
-    {
-      "id": "876014",
-      "name": "印花 | Natus Vincere （闪亮） | 2021年斯德哥尔摩锦标赛",
-      "hash_name": "印花 | Natus Vincere （闪亮） | 2021年斯德哥尔摩锦标赛",
-      "buff_price": 13.8,
-      "youpin_price": 15.88,
-      "price_diff": 2.08,
-      "profit_rate": 15.072463768115943,
-      "buff_url": "https://buff.163.com/goods/876014",
-      "youpin_url": "https://www.youpin898.com/search?keyword=印花 | Natus Vincere （闪亮） | 2021年斯德哥尔摩锦标赛",
-      "image_url": "https://g.fp.ps.netease.com/market/file/6171facd79d2f72f7d7ace21rcVqkvY403?fop=imageView/6/f/webp/q/75",
-      "category": "重新筛选",
-      "last_updated": "2025-06-13T14:54:45.442369"
     },
     {
       "id": "876014",
@@ -1925,20 +1847,6 @@
       "last_updated": "2025-06-13T14:54:45.425772"
     },
     {
-      "id": "1116768",
-      "name": "印花 | The Mongolz（闪亮）| 2025年奥斯汀锦标赛",
-      "hash_name": "印花 | The Mongolz（闪亮）| 2025年奥斯汀锦标赛",
-      "buff_price": 2.5,
-      "youpin_price": 2.84,
-      "price_diff": 0.33999999999999986,
-      "profit_rate": 13.599999999999996,
-      "buff_url": "https://buff.163.com/goods/1116768",
-      "youpin_url": "https://www.youpin898.com/search?keyword=印花 | The Mongolz（闪亮）| 2025年奥斯汀锦标赛",
-      "image_url": "https://market.fp.ps.netease.com/file/682fc2add0d6206289cc05b8dbT9Ff9H06?fop=imageView/6/f/webp/q/75",
-      "category": "重新筛选",
-      "last_updated": "2025-06-13T14:54:45.425772"
-    },
-    {
       "id": "894114",
       "name": "印花 | Ninjas in Pyjamas（金色）| 2022年安特卫普锦标赛",
       "hash_name": "印花 | Ninjas in Pyjamas（金色）| 2022年安特卫普锦标赛",
@@ -2035,20 +1943,6 @@
       "image_url": "https://market.fp.ps.netease.com/file/6747a41fec184c060136dfdbsczdqoJi05?fop=imageView/6/f/webp/q/75",
       "category": "重新筛选",
       "last_updated": "2025-06-13T14:54:45.443347"
-    },
-    {
-      "id": "36651",
-      "name": "截短霰弹枪 | 千纸鹤 (崭新出厂)",
-      "hash_name": "截短霰弹枪 | 千纸鹤 (崭新出厂)",
-      "buff_price": 2.62,
-      "youpin_price": 2.96,
-      "price_diff": 0.33999999999999986,
-      "profit_rate": 12.977099236641216,
-      "buff_url": "https://buff.163.com/goods/36651",
-      "youpin_url": "https://www.youpin898.com/search?keyword=截短霰弹枪 | 千纸鹤 (崭新出厂)",
-      "image_url": "https://market.fp.ps.netease.com/file/65f57c7ac7e62f1deb81f100NvGHaKTd05?fop=imageView/6/f/webp/q/75",
-      "category": "重新筛选",
-      "last_updated": "2025-06-13T14:54:45.422256"
     },
     {
       "id": "36651",
@@ -2289,34 +2183,6 @@
       "last_updated": "2025-06-13T14:54:45.424258"
     },
     {
-      "id": "781633",
-      "name": "加利尔 AR | 凤凰商号 (战痕累累)",
-      "hash_name": "加利尔 AR | 凤凰商号 (战痕累累)",
-      "buff_price": 1.9,
-      "youpin_price": 2.12,
-      "price_diff": 0.2200000000000002,
-      "profit_rate": 11.578947368421064,
-      "buff_url": "https://buff.163.com/goods/781633",
-      "youpin_url": "https://www.youpin898.com/search?keyword=加利尔 AR | 凤凰商号 (战痕累累)",
-      "image_url": "https://market.fp.ps.netease.com/file/65f5a24ac2ff2f467490a3628LCEglAq05?fop=imageView/6/f/webp/q/75",
-      "category": "重新筛选",
-      "last_updated": "2025-06-13T14:54:45.424258"
-    },
-    {
-      "id": "769245",
-      "name": "沙漠之鹰 | 轻轨 (战痕累累)",
-      "hash_name": "沙漠之鹰 | 轻轨 (战痕累累)",
-      "buff_price": 2.85,
-      "youpin_price": 3.18,
-      "price_diff": 0.33000000000000007,
-      "profit_rate": 11.578947368421055,
-      "buff_url": "https://buff.163.com/goods/769245",
-      "youpin_url": "https://www.youpin898.com/search?keyword=沙漠之鹰 | 轻轨 (战痕累累)",
-      "image_url": "https://market.fp.ps.netease.com/file/65f584fb421bf285e851c3c60bXuHZFO05?fop=imageView/6/f/webp/q/75",
-      "category": "重新筛选",
-      "last_updated": "2025-06-13T14:54:45.431793"
-    },
-    {
       "id": "769245",
       "name": "沙漠之鹰 | 轻轨 (战痕累累)",
       "hash_name": "沙漠之鹰 | 轻轨 (战痕累累)",
@@ -2413,20 +2279,6 @@
       "image_url": "https://g.fp.ps.netease.com/market/file/6271d448becf8b66c540b35caD6iagNg04?fop=imageView/6/f/webp/q/75",
       "category": "重新筛选",
       "last_updated": "2025-06-13T14:54:45.443347"
-    },
-    {
-      "id": "769215",
-      "name": "AK-47 | 迷踪秘境 (战痕累累)",
-      "hash_name": "AK-47 | 迷踪秘境 (战痕累累)",
-      "buff_price": 1.88,
-      "youpin_price": 2.09,
-      "price_diff": 0.20999999999999996,
-      "profit_rate": 11.170212765957444,
-      "buff_url": "https://buff.163.com/goods/769215",
-      "youpin_url": "https://www.youpin898.com/search?keyword=AK-47 | 迷踪秘境 (战痕累累)",
-      "image_url": "https://market.fp.ps.netease.com/file/65f584f13415dd751983cc32aYLdbkTT05?fop=imageView/6/f/webp/q/75",
-      "category": "重新筛选",
-      "last_updated": "2025-06-13T14:54:45.419742"
     },
     {
       "id": "769215",
@@ -2581,34 +2433,6 @@
       "image_url": "https://g.fp.ps.netease.com/market/file/63e5a5af36cc4b4a206ee90dAuck82xu04?fop=imageView/6/f/webp/q/75",
       "category": "重新筛选",
       "last_updated": "2025-06-13T14:54:45.416226"
-    },
-    {
-      "id": "921407",
-      "name": "印花 | 优雅凝视（闪亮）",
-      "hash_name": "印花 | 优雅凝视（闪亮）",
-      "buff_price": 12.18,
-      "youpin_price": 13.49,
-      "price_diff": 1.3100000000000005,
-      "profit_rate": 10.755336617405588,
-      "buff_url": "https://buff.163.com/goods/921407",
-      "youpin_url": "https://www.youpin898.com/search?keyword=印花 | 优雅凝视（闪亮）",
-      "image_url": "https://g.fp.ps.netease.com/market/file/63e5a5af36cc4b4a206ee90dAuck82xu04?fop=imageView/6/f/webp/q/75",
-      "category": "重新筛选",
-      "last_updated": "2025-06-13T14:54:45.416226"
-    },
-    {
-      "id": "36419",
-      "name": "SCAR-20 | 权力之心 (久经沙场)",
-      "hash_name": "SCAR-20 | 权力之心 (久经沙场)",
-      "buff_price": 2.42,
-      "youpin_price": 2.68,
-      "price_diff": 0.26000000000000023,
-      "profit_rate": 10.743801652892571,
-      "buff_url": "https://buff.163.com/goods/36419",
-      "youpin_url": "https://www.youpin898.com/search?keyword=SCAR-20 | 权力之心 (久经沙场)",
-      "image_url": "https://market.fp.ps.netease.com/file/65f57aeea2fc197ba285e5b4riKi5u5Q05?fop=imageView/6/f/webp/q/75",
-      "category": "重新筛选",
-      "last_updated": "2025-06-13T14:54:45.429287"
     },
     {
       "id": "36419",
@@ -2861,20 +2685,6 @@
       "image_url": "https://g.fp.ps.netease.com/market/file/5d544eab2786fd3c20dbd576aeeOglqx02?fop=imageView/6/f/webp/q/75",
       "category": "重新筛选",
       "last_updated": "2025-06-13T14:54:45.444348"
-    },
-    {
-      "id": "781589",
-      "name": "MAC-10 | 魅惑 (略有磨损)",
-      "hash_name": "MAC-10 | 魅惑 (略有磨损)",
-      "buff_price": 4.56,
-      "youpin_price": 5.0,
-      "price_diff": 0.4400000000000004,
-      "profit_rate": 9.649122807017553,
-      "buff_url": "https://buff.163.com/goods/781589",
-      "youpin_url": "https://www.youpin898.com/search?keyword=MAC-10 | 魅惑 (略有磨损)",
-      "image_url": "https://market.fp.ps.netease.com/file/65f5866450aeb89c1fe701915o7TtS6X05?fop=imageView/6/f/webp/q/75",
-      "category": "重新筛选",
-      "last_updated": "2025-06-13T14:54:45.417770"
     },
     {
       "id": "781589",
@@ -3465,20 +3275,6 @@
       "last_updated": "2025-06-13T14:54:45.425772"
     },
     {
-      "id": "39287",
-      "name": "P250（StatTrak™） | 超新星 (崭新出厂)",
-      "hash_name": "P250（StatTrak™） | 超新星 (崭新出厂)",
-      "buff_price": 32.68,
-      "youpin_price": 35.1,
-      "price_diff": 2.4200000000000017,
-      "profit_rate": 7.405140758873935,
-      "buff_url": "https://buff.163.com/goods/39287",
-      "youpin_url": "https://www.youpin898.com/search?keyword=P250（StatTrak™） | 超新星 (崭新出厂)",
-      "image_url": "https://market.fp.ps.netease.com/file/65f57b7057177ec7b76b6539gBT4cqWI05?fop=imageView/6/f/webp/q/75",
-      "category": "重新筛选",
-      "last_updated": "2025-06-13T14:54:45.425772"
-    },
-    {
       "id": "921533",
       "name": "R8 左轮手枪 | 蕉农炮 (崭新出厂)",
       "hash_name": "R8 左轮手枪 | 蕉农炮 (崭新出厂)",
@@ -3743,20 +3539,6 @@
       "image_url": "https://g.fp.ps.netease.com/market/file/5dd32bc15e602724caa96b829tNiZxCP02?fop=imageView/6/f/webp/q/75",
       "category": "重新筛选",
       "last_updated": "2025-06-13T14:54:45.422256"
-    },
-    {
-      "id": "779213",
-      "name": "AWP（StatTrak™） | 毛细血管 (久经沙场)",
-      "hash_name": "AWP（StatTrak™） | 毛细血管 (久经沙场)",
-      "buff_price": 10.0,
-      "youpin_price": 10.67,
-      "price_diff": 0.6699999999999999,
-      "profit_rate": 6.699999999999999,
-      "buff_url": "https://buff.163.com/goods/779213",
-      "youpin_url": "https://www.youpin898.com/search?keyword=AWP（StatTrak™） | 毛细血管 (久经沙场)",
-      "image_url": "https://market.fp.ps.netease.com/file/65f5871d6bc0804770059a33peosroFU05?fop=imageView/6/f/webp/q/75",
-      "category": "重新筛选",
-      "last_updated": "2025-06-13T14:54:45.420742"
     },
     {
       "id": "779213",
@@ -4207,20 +3989,6 @@
       "last_updated": "2025-06-13T14:54:45.416226"
     },
     {
-      "id": "1116009",
-      "name": "P2000 | 草泽 (久经沙场)",
-      "hash_name": "P2000 | 草泽 (久经沙场)",
-      "buff_price": 2.07,
-      "youpin_price": 2.19,
-      "price_diff": 0.1200000000000001,
-      "profit_rate": 5.797101449275368,
-      "buff_url": "https://buff.163.com/goods/1116009",
-      "youpin_url": "https://www.youpin898.com/search?keyword=P2000 | 草泽 (久经沙场)",
-      "image_url": "https://market.fp.ps.netease.com/file/67eb53fc87826140bdacf2274xrlWu9Z06?fop=imageView/6/f/webp/q/75",
-      "category": "重新筛选",
-      "last_updated": "2025-06-13T14:54:45.416226"
-    },
-    {
       "id": "763280",
       "name": "格洛克 18 型（StatTrak™） | 锈蚀烈焰 (略有磨损)",
       "hash_name": "格洛克 18 型（StatTrak™） | 锈蚀烈焰 (略有磨损)",
@@ -4415,20 +4183,6 @@
       "image_url": "https://g.fp.ps.netease.com/market/file/613a8459704e1cb4c309501e56VpasWK03?fop=imageView/6/f/webp/q/75",
       "category": "重新筛选",
       "last_updated": "2025-06-13T14:54:45.442369"
-    },
-    {
-      "id": "927339",
-      "name": "AK-47 | 钢铁三角洲 (久经沙场)",
-      "hash_name": "AK-47 | 钢铁三角洲 (久经沙场)",
-      "buff_price": 7.15,
-      "youpin_price": 7.54,
-      "price_diff": 0.3899999999999997,
-      "profit_rate": 5.45454545454545,
-      "buff_url": "https://buff.163.com/goods/927339",
-      "youpin_url": "https://www.youpin898.com/search?keyword=AK-47 | 钢铁三角洲 (久经沙场)",
-      "image_url": "https://market.fp.ps.netease.com/file/65f5903cdf49f7635e026ae5SU0OYibL05?fop=imageView/6/f/webp/q/75",
-      "category": "重新筛选",
-      "last_updated": "2025-06-13T14:54:45.430288"
     },
     {
       "id": "927339",
@@ -4697,20 +4451,6 @@
       "last_updated": "2025-06-13T14:54:45.433801"
     },
     {
-      "id": "761359",
-      "name": "PP-野牛（纪念品） | 红苹果 (略有磨损)",
-      "hash_name": "PP-野牛（纪念品） | 红苹果 (略有磨损)",
-      "buff_price": 4.05,
-      "youpin_price": 4.26,
-      "price_diff": 0.20999999999999996,
-      "profit_rate": 5.185185185185184,
-      "buff_url": "https://buff.163.com/goods/761359",
-      "youpin_url": "https://www.youpin898.com/search?keyword=PP-野牛（纪念品） | 红苹果 (略有磨损)",
-      "image_url": "https://market.fp.ps.netease.com/file/65f5cd95f8746878c712e57605iOirNl05?fop=imageView/6/f/webp/q/75",
-      "category": "重新筛选",
-      "last_updated": "2025-06-13T14:54:45.433801"
-    },
-    {
       "id": "35246",
       "name": "M4A1 消音型 | 氮化处理 (破损不堪)",
       "hash_name": "M4A1 消音型 | 氮化处理 (破损不堪)",
@@ -4767,20 +4507,6 @@
       "last_updated": "2025-06-13T14:54:45.423256"
     },
     {
-      "id": "34780",
-      "name": "FN57 | 朝枪夕拾 (久经沙场)",
-      "hash_name": "FN57 | 朝枪夕拾 (久经沙场)",
-      "buff_price": 6.09,
-      "youpin_price": 6.4,
-      "price_diff": 0.3100000000000005,
-      "profit_rate": 5.090311986863719,
-      "buff_url": "https://buff.163.com/goods/34780",
-      "youpin_url": "https://www.youpin898.com/search?keyword=FN57 | 朝枪夕拾 (久经沙场)",
-      "image_url": "https://market.fp.ps.netease.com/file/65f579ccfe0439f57c2e2e17LczHr5J305?fop=imageView/6/f/webp/q/75",
-      "category": "重新筛选",
-      "last_updated": "2025-06-13T14:54:45.423256"
-    },
-    {
       "id": "761449",
       "name": "M4A4（纪念品） | 主机 (久经沙场)",
       "hash_name": "M4A4（纪念品） | 主机 (久经沙场)",
@@ -4821,20 +4547,6 @@
       "image_url": "https://market.fp.ps.netease.com/file/65f578ad67fd933831d01df5hmTxJvYQ05?fop=imageView/6/f/webp/q/75",
       "category": "重新筛选",
       "last_updated": "2025-06-13T14:54:45.427774"
-    },
-    {
-      "id": "38681",
-      "name": "加利尔 AR（StatTrak™） | 沙尘暴 (久经沙场)",
-      "hash_name": "加利尔 AR（StatTrak™） | 沙尘暴 (久经沙场)",
-      "buff_price": 12.0,
-      "youpin_price": 12.6,
-      "price_diff": 0.5999999999999996,
-      "profit_rate": 4.9999999999999964,
-      "buff_url": "https://buff.163.com/goods/38681",
-      "youpin_url": "https://www.youpin898.com/search?keyword=加利尔 AR（StatTrak™） | 沙尘暴 (久经沙场)",
-      "image_url": "https://market.fp.ps.netease.com/file/65f57ec7cadf40baa3254be9XJU4eHk105?fop=imageView/6/f/webp/q/75",
-      "category": "重新筛选",
-      "last_updated": "2025-06-13T14:54:45.434802"
     },
     {
       "id": "38681",
@@ -5103,20 +4815,6 @@
       "last_updated": "2025-06-13T14:54:45.416226"
     },
     {
-      "id": "762123",
-      "name": "M4A4 | 变频器 (略有磨损)",
-      "hash_name": "M4A4 | 变频器 (略有磨损)",
-      "buff_price": 3.05,
-      "youpin_price": 3.19,
-      "price_diff": 0.14000000000000012,
-      "profit_rate": 4.590163934426235,
-      "buff_url": "https://buff.163.com/goods/762123",
-      "youpin_url": "https://www.youpin898.com/search?keyword=M4A4 | 变频器 (略有磨损)",
-      "image_url": "https://market.fp.ps.netease.com/file/65f58e17ed92c8b28579b06eLPQd2odI05?fop=imageView/6/f/webp/q/75",
-      "category": "重新筛选",
-      "last_updated": "2025-06-13T14:54:45.418741"
-    },
-    {
       "id": "876037",
       "name": "印花 | FURIA （闪亮） | 2021年斯德哥尔摩锦标赛",
       "hash_name": "印花 | FURIA （闪亮） | 2021年斯德哥尔摩锦标赛",
@@ -5171,20 +4869,6 @@
       "image_url": "https://market.fp.ps.netease.com/file/65f58b1d15bf87e8b346a27dY2l3zgNP05?fop=imageView/6/f/webp/q/75",
       "category": "重新筛选",
       "last_updated": "2025-06-13T14:54:45.425772"
-    },
-    {
-      "id": "34671",
-      "name": "法玛斯 | 防滚架 (久经沙场)",
-      "hash_name": "法玛斯 | 防滚架 (久经沙场)",
-      "buff_price": 15.2,
-      "youpin_price": 15.88,
-      "price_diff": 0.6800000000000015,
-      "profit_rate": 4.473684210526326,
-      "buff_url": "https://buff.163.com/goods/34671",
-      "youpin_url": "https://www.youpin898.com/search?keyword=法玛斯 | 防滚架 (久经沙场)",
-      "image_url": "https://market.fp.ps.netease.com/file/65f5781b8b10f4dfcdded5ca5tQA2OWo05?fop=imageView/6/f/webp/q/75",
-      "category": "重新筛选",
-      "last_updated": "2025-06-13T14:54:45.423256"
     },
     {
       "id": "34671",
@@ -5271,20 +4955,6 @@
       "last_updated": "2025-06-13T14:54:45.417770"
     },
     {
-      "id": "900491",
-      "name": "P90 | 给爷冲 (略有磨损)",
-      "hash_name": "P90 | 给爷冲 (略有磨损)",
-      "buff_price": 4.98,
-      "youpin_price": 5.2,
-      "price_diff": 0.21999999999999975,
-      "profit_rate": 4.417670682730918,
-      "buff_url": "https://buff.163.com/goods/900491",
-      "youpin_url": "https://www.youpin898.com/search?keyword=P90 | 给爷冲 (略有磨损)",
-      "image_url": "https://market.fp.ps.netease.com/file/65f582f9325617dbcaf55a50vzSpZypj05?fop=imageView/6/f/webp/q/75",
-      "category": "重新筛选",
-      "last_updated": "2025-06-13T14:54:45.417770"
-    },
-    {
       "id": "775166",
       "name": "AUG | 极地孤狼 (略有磨损)",
       "hash_name": "AUG | 极地孤狼 (略有磨损)",
@@ -5297,34 +4967,6 @@
       "image_url": "https://market.fp.ps.netease.com/file/65f578cadb8a6890c4d6e531wYWduMTa05?fop=imageView/6/f/webp/q/75",
       "category": "重新筛选",
       "last_updated": "2025-06-13T14:54:45.420742"
-    },
-    {
-      "id": "775166",
-      "name": "AUG | 极地孤狼 (略有磨损)",
-      "hash_name": "AUG | 极地孤狼 (略有磨损)",
-      "buff_price": 22.88,
-      "youpin_price": 23.89,
-      "price_diff": 1.0100000000000016,
-      "profit_rate": 4.414335664335671,
-      "buff_url": "https://buff.163.com/goods/775166",
-      "youpin_url": "https://www.youpin898.com/search?keyword=AUG | 极地孤狼 (略有磨损)",
-      "image_url": "https://market.fp.ps.netease.com/file/65f578cadb8a6890c4d6e531wYWduMTa05?fop=imageView/6/f/webp/q/75",
-      "category": "重新筛选",
-      "last_updated": "2025-06-13T14:54:45.421278"
-    },
-    {
-      "id": "900489",
-      "name": "M249 | 闹市区 (略有磨损)",
-      "hash_name": "M249 | 闹市区 (略有磨损)",
-      "buff_price": 4.79,
-      "youpin_price": 5.0,
-      "price_diff": 0.20999999999999996,
-      "profit_rate": 4.384133611691022,
-      "buff_url": "https://buff.163.com/goods/900489",
-      "youpin_url": "https://www.youpin898.com/search?keyword=M249 | 闹市区 (略有磨损)",
-      "image_url": "https://market.fp.ps.netease.com/file/65f582c5357c8abf1f924aa0XNXtj2Vi05?fop=imageView/6/f/webp/q/75",
-      "category": "重新筛选",
-      "last_updated": "2025-06-13T14:54:45.417225"
     },
     {
       "id": "900489",
@@ -5409,20 +5051,6 @@
       "image_url": "https://market.fp.ps.netease.com/file/65f576ee17e08529e1805b58HKYtiyYQ05?fop=imageView/6/f/webp/q/75",
       "category": "重新筛选",
       "last_updated": "2025-06-13T14:54:45.432496"
-    },
-    {
-      "id": "763382",
-      "name": "沙漠之鹰（StatTrak™） | 机械工业 (久经沙场)",
-      "hash_name": "沙漠之鹰（StatTrak™） | 机械工业 (久经沙场)",
-      "buff_price": 85.18,
-      "youpin_price": 88.75,
-      "price_diff": 3.569999999999993,
-      "profit_rate": 4.191124677154253,
-      "buff_url": "https://buff.163.com/goods/763382",
-      "youpin_url": "https://www.youpin898.com/search?keyword=沙漠之鹰（StatTrak™） | 机械工业 (久经沙场)",
-      "image_url": "https://market.fp.ps.netease.com/file/65f586e9b75c42f1aa1259914GDbJc9a05?fop=imageView/6/f/webp/q/75",
-      "category": "重新筛选",
-      "last_updated": "2025-06-13T14:54:45.433801"
     },
     {
       "id": "763382",
@@ -5565,20 +5193,6 @@
       "last_updated": "2025-06-13T14:54:45.431793"
     },
     {
-      "id": "871126",
-      "name": "MAG-7 | 海军之辉 (久经沙场)",
-      "hash_name": "MAG-7 | 海军之辉 (久经沙场)",
-      "buff_price": 3.56,
-      "youpin_price": 3.7,
-      "price_diff": 0.14000000000000012,
-      "profit_rate": 3.9325842696629247,
-      "buff_url": "https://buff.163.com/goods/871126",
-      "youpin_url": "https://www.youpin898.com/search?keyword=MAG-7 | 海军之辉 (久经沙场)",
-      "image_url": "https://market.fp.ps.netease.com/file/65f58d683b9040aa6c3d69b7hHe8xRSr05?fop=imageView/6/f/webp/q/75",
-      "category": "重新筛选",
-      "last_updated": "2025-06-13T14:54:45.431793"
-    },
-    {
       "id": "871093",
       "name": "PP-野牛 | 安乐蜥 (久经沙场)",
       "hash_name": "PP-野牛 | 安乐蜥 (久经沙场)",
@@ -5621,34 +5235,6 @@
       "last_updated": "2025-06-13T14:54:45.433801"
     },
     {
-      "id": "34003",
-      "name": "AUG | 变色龙 (略有磨损)",
-      "hash_name": "AUG | 变色龙 (略有磨损)",
-      "buff_price": 20.91,
-      "youpin_price": 21.73,
-      "price_diff": 0.8200000000000003,
-      "profit_rate": 3.9215686274509816,
-      "buff_url": "https://buff.163.com/goods/34003",
-      "youpin_url": "https://www.youpin898.com/search?keyword=AUG | 变色龙 (略有磨损)",
-      "image_url": "https://market.fp.ps.netease.com/file/65f578af46b61d993ad51e89HulVvuiR05?fop=imageView/6/f/webp/q/75",
-      "category": "重新筛选",
-      "last_updated": "2025-06-13T14:54:45.433801"
-    },
-    {
-      "id": "956476",
-      "name": "截短霰弹枪 | 模拟输入 (久经沙场)",
-      "hash_name": "截短霰弹枪 | 模拟输入 (久经沙场)",
-      "buff_price": 5.12,
-      "youpin_price": 5.32,
-      "price_diff": 0.20000000000000018,
-      "profit_rate": 3.9062500000000036,
-      "buff_url": "https://buff.163.com/goods/956476",
-      "youpin_url": "https://www.youpin898.com/search?keyword=截短霰弹枪 | 模拟输入 (久经沙场)",
-      "image_url": "https://market.fp.ps.netease.com/file/65c34dce173a0bd7d8573f38JGMW7GUT05?fop=imageView/6/f/webp/q/75",
-      "category": "重新筛选",
-      "last_updated": "2025-06-13T14:54:45.423256"
-    },
-    {
       "id": "956476",
       "name": "截短霰弹枪 | 模拟输入 (久经沙场)",
       "hash_name": "截短霰弹枪 | 模拟输入 (久经沙场)",
@@ -5675,20 +5261,6 @@
       "image_url": "https://market.fp.ps.netease.com/file/65c34dc751c92b37aad3c27akYPpw0vx05?fop=imageView/6/f/webp/q/75",
       "category": "重新筛选",
       "last_updated": "2025-06-13T14:54:45.423256"
-    },
-    {
-      "id": "36590",
-      "name": "截短霰弹枪 | 渐变琥珀 (久经沙场)",
-      "hash_name": "截短霰弹枪 | 渐变琥珀 (久经沙场)",
-      "buff_price": 3.85,
-      "youpin_price": 4.0,
-      "price_diff": 0.1499999999999999,
-      "profit_rate": 3.896103896103894,
-      "buff_url": "https://buff.163.com/goods/36590",
-      "youpin_url": "https://www.youpin898.com/search?keyword=截短霰弹枪 | 渐变琥珀 (久经沙场)",
-      "image_url": "https://market.fp.ps.netease.com/file/65f5a7ce269c9c2666e328faCHeNALDq05?fop=imageView/6/f/webp/q/75",
-      "category": "重新筛选",
-      "last_updated": "2025-06-13T14:54:45.437317"
     },
     {
       "id": "36590",
@@ -5773,20 +5345,6 @@
       "image_url": "https://market.fp.ps.netease.com/file/65f57626acf98ab8de14120bLCJHyie305?fop=imageView/6/f/webp/q/75",
       "category": "重新筛选",
       "last_updated": "2025-06-13T14:54:45.439833"
-    },
-    {
-      "id": "39509",
-      "name": "SG 553（StatTrak™） | 幻影 (久经沙场)",
-      "hash_name": "SG 553（StatTrak™） | 幻影 (久经沙场)",
-      "buff_price": 6.54,
-      "youpin_price": 6.79,
-      "price_diff": 0.25,
-      "profit_rate": 3.82262996941896,
-      "buff_url": "https://buff.163.com/goods/39509",
-      "youpin_url": "https://www.youpin898.com/search?keyword=SG 553（StatTrak™） | 幻影 (久经沙场)",
-      "image_url": "https://market.fp.ps.netease.com/file/65f57f65b9e901070e607168c7vuz4i505?fop=imageView/6/f/webp/q/75",
-      "category": "重新筛选",
-      "last_updated": "2025-06-13T14:54:45.428312"
     },
     {
       "id": "39509",
@@ -5971,20 +5529,6 @@
       "last_updated": "2025-06-13T14:54:45.417770"
     },
     {
-      "id": "34941",
-      "name": "加利尔 AR | 火箭冰棒 (略有磨损)",
-      "hash_name": "加利尔 AR | 火箭冰棒 (略有磨损)",
-      "buff_price": 16.2,
-      "youpin_price": 16.78,
-      "price_diff": 0.5800000000000018,
-      "profit_rate": 3.580246913580259,
-      "buff_url": "https://buff.163.com/goods/34941",
-      "youpin_url": "https://www.youpin898.com/search?keyword=加利尔 AR | 火箭冰棒 (略有磨损)",
-      "image_url": "https://market.fp.ps.netease.com/file/65f5795dd47d0c50d8e56aa0zTbaIAeB05?fop=imageView/6/f/webp/q/75",
-      "category": "重新筛选",
-      "last_updated": "2025-06-13T14:54:45.417770"
-    },
-    {
       "id": "894316",
       "name": "印花 | Cloud9（全息）| 2022年安特卫普锦标赛",
       "hash_name": "印花 | Cloud9（全息）| 2022年安特卫普锦标赛",
@@ -6053,20 +5597,6 @@
       "image_url": "https://g.fp.ps.netease.com/market/file/5d544dde6f04946767749881yb3k7NO502?fop=imageView/6/f/webp/q/75",
       "category": "重新筛选",
       "last_updated": "2025-06-13T14:54:45.447861"
-    },
-    {
-      "id": "956528",
-      "name": "FN57 | 混合体 (崭新出厂)",
-      "hash_name": "FN57 | 混合体 (崭新出厂)",
-      "buff_price": 17.0,
-      "youpin_price": 17.6,
-      "price_diff": 0.6000000000000014,
-      "profit_rate": 3.5294117647058907,
-      "buff_url": "https://buff.163.com/goods/956528",
-      "youpin_url": "https://www.youpin898.com/search?keyword=FN57 | 混合体 (崭新出厂)",
-      "image_url": "https://market.fp.ps.netease.com/file/65c34dce3f9a8ab16ec40593M3UizTMW05?fop=imageView/6/f/webp/q/75",
-      "category": "重新筛选",
-      "last_updated": "2025-06-13T14:54:45.422256"
     },
     {
       "id": "956528",
@@ -6361,34 +5891,6 @@
       "image_url": "https://market.fp.ps.netease.com/file/65f5763dd11b89945f692de4DwDOk9sv05?fop=imageView/6/f/webp/q/75",
       "category": "重新筛选",
       "last_updated": "2025-06-13T14:54:45.437317"
-    },
-    {
-      "id": "779181",
-      "name": "MAG-7 | 正义 (久经沙场)",
-      "hash_name": "MAG-7 | 正义 (久经沙场)",
-      "buff_price": 15.28,
-      "youpin_price": 15.79,
-      "price_diff": 0.5099999999999998,
-      "profit_rate": 3.3376963350785327,
-      "buff_url": "https://buff.163.com/goods/779181",
-      "youpin_url": "https://www.youpin898.com/search?keyword=MAG-7 | 正义 (久经沙场)",
-      "image_url": "https://market.fp.ps.netease.com/file/65f5763dd11b89945f692de4DwDOk9sv05?fop=imageView/6/f/webp/q/75",
-      "category": "重新筛选",
-      "last_updated": "2025-06-13T14:54:45.437317"
-    },
-    {
-      "id": "33893",
-      "name": "AK-47 | 翡翠细条纹 (破损不堪)",
-      "hash_name": "AK-47 | 翡翠细条纹 (破损不堪)",
-      "buff_price": 18.0,
-      "youpin_price": 18.6,
-      "price_diff": 0.6000000000000014,
-      "profit_rate": 3.333333333333341,
-      "buff_url": "https://buff.163.com/goods/33893",
-      "youpin_url": "https://www.youpin898.com/search?keyword=AK-47 | 翡翠细条纹 (破损不堪)",
-      "image_url": "https://market.fp.ps.netease.com/file/65f596c55ece72ec14ee49ecQi76UciX05?fop=imageView/6/f/webp/q/75",
-      "category": "重新筛选",
-      "last_updated": "2025-06-13T14:54:45.422256"
     },
     {
       "id": "33893",
@@ -6839,20 +6341,6 @@
       "last_updated": "2025-06-13T14:54:45.428312"
     },
     {
-      "id": "38318",
-      "name": "AWP（StatTrak™） | 火卫一 (略有磨损)",
-      "hash_name": "AWP（StatTrak™） | 火卫一 (略有磨损)",
-      "buff_price": 32.48,
-      "youpin_price": 33.39,
-      "price_diff": 0.9100000000000037,
-      "profit_rate": 2.801724137931046,
-      "buff_url": "https://buff.163.com/goods/38318",
-      "youpin_url": "https://www.youpin898.com/search?keyword=AWP（StatTrak™） | 火卫一 (略有磨损)",
-      "image_url": "https://market.fp.ps.netease.com/file/65f57ba79e7b56ec822e10d6RRGzlHdo05?fop=imageView/6/f/webp/q/75",
-      "category": "重新筛选",
-      "last_updated": "2025-06-13T14:54:45.428312"
-    },
-    {
       "id": "45380",
       "name": "AUG | 湖怪鸟 (略有磨损)",
       "hash_name": "AUG | 湖怪鸟 (略有磨损)",
@@ -6895,20 +6383,6 @@
       "last_updated": "2025-06-13T14:54:45.416226"
     },
     {
-      "id": "762118",
-      "name": "格洛克 18 型 | 核子花园 (久经沙场)",
-      "hash_name": "格洛克 18 型 | 核子花园 (久经沙场)",
-      "buff_price": 6.54,
-      "youpin_price": 6.72,
-      "price_diff": 0.17999999999999972,
-      "profit_rate": 2.752293577981647,
-      "buff_url": "https://buff.163.com/goods/762118",
-      "youpin_url": "https://www.youpin898.com/search?keyword=格洛克 18 型 | 核子花园 (久经沙场)",
-      "image_url": "https://market.fp.ps.netease.com/file/65f5c0c152ab853c98c15249Jckq0mJJ05?fop=imageView/6/f/webp/q/75",
-      "category": "重新筛选",
-      "last_updated": "2025-06-13T14:54:45.416226"
-    },
-    {
       "id": "37735",
       "name": "M4A4（纪念品） | 狂哮飓风 (久经沙场)",
       "hash_name": "M4A4（纪念品） | 狂哮飓风 (久经沙场)",
@@ -6935,20 +6409,6 @@
       "image_url": "https://market.fp.ps.netease.com/file/65f57ef6bb9ba13200db584bPyzTCXfY05?fop=imageView/6/f/webp/q/75",
       "category": "重新筛选",
       "last_updated": "2025-06-13T14:54:45.424791"
-    },
-    {
-      "id": "1113931",
-      "name": "印花 | FaZe Clan（金色）| 2024年上海锦标赛",
-      "hash_name": "印花 | FaZe Clan（金色）| 2024年上海锦标赛",
-      "buff_price": 22.77,
-      "youpin_price": 23.39,
-      "price_diff": 0.620000000000001,
-      "profit_rate": 2.7228809837505534,
-      "buff_url": "https://buff.163.com/goods/1113931",
-      "youpin_url": "https://www.youpin898.com/search?keyword=印花 | FaZe Clan（金色）| 2024年上海锦标赛",
-      "image_url": "https://market.fp.ps.netease.com/file/6747aa94098ed2d4455ebf778W3ikRdZ05?fop=imageView/6/f/webp/q/75",
-      "category": "重新筛选",
-      "last_updated": "2025-06-13T14:54:45.439833"
     },
     {
       "id": "1113931",
@@ -7063,20 +6523,6 @@
       "last_updated": "2025-06-13T14:54:45.417225"
     },
     {
-      "id": "886687",
-      "name": "双持贝瑞塔 | 瓜瓜 (久经沙场)",
-      "hash_name": "双持贝瑞塔 | 瓜瓜 (久经沙场)",
-      "buff_price": 9.46,
-      "youpin_price": 9.71,
-      "price_diff": 0.25,
-      "profit_rate": 2.642706131078224,
-      "buff_url": "https://buff.163.com/goods/886687",
-      "youpin_url": "https://www.youpin898.com/search?keyword=双持贝瑞塔 | 瓜瓜 (久经沙场)",
-      "image_url": "https://market.fp.ps.netease.com/file/660cbd283d4c2b9632c51ac4ql9PJicJ05?fop=imageView/6/f/webp/q/75",
-      "category": "重新筛选",
-      "last_updated": "2025-06-13T14:54:45.417225"
-    },
-    {
       "id": "968079",
       "name": "格洛克 18 型 | 大金牙 (久经沙场)",
       "hash_name": "格洛克 18 型 | 大金牙 (久经沙场)",
@@ -7131,20 +6577,6 @@
       "image_url": "https://market.fp.ps.netease.com/file/65f57072372367dc73b699e2Zc91itAt05?fop=imageView/6/f/webp/q/75",
       "category": "重新筛选",
       "last_updated": "2025-06-13T14:54:45.438852"
-    },
-    {
-      "id": "968106",
-      "name": "AK-47 | 交叉渐变 (久经沙场)",
-      "hash_name": "AK-47 | 交叉渐变 (久经沙场)",
-      "buff_price": 9.0,
-      "youpin_price": 9.23,
-      "price_diff": 0.23000000000000043,
-      "profit_rate": 2.5555555555555602,
-      "buff_url": "https://buff.163.com/goods/968106",
-      "youpin_url": "https://www.youpin898.com/search?keyword=AK-47 | 交叉渐变 (久经沙场)",
-      "image_url": "https://market.fp.ps.netease.com/file/66fdfa44a338f4e2221c9a86eafZ8NiC05?fop=imageView/6/f/webp/q/75",
-      "category": "重新筛选",
-      "last_updated": "2025-06-13T14:54:45.422256"
     },
     {
       "id": "968106",
@@ -7273,20 +6705,6 @@
       "last_updated": "2025-06-13T14:54:45.417770"
     },
     {
-      "id": "34448",
-      "name": "沙漠之鹰 | 纳迦蛇神 (久经沙场)",
-      "hash_name": "沙漠之鹰 | 纳迦蛇神 (久经沙场)",
-      "buff_price": 10.1,
-      "youpin_price": 10.35,
-      "price_diff": 0.25,
-      "profit_rate": 2.4752475247524752,
-      "buff_url": "https://buff.163.com/goods/34448",
-      "youpin_url": "https://www.youpin898.com/search?keyword=沙漠之鹰 | 纳迦蛇神 (久经沙场)",
-      "image_url": "https://market.fp.ps.netease.com/file/65f587f4cd9da2afdd37106dFF9G5Glk05?fop=imageView/6/f/webp/q/75",
-      "category": "重新筛选",
-      "last_updated": "2025-06-13T14:54:45.417770"
-    },
-    {
       "id": "876096",
       "name": "印花 | Team Liquid （闪亮） | 2021年斯德哥尔摩锦标赛",
       "hash_name": "印花 | Team Liquid （闪亮） | 2021年斯德哥尔摩锦标赛",
@@ -7327,34 +6745,6 @@
       "image_url": "https://market.fp.ps.netease.com/file/67eb2a9886adad7234213cf6lF1VONwE06?fop=imageView/6/f/webp/q/75",
       "category": "重新筛选",
       "last_updated": "2025-06-13T14:54:45.424258"
-    },
-    {
-      "id": "1115591",
-      "name": "AK-47 | 灼心怒焰 (略有磨损)",
-      "hash_name": "AK-47 | 灼心怒焰 (略有磨损)",
-      "buff_price": 66.39,
-      "youpin_price": 67.99,
-      "price_diff": 1.5999999999999943,
-      "profit_rate": 2.4100015062509326,
-      "buff_url": "https://buff.163.com/goods/1115591",
-      "youpin_url": "https://www.youpin898.com/search?keyword=AK-47 | 灼心怒焰 (略有磨损)",
-      "image_url": "https://market.fp.ps.netease.com/file/67eb2a9886adad7234213cf6lF1VONwE06?fop=imageView/6/f/webp/q/75",
-      "category": "重新筛选",
-      "last_updated": "2025-06-13T14:54:45.424258"
-    },
-    {
-      "id": "921872",
-      "name": "AWP | 金粉肆蛇 (久经沙场)",
-      "hash_name": "AWP | 金粉肆蛇 (久经沙场)",
-      "buff_price": 12.46,
-      "youpin_price": 12.76,
-      "price_diff": 0.29999999999999893,
-      "profit_rate": 2.407704654895657,
-      "buff_url": "https://buff.163.com/goods/921872",
-      "youpin_url": "https://www.youpin898.com/search?keyword=AWP | 金粉肆蛇 (久经沙场)",
-      "image_url": "https://market.fp.ps.netease.com/file/65f578d581493ca5bafd317dlUWwNURW05?fop=imageView/6/f/webp/q/75",
-      "category": "重新筛选",
-      "last_updated": "2025-06-13T14:54:45.419742"
     },
     {
       "id": "921872",
@@ -7439,20 +6829,6 @@
       "image_url": "https://g.fp.ps.netease.com/market/file/645448f94efdc938fe0e8e63NR5C3iAq04?fop=imageView/6/f/webp/q/75",
       "category": "重新筛选",
       "last_updated": "2025-06-13T14:54:45.444348"
-    },
-    {
-      "id": "38726",
-      "name": "格洛克 18 型（StatTrak™） | 异星世界 (略有磨损)",
-      "hash_name": "格洛克 18 型（StatTrak™） | 异星世界 (略有磨损)",
-      "buff_price": 5.07,
-      "youpin_price": 5.19,
-      "price_diff": 0.1200000000000001,
-      "profit_rate": 2.3668639053254457,
-      "buff_url": "https://buff.163.com/goods/38726",
-      "youpin_url": "https://www.youpin898.com/search?keyword=格洛克 18 型（StatTrak™） | 异星世界 (略有磨损)",
-      "image_url": "https://market.fp.ps.netease.com/file/660d767ec5f82ddf53cf97a50YjUNtaj05?fop=imageView/6/f/webp/q/75",
-      "category": "重新筛选",
-      "last_updated": "2025-06-13T14:54:45.422256"
     },
     {
       "id": "38726",
@@ -7679,20 +7055,6 @@
       "last_updated": "2025-06-13T14:54:45.438317"
     },
     {
-      "id": "35212",
-      "name": "M4A1 消音型 | 守护者 (崭新出厂)",
-      "hash_name": "M4A1 消音型 | 守护者 (崭新出厂)",
-      "buff_price": 239.0,
-      "youpin_price": 244.0,
-      "price_diff": 5.0,
-      "profit_rate": 2.092050209205021,
-      "buff_url": "https://buff.163.com/goods/35212",
-      "youpin_url": "https://www.youpin898.com/search?keyword=M4A1 消音型 | 守护者 (崭新出厂)",
-      "image_url": "https://market.fp.ps.netease.com/file/65f577bc1dbe9af3dbfbdcc2yFL0POev05?fop=imageView/6/f/webp/q/75",
-      "category": "重新筛选",
-      "last_updated": "2025-06-13T14:54:45.438317"
-    },
-    {
       "id": "775002",
       "name": "枪手 | 凤凰战士",
       "hash_name": "枪手 | 凤凰战士",
@@ -7749,20 +7111,6 @@
       "last_updated": "2025-06-13T14:54:45.438852"
     },
     {
-      "id": "34949",
-      "name": "加利尔 AR | 沙尘暴 (久经沙场)",
-      "hash_name": "加利尔 AR | 沙尘暴 (久经沙场)",
-      "buff_price": 6.31,
-      "youpin_price": 6.44,
-      "price_diff": 0.13000000000000078,
-      "profit_rate": 2.060221870047556,
-      "buff_url": "https://buff.163.com/goods/34949",
-      "youpin_url": "https://www.youpin898.com/search?keyword=加利尔 AR | 沙尘暴 (久经沙场)",
-      "image_url": "https://market.fp.ps.netease.com/file/65f57ec7cadf40baa3254be9XJU4eHk105?fop=imageView/6/f/webp/q/75",
-      "category": "重新筛选",
-      "last_updated": "2025-06-13T14:54:45.438852"
-    },
-    {
       "id": "775915",
       "name": "AK-47 | 巴洛克之紫 (略有磨损)",
       "hash_name": "AK-47 | 巴洛克之紫 (略有磨损)",
@@ -7775,20 +7123,6 @@
       "image_url": "https://market.fp.ps.netease.com/file/65f5a1260620fc6e8cda24da2UFEmiHr05?fop=imageView/6/f/webp/q/75",
       "category": "重新筛选",
       "last_updated": "2025-06-13T14:54:45.436317"
-    },
-    {
-      "id": "873651",
-      "name": "音乐盒 | bbno$ - 你急了！",
-      "hash_name": "音乐盒 | bbno$ - 你急了！",
-      "buff_price": 20.7,
-      "youpin_price": 21.12,
-      "price_diff": 0.4200000000000017,
-      "profit_rate": 2.028985507246385,
-      "buff_url": "https://buff.163.com/goods/873651",
-      "youpin_url": "https://www.youpin898.com/search?keyword=音乐盒 | bbno$ - 你急了！",
-      "image_url": "https://g.fp.ps.netease.com/market/file/615f98f4fbfe1b1f2acc2cf55R13UCUC03?fop=imageView/6/f/webp/q/75",
-      "category": "重新筛选",
-      "last_updated": "2025-06-13T14:54:45.417770"
     },
     {
       "id": "873651",
@@ -7931,20 +7265,6 @@
       "last_updated": "2025-06-13T14:54:45.428312"
     },
     {
-      "id": "779175",
-      "name": "棱彩2号武器箱",
-      "hash_name": "棱彩2号武器箱",
-      "buff_price": 8.67,
-      "youpin_price": 8.84,
-      "price_diff": 0.16999999999999993,
-      "profit_rate": 1.9607843137254894,
-      "buff_url": "https://buff.163.com/goods/779175",
-      "youpin_url": "https://www.youpin898.com/search?keyword=棱彩2号武器箱",
-      "image_url": "https://g.fp.ps.netease.com/market/file/5e83d7916f04943b53820821TwZ0RJVV02?fop=imageView/6/f/webp/q/75",
-      "category": "重新筛选",
-      "last_updated": "2025-06-13T14:54:45.428312"
-    },
-    {
       "id": "886753",
       "name": "AK-47 | 夜愿 (略有磨损)",
       "hash_name": "AK-47 | 夜愿 (略有磨损)",
@@ -7999,20 +7319,6 @@
       "image_url": "https://g.fp.ps.netease.com/market/file/6271d59957166d2dbe2d02598h6KlvQ704?fop=imageView/6/f/webp/q/75",
       "category": "重新筛选",
       "last_updated": "2025-06-13T14:54:45.445906"
-    },
-    {
-      "id": "42235",
-      "name": "USP 消音版 | 力矩 (略有磨损)",
-      "hash_name": "USP 消音版 | 力矩 (略有磨损)",
-      "buff_price": 7.36,
-      "youpin_price": 7.5,
-      "price_diff": 0.13999999999999968,
-      "profit_rate": 1.9021739130434738,
-      "buff_url": "https://buff.163.com/goods/42235",
-      "youpin_url": "https://www.youpin898.com/search?keyword=USP 消音版 | 力矩 (略有磨损)",
-      "image_url": "https://market.fp.ps.netease.com/file/65f5847b3fad02c2b38b0408dgtRclF505?fop=imageView/6/f/webp/q/75",
-      "category": "重新筛选",
-      "last_updated": "2025-06-13T14:54:45.422256"
     },
     {
       "id": "42235",
@@ -8141,20 +7447,6 @@
       "last_updated": "2025-06-13T14:54:45.432800"
     },
     {
-      "id": "45257",
-      "name": "格洛克 18 型 | 城里的月光 (崭新出厂)",
-      "hash_name": "格洛克 18 型 | 城里的月光 (崭新出厂)",
-      "buff_price": 11.69,
-      "youpin_price": 11.9,
-      "price_diff": 0.21000000000000085,
-      "profit_rate": 1.7964071856287498,
-      "buff_url": "https://buff.163.com/goods/45257",
-      "youpin_url": "https://www.youpin898.com/search?keyword=格洛克 18 型 | 城里的月光 (崭新出厂)",
-      "image_url": "https://market.fp.ps.netease.com/file/65f583551d063abcb0537e01zWdK5JTm05?fop=imageView/6/f/webp/q/75",
-      "category": "重新筛选",
-      "last_updated": "2025-06-13T14:54:45.432800"
-    },
-    {
       "id": "900603",
       "name": "SG 553 | 青龙 (崭新出厂)",
       "hash_name": "SG 553 | 青龙 (崭新出厂)",
@@ -8179,34 +7471,6 @@
       "buff_url": "https://buff.163.com/goods/1116902",
       "youpin_url": "https://www.youpin898.com/search?keyword=印花 | donk（闪亮）| 2025年奥斯汀锦标赛",
       "image_url": "https://market.fp.ps.netease.com/file/682fc537c535241544b8349fzhv6GWIv06?fop=imageView/6/f/webp/q/75",
-      "category": "重新筛选",
-      "last_updated": "2025-06-13T14:54:45.418741"
-    },
-    {
-      "id": "1116902",
-      "name": "印花 | donk（闪亮）| 2025年奥斯汀锦标赛",
-      "hash_name": "印花 | donk（闪亮）| 2025年奥斯汀锦标赛",
-      "buff_price": 51.99,
-      "youpin_price": 52.89,
-      "price_diff": 0.8999999999999986,
-      "profit_rate": 1.7311021350259637,
-      "buff_url": "https://buff.163.com/goods/1116902",
-      "youpin_url": "https://www.youpin898.com/search?keyword=印花 | donk（闪亮）| 2025年奥斯汀锦标赛",
-      "image_url": "https://market.fp.ps.netease.com/file/682fc537c535241544b8349fzhv6GWIv06?fop=imageView/6/f/webp/q/75",
-      "category": "重新筛选",
-      "last_updated": "2025-06-13T14:54:45.418741"
-    },
-    {
-      "id": "36465",
-      "name": "SG 553 | 大马士革钢 (略有磨损)",
-      "hash_name": "SG 553 | 大马士革钢 (略有磨损)",
-      "buff_price": 9.39,
-      "youpin_price": 9.55,
-      "price_diff": 0.16000000000000014,
-      "profit_rate": 1.7039403620873286,
-      "buff_url": "https://buff.163.com/goods/36465",
-      "youpin_url": "https://www.youpin898.com/search?keyword=SG 553 | 大马士革钢 (略有磨损)",
-      "image_url": "https://market.fp.ps.netease.com/file/65f58b9be92c5414b8330347sqEYEyBv05?fop=imageView/6/f/webp/q/75",
       "category": "重新筛选",
       "last_updated": "2025-06-13T14:54:45.418741"
     },
@@ -8307,20 +7571,6 @@
       "image_url": "https://g.fp.ps.netease.com/market/file/5aa091c8a75014c6bfd9cf89tSoTzLEN?fop=imageView/6/f/webp/q/75",
       "category": "重新筛选",
       "last_updated": "2025-06-13T14:54:45.417770"
-    },
-    {
-      "id": "763322",
-      "name": "MP5-SD | 磷光体 (久经沙场)",
-      "hash_name": "MP5-SD | 磷光体 (久经沙场)",
-      "buff_price": 25.88,
-      "youpin_price": 26.3,
-      "price_diff": 0.4200000000000017,
-      "profit_rate": 1.6228748068006247,
-      "buff_url": "https://buff.163.com/goods/763322",
-      "youpin_url": "https://www.youpin898.com/search?keyword=MP5-SD | 磷光体 (久经沙场)",
-      "image_url": "https://market.fp.ps.netease.com/file/65f57a13ad8137eadd8cb38bOAjv4plC05?fop=imageView/6/f/webp/q/75",
-      "category": "重新筛选",
-      "last_updated": "2025-06-13T14:54:45.416226"
     },
     {
       "id": "763322",
@@ -8489,20 +7739,6 @@
       "image_url": "https://market.fp.ps.netease.com/file/65f5774b4d6a3bcc4672e53dRw7APymW05?fop=imageView/6/f/webp/q/75",
       "category": "重新筛选",
       "last_updated": "2025-06-13T14:54:45.437317"
-    },
-    {
-      "id": "42154",
-      "name": "USP 消音版 | 蓝图 (略有磨损)",
-      "hash_name": "USP 消音版 | 蓝图 (略有磨损)",
-      "buff_price": 61.65,
-      "youpin_price": 62.6,
-      "price_diff": 0.9500000000000028,
-      "profit_rate": 1.5409570154095746,
-      "buff_url": "https://buff.163.com/goods/42154",
-      "youpin_url": "https://www.youpin898.com/search?keyword=USP 消音版 | 蓝图 (略有磨损)",
-      "image_url": "https://market.fp.ps.netease.com/file/65f575b3187078229d0ed17aKovRi26W05?fop=imageView/6/f/webp/q/75",
-      "category": "重新筛选",
-      "last_updated": "2025-06-13T14:54:45.421278"
     },
     {
       "id": "42154",
@@ -8715,20 +7951,6 @@
       "last_updated": "2025-06-13T14:54:45.433801"
     },
     {
-      "id": "769269",
-      "name": "AUG | 动量 (略有磨损)",
-      "hash_name": "AUG | 动量 (略有磨损)",
-      "buff_price": 34.18,
-      "youpin_price": 34.67,
-      "price_diff": 0.490000000000002,
-      "profit_rate": 1.4335868929198419,
-      "buff_url": "https://buff.163.com/goods/769269",
-      "youpin_url": "https://www.youpin898.com/search?keyword=AUG | 动量 (略有磨损)",
-      "image_url": "https://market.fp.ps.netease.com/file/65f572fbc3d9ffdfa80ceca4ONJcXPpA05?fop=imageView/6/f/webp/q/75",
-      "category": "重新筛选",
-      "last_updated": "2025-06-13T14:54:45.433801"
-    },
-    {
       "id": "895407",
       "name": "印花 | karrigan（全息） | 2022年安特卫普锦标赛",
       "hash_name": "印花 | karrigan（全息） | 2022年安特卫普锦标赛",
@@ -8767,34 +7989,6 @@
       "buff_url": "https://buff.163.com/goods/35198",
       "youpin_url": "https://www.youpin898.com/search?keyword=M4A1 消音型 | 毁灭者 2000 (久经沙场)",
       "image_url": "https://market.fp.ps.netease.com/file/65f5775253c7439a7c6658507cfGfbhV05?fop=imageView/6/f/webp/q/75",
-      "category": "重新筛选",
-      "last_updated": "2025-06-13T14:54:45.422256"
-    },
-    {
-      "id": "35198",
-      "name": "M4A1 消音型 | 毁灭者 2000 (久经沙场)",
-      "hash_name": "M4A1 消音型 | 毁灭者 2000 (久经沙场)",
-      "buff_price": 97.15,
-      "youpin_price": 98.5,
-      "price_diff": 1.3499999999999943,
-      "profit_rate": 1.3896037056098758,
-      "buff_url": "https://buff.163.com/goods/35198",
-      "youpin_url": "https://www.youpin898.com/search?keyword=M4A1 消音型 | 毁灭者 2000 (久经沙场)",
-      "image_url": "https://market.fp.ps.netease.com/file/65f5775253c7439a7c6658507cfGfbhV05?fop=imageView/6/f/webp/q/75",
-      "category": "重新筛选",
-      "last_updated": "2025-06-13T14:54:45.422256"
-    },
-    {
-      "id": "1115773",
-      "name": "格洛克 18 型（StatTrak™） | 忍瞳 (久经沙场)",
-      "hash_name": "格洛克 18 型（StatTrak™） | 忍瞳 (久经沙场)",
-      "buff_price": 86.8,
-      "youpin_price": 88.0,
-      "price_diff": 1.2000000000000028,
-      "profit_rate": 1.3824884792626762,
-      "buff_url": "https://buff.163.com/goods/1115773",
-      "youpin_url": "https://www.youpin898.com/search?keyword=格洛克 18 型（StatTrak™） | 忍瞳 (久经沙场)",
-      "image_url": "https://market.fp.ps.netease.com/file/67eb26465b057cc0d48a43d9D1T88Xg806?fop=imageView/6/f/webp/q/75",
       "category": "重新筛选",
       "last_updated": "2025-06-13T14:54:45.422256"
     },
@@ -8839,20 +8033,6 @@
       "image_url": "https://market.fp.ps.netease.com/file/65f584b450aeb89c1fe6e245SNtsmEwM05?fop=imageView/6/f/webp/q/75",
       "category": "重新筛选",
       "last_updated": "2025-06-13T14:54:45.417770"
-    },
-    {
-      "id": "38408",
-      "name": "沙漠之鹰（StatTrak™） | 科林斯遗产 (崭新出厂)",
-      "hash_name": "沙漠之鹰（StatTrak™） | 科林斯遗产 (崭新出厂)",
-      "buff_price": 24.77,
-      "youpin_price": 25.1,
-      "price_diff": 0.33000000000000185,
-      "profit_rate": 1.3322567622123611,
-      "buff_url": "https://buff.163.com/goods/38408",
-      "youpin_url": "https://www.youpin898.com/search?keyword=沙漠之鹰（StatTrak™） | 科林斯遗产 (崭新出厂)",
-      "image_url": "https://market.fp.ps.netease.com/file/65f584b450aeb89c1fe6e245SNtsmEwM05?fop=imageView/6/f/webp/q/75",
-      "category": "重新筛选",
-      "last_updated": "2025-06-13T14:54:45.418741"
     },
     {
       "id": "33811",
@@ -8911,20 +8091,6 @@
       "last_updated": "2025-06-13T14:54:45.422256"
     },
     {
-      "id": "35685",
-      "name": "MP9 | 红宝石毒镖 (略有磨损)",
-      "hash_name": "MP9 | 红宝石毒镖 (略有磨损)",
-      "buff_price": 9.09,
-      "youpin_price": 9.21,
-      "price_diff": 0.120000000000001,
-      "profit_rate": 1.320132013201331,
-      "buff_url": "https://buff.163.com/goods/35685",
-      "youpin_url": "https://www.youpin898.com/search?keyword=MP9 | 红宝石毒镖 (略有磨损)",
-      "image_url": "https://market.fp.ps.netease.com/file/65f57a473650d042c87d869dVefEAyiV05?fop=imageView/6/f/webp/q/75",
-      "category": "重新筛选",
-      "last_updated": "2025-06-13T14:54:45.422256"
-    },
-    {
       "id": "1114613",
       "name": "印花 | ropz（全息）| 2024年上海锦标赛",
       "hash_name": "印花 | ropz（全息）| 2024年上海锦标赛",
@@ -8937,20 +8103,6 @@
       "image_url": "https://market.fp.ps.netease.com/file/6747ab85b9e08de0417f080dZajJaYZe05?fop=imageView/6/f/webp/q/75",
       "category": "重新筛选",
       "last_updated": "2025-06-13T14:54:45.417770"
-    },
-    {
-      "id": "1114613",
-      "name": "印花 | ropz（全息）| 2024年上海锦标赛",
-      "hash_name": "印花 | ropz（全息）| 2024年上海锦标赛",
-      "buff_price": 25.76,
-      "youpin_price": 26.1,
-      "price_diff": 0.33999999999999986,
-      "profit_rate": 1.3198757763975149,
-      "buff_url": "https://buff.163.com/goods/1114613",
-      "youpin_url": "https://www.youpin898.com/search?keyword=印花 | ropz（全息）| 2024年上海锦标赛",
-      "image_url": "https://market.fp.ps.netease.com/file/6747ab85b9e08de0417f080dZajJaYZe05?fop=imageView/6/f/webp/q/75",
-      "category": "重新筛选",
-      "last_updated": "2025-06-13T14:54:45.418741"
     },
     {
       "id": "33940",
@@ -9093,20 +8245,6 @@
       "last_updated": "2025-06-13T14:54:45.417770"
     },
     {
-      "id": "956502",
-      "name": "USP 消音版 | 破颚者 (略有磨损)",
-      "hash_name": "USP 消音版 | 破颚者 (略有磨损)",
-      "buff_price": 70.9,
-      "youpin_price": 71.8,
-      "price_diff": 0.8999999999999915,
-      "profit_rate": 1.2693935119887043,
-      "buff_url": "https://buff.163.com/goods/956502",
-      "youpin_url": "https://www.youpin898.com/search?keyword=USP 消音版 | 破颚者 (略有磨损)",
-      "image_url": "https://market.fp.ps.netease.com/file/65c34dccb73a13c1ac281b3aUyorVQT505?fop=imageView/6/f/webp/q/75",
-      "category": "重新筛选",
-      "last_updated": "2025-06-13T14:54:45.418741"
-    },
-    {
       "id": "35779",
       "name": "内格夫 | 动力装载机 (略有磨损)",
       "hash_name": "内格夫 | 动力装载机 (略有磨损)",
@@ -9233,20 +8371,6 @@
       "last_updated": "2025-06-13T14:54:45.417225"
     },
     {
-      "id": "35220",
-      "name": "M4A1 消音型 | 暴怒野兽 (久经沙场)",
-      "hash_name": "M4A1 消音型 | 暴怒野兽 (久经沙场)",
-      "buff_price": 167.5,
-      "youpin_price": 169.48,
-      "price_diff": 1.9799999999999898,
-      "profit_rate": 1.1820895522388,
-      "buff_url": "https://buff.163.com/goods/35220",
-      "youpin_url": "https://www.youpin898.com/search?keyword=M4A1 消音型 | 暴怒野兽 (久经沙场)",
-      "image_url": "https://market.fp.ps.netease.com/file/65f5776dc5490b95714b9905xg4SsYW905?fop=imageView/6/f/webp/q/75",
-      "category": "重新筛选",
-      "last_updated": "2025-06-13T14:54:45.417770"
-    },
-    {
       "id": "772306",
       "name": "印花 | s1mple（闪亮）| 2019年柏林锦标赛",
       "hash_name": "印花 | s1mple（闪亮）| 2019年柏林锦标赛",
@@ -9359,20 +8483,6 @@
       "last_updated": "2025-06-13T14:54:45.416226"
     },
     {
-      "id": "781541",
-      "name": "格洛克 18 型 | 摩登时代 (久经沙场)",
-      "hash_name": "格洛克 18 型 | 摩登时代 (久经沙场)",
-      "buff_price": 18.54,
-      "youpin_price": 18.75,
-      "price_diff": 0.21000000000000085,
-      "profit_rate": 1.1326860841423994,
-      "buff_url": "https://buff.163.com/goods/781541",
-      "youpin_url": "https://www.youpin898.com/search?keyword=格洛克 18 型 | 摩登时代 (久经沙场)",
-      "image_url": "https://market.fp.ps.netease.com/file/65f581544ea8648caee05b17dirHXdkV05?fop=imageView/6/f/webp/q/75",
-      "category": "重新筛选",
-      "last_updated": "2025-06-13T14:54:45.416226"
-    },
-    {
       "id": "45312",
       "name": "格洛克 18 型（StatTrak™） | 城里的月光 (久经沙场)",
       "hash_name": "格洛克 18 型（StatTrak™） | 城里的月光 (久经沙场)",
@@ -9455,20 +8565,6 @@
       "image_url": "https://market.fp.ps.netease.com/file/66fe0ec1257b10950452f1f4Rd0dhOcO05?fop=imageView/6/f/webp/q/75",
       "category": "重新筛选",
       "last_updated": "2025-06-13T14:54:45.438317"
-    },
-    {
-      "id": "45392",
-      "name": "M4A4（StatTrak™） | 黑色魅影 (久经沙场)",
-      "hash_name": "M4A4（StatTrak™） | 黑色魅影 (久经沙场)",
-      "buff_price": 142.5,
-      "youpin_price": 143.8,
-      "price_diff": 1.3000000000000114,
-      "profit_rate": 0.9122807017543939,
-      "buff_url": "https://buff.163.com/goods/45392",
-      "youpin_url": "https://www.youpin898.com/search?keyword=M4A4（StatTrak™） | 黑色魅影 (久经沙场)",
-      "image_url": "https://market.fp.ps.netease.com/file/65f578f4494663771bb7a447PXczmV2B05?fop=imageView/6/f/webp/q/75",
-      "category": "重新筛选",
-      "last_updated": "2025-06-13T14:54:45.422256"
     },
     {
       "id": "45392",
@@ -9751,20 +8847,6 @@
       "last_updated": "2025-06-13T14:54:45.423256"
     },
     {
-      "id": "921383",
-      "name": "音乐盒 | Denzel Curry - 终极",
-      "hash_name": "音乐盒 | Denzel Curry - 终极",
-      "buff_price": 22.85,
-      "youpin_price": 22.99,
-      "price_diff": 0.13999999999999702,
-      "profit_rate": 0.6126914660831378,
-      "buff_url": "https://buff.163.com/goods/921383",
-      "youpin_url": "https://www.youpin898.com/search?keyword=音乐盒 | Denzel Curry - 终极",
-      "image_url": "https://g.fp.ps.netease.com/market/file/63e5a40f3b75001a5cb4e4d1afbNcRGe04?fop=imageView/6/f/webp/q/75",
-      "category": "重新筛选",
-      "last_updated": "2025-06-13T14:54:45.423256"
-    },
-    {
       "id": "779307",
       "name": "AWP | 毛细血管 (崭新出厂)",
       "hash_name": "AWP | 毛细血管 (崭新出厂)",
@@ -9863,20 +8945,6 @@
       "last_updated": "2025-06-13T14:54:45.419742"
     },
     {
-      "id": "33970",
-      "name": "AK-47 | 皇后 (久经沙场)",
-      "hash_name": "AK-47 | 皇后 (久经沙场)",
-      "buff_price": 270.0,
-      "youpin_price": 271.5,
-      "price_diff": 1.5,
-      "profit_rate": 0.5555555555555556,
-      "buff_url": "https://buff.163.com/goods/33970",
-      "youpin_url": "https://www.youpin898.com/search?keyword=AK-47 | 皇后 (久经沙场)",
-      "image_url": "https://market.fp.ps.netease.com/file/65f5779ddd7f5e6f46af1b7cvEUhd9Cd05?fop=imageView/6/f/webp/q/75",
-      "category": "重新筛选",
-      "last_updated": "2025-06-13T14:54:45.419742"
-    },
-    {
       "id": "774902",
       "name": "奥西瑞斯 | 精锐分子",
       "hash_name": "奥西瑞斯 | 精锐分子",
@@ -9959,20 +9027,6 @@
       "image_url": "https://market.fp.ps.netease.com/file/65f577bc1dbe9af3dbfbdcc2yFL0POev05?fop=imageView/6/f/webp/q/75",
       "category": "重新筛选",
       "last_updated": "2025-06-13T14:54:45.435590"
-    },
-    {
-      "id": "33890",
-      "name": "AK-47 | 翡翠细条纹 (崭新出厂)",
-      "hash_name": "AK-47 | 翡翠细条纹 (崭新出厂)",
-      "buff_price": 69.7,
-      "youpin_price": 70.0,
-      "price_diff": 0.29999999999999716,
-      "profit_rate": 0.4304160688665669,
-      "buff_url": "https://buff.163.com/goods/33890",
-      "youpin_url": "https://www.youpin898.com/search?keyword=AK-47 | 翡翠细条纹 (崭新出厂)",
-      "image_url": "https://market.fp.ps.netease.com/file/65f58cd5ffb848e55ab81764AO5BHalX05?fop=imageView/6/f/webp/q/75",
-      "category": "重新筛选",
-      "last_updated": "2025-06-13T14:54:45.425772"
     },
     {
       "id": "33890",
@@ -10157,20 +9211,6 @@
       "last_updated": "2025-06-13T14:54:45.420742"
     },
     {
-      "id": "773698",
-      "name": "AWP | 野火 (久经沙场)",
-      "hash_name": "AWP | 野火 (久经沙场)",
-      "buff_price": 354.0,
-      "youpin_price": 354.99,
-      "price_diff": 0.9900000000000091,
-      "profit_rate": 0.27966101694915513,
-      "buff_url": "https://buff.163.com/goods/773698",
-      "youpin_url": "https://www.youpin898.com/search?keyword=AWP | 野火 (久经沙场)",
-      "image_url": "https://market.fp.ps.netease.com/file/65f5730923321f94e4a72f2f14zIwQzc05?fop=imageView/6/f/webp/q/75",
-      "category": "重新筛选",
-      "last_updated": "2025-06-13T14:54:45.421278"
-    },
-    {
       "id": "36079",
       "name": "P250 | 生化短吻鳄 (略有磨损)",
       "hash_name": "P250 | 生化短吻鳄 (略有磨损)",
@@ -10295,20 +9335,6 @@
       "image_url": "https://market.fp.ps.netease.com/file/65f5883e5a6a27a628a8e32eEOApKA4J05?fop=imageView/6/f/webp/q/75",
       "category": "重新筛选",
       "last_updated": "2025-06-13T14:54:45.436317"
-    },
-    {
-      "id": "34078",
-      "name": "AWP | 电子蜂巢 (崭新出厂)",
-      "hash_name": "AWP | 电子蜂巢 (崭新出厂)",
-      "buff_price": 348.9,
-      "youpin_price": 349.0,
-      "price_diff": 0.10000000000002274,
-      "profit_rate": 0.02866150759530603,
-      "buff_url": "https://buff.163.com/goods/34078",
-      "youpin_url": "https://www.youpin898.com/search?keyword=AWP | 电子蜂巢 (崭新出厂)",
-      "image_url": "https://market.fp.ps.netease.com/file/65f57687187078229d0ee571WFuaPIu305?fop=imageView/6/f/webp/q/75",
-      "category": "重新筛选",
-      "last_updated": "2025-06-13T14:54:45.430288"
     },
     {
       "id": "34078",
