@@ -14,8 +14,8 @@
       "game": "csgo",
       "qr_code_verify_ticket": "",
       "remember_me": "",
-      "session": "1-v6c57p3AxMjpbcFc60CprSuxttNWFGwWKN0APzBr6VfW2044457754",
-      "csrf_token": "IjRjYWI0NmEyODYyYzY4NjNlMzY4ZWE1YzRhNTU1OWVmNjUxNWNkNjki.aFjJpQ.G3JqN3QJ0H2AcTnQT71lIXeyk3s"
+      "session": "1-hhnEzLjMbibxzZN28BEjTATOEdxZncBj8J8qTx0sjFxh2044457754",
+      "csrf_token": "Ijg2NmZhMDE5OGE3NDFlZmVlMzIwZmE3YzQyZGFmNWI0YmRiOTEyMzci.aGHwaQ.gCkPGLF4bVzGI5OjnqjXOlHC-ds"
     },
     "headers": {
       "Accept": "application/json, text/javascript, */*; q=0.01",
@@ -31,14 +31,14 @@
       "sec-ch-ua-mobile": "?0",
       "sec-ch-ua-platform": "\"Windows\""
     },
-    "last_updated": "2025-06-10T09:59:59.624875",
+    "last_updated": "2025-06-30T10:03:55.346286",
     "status": "已配置"
   },
   "youpin": {
     "device_id": "5b38ebeb-5a5b-4b1a-afe9-b51edbbb8e01",
-    "device_uk": "5FLLZU0s6briQcSlAJZN5XjSMauzFWlWTcTHd22Dn7PDPRs8gBwUVvJBiY753qH1I",
+    "device_uk": "5FLSJmILh3O0zl2UPD5CiiMYByHVYf1V9Gst25SjqaNHB8BqXsUM9JG6iSqK0o11F",
     "uk": "5FEvkZD2PSMLMTtE0BqOfidTtuoaX9HWBIze4zzFxfdXrsajaPWS4yY5ay96BuX1M",
-    "b3": "b75be2c602134065b29192d74b22ba3d-dbf90dfde642502f-1",
+    "b3": "1dd728c2a8054520bb3708704c17e8ae-03656111c67f43de-1",
     "headers": {
       "accept": "application/json, text/plain, */*",
       "accept-language": "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7",
@@ -52,14 +52,14 @@
       "secret-v": "h5_v1",
       "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36 Edg/136.0.0.0",
       "deviceid": "5b38ebeb-5a5b-4b1a-afe9-b51edbbb8e01",
-      "deviceuk": "5FLLZU0s6briQcSlAJZN5XjSMauzFWlWTcTHd22Dn7PDPRs8gBwUVvJBiY753qH1I",
+      "deviceuk": "5FLSJmILh3O0zl2UPD5CiiMYByHVYf1V9Gst25SjqaNHB8BqXsUM9JG6iSqK0o11F",
       "uk": "5FEvkZD2PSMLMTtE0BqOfidTtuoaX9HWBIze4zzFxfdXrsajaPWS4yY5ay96BuX1M",
-      "b3": "8541581321bd4125813b58b73aadb703-d364076b5d6dd58c-1",
-      "traceparent": "00-b75be2c602134065b29192d74b22ba3d-dbf90dfde642502f-01",
-      "authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiI3ZWNiMGJjZjZiNGE0Mzg4OWE5MGMxMWZiMWZjY2NmZiIsIm5hbWVpZCI6IjM2ODkyMzMiLCJJZCI6IjM2ODkyMzMiLCJ1bmlxdWVfbmFtZSI6IuenkuWPkeenkuWPkSIsIk5hbWUiOiLnp5Llj5Hnp5Llj5EiLCJ2ZXJzaW9uIjoiUkVwIiwibmJmIjoxNzUwNjQ4OTc5LCJleHAiOjE3NTE1MTI5NzksImlzcyI6InlvdXBpbjg5OC5jb20iLCJkZXZpY2VJZCI6IjViMzhlYmViLTVhNWItNGIxYS1hZmU5LWI1MWVkYmJiOGUwMSIsImF1ZCI6InVzZXIifQ.Cnj1A3qfaKW3MeqkVt9fKFOA3BdOoVb7p0fWe1WzqJo"
+      "b3": "1dd728c2a8054520bb3708704c17e8ae-03656111c67f43de-1",
+      "traceparent": "00-1dd728c2a8054520bb3708704c17e8ae-03656111c67f43de-01",
+      "authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiI5NDk4NDJiMTlkOWM0YWFjYTEzMmQzYThlNGU2OGJmMiIsIm5hbWVpZCI6IjM2ODkyMzMiLCJJZCI6IjM2ODkyMzMiLCJ1bmlxdWVfbmFtZSI6IuenkuWPkeenkuWPkSIsIk5hbWUiOiLnp5Llj5Hnp5Llj5EiLCJ2ZXJzaW9uIjoiVlRXIiwibmJmIjoxNzUxMjYxNzE3LCJleHAiOjE3NTIxMjU3MTcsImlzcyI6InlvdXBpbjg5OC5jb20iLCJkZXZpY2VJZCI6IjViMzhlYmViLTVhNWItNGIxYS1hZmU5LWI1MWVkYmJiOGUwMSIsImF1ZCI6InVzZXIifQ.y3UZ0Must8thMnOu1UGSpX1eFbBhQ_9tMjRQTGhwlGc"
     },
-    "last_updated": "2025-06-19T14:10:56.984739",
+    "last_updated": "2025-06-30T13:36:20.902437",
     "status": "已配置",
-    "authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiI3ZWNiMGJjZjZiNGE0Mzg4OWE5MGMxMWZiMWZjY2NmZiIsIm5hbWVpZCI6IjM2ODkyMzMiLCJJZCI6IjM2ODkyMzMiLCJ1bmlxdWVfbmFtZSI6IuenkuWPkeenkuWPkSIsIk5hbWUiOiLnp5Llj5Hnp5Llj5EiLCJ2ZXJzaW9uIjoiUkVwIiwibmJmIjoxNzUwNjQ4OTc5LCJleHAiOjE3NTE1MTI5NzksImlzcyI6InlvdXBpbjg5OC5jb20iLCJkZXZpY2VJZCI6IjViMzhlYmViLTVhNWItNGIxYS1hZmU5LWI1MWVkYmJiOGUwMSIsImF1ZCI6InVzZXIifQ.Cnj1A3qfaKW3MeqkVt9fKFOA3BdOoVb7p0fWe1WzqJo"
+    "authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiI5NDk4NDJiMTlkOWM0YWFjYTEzMmQzYThlNGU2OGJmMiIsIm5hbWVpZCI6IjM2ODkyMzMiLCJJZCI6IjM2ODkyMzMiLCJ1bmlxdWVfbmFtZSI6IuenkuWPkeenkuWPkSIsIk5hbWUiOiLnp5Llj5Hnp5Llj5EiLCJ2ZXJzaW9uIjoiVlRXIiwibmJmIjoxNzUxMjYxNzE3LCJleHAiOjE3NTIxMjU3MTcsImlzcyI6InlvdXBpbjg5OC5jb20iLCJkZXZpY2VJZCI6IjViMzhlYmViLTVhNWItNGIxYS1hZmU5LWI1MWVkYmJiOGUwMSIsImF1ZCI6InVzZXIifQ.y3UZ0Must8thMnOu1UGSpX1eFbBhQ_9tMjRQTGhwlGc"
   }
 }
