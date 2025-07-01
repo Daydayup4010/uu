@@ -220,6 +220,38 @@ class SavedDataProcessor:
         files = self.get_latest_full_data_files()
         return files['buff_file'] is not None and files['youpin_file'] is not None
     
+    def _deduplicate_diff_items(self, diff_items: List[PriceDiffItem]) -> List[PriceDiffItem]:
+        """对价差商品列表进行去重处理"""
+        if not diff_items:
+            return diff_items
+        
+        def generate_item_key(item):
+            """生成商品的唯一关键字"""
+            # 优先使用skin_item的ID，其次使用hash_name
+            if hasattr(item, 'skin_item') and item.skin_item and hasattr(item.skin_item, 'id') and item.skin_item.id:
+                return f"id_{item.skin_item.id}"
+            elif hasattr(item, 'skin_item') and item.skin_item and hasattr(item.skin_item, 'hash_name') and item.skin_item.hash_name:
+                return f"hash_{item.skin_item.hash_name}"
+            elif hasattr(item, 'skin_item') and item.skin_item and hasattr(item.skin_item, 'name') and item.skin_item.name:
+                return f"name_{item.skin_item.name}"
+            else:
+                return f"fallback_{str(item)}"
+        
+        unique_items = {}
+        
+        for item in diff_items:
+            key = generate_item_key(item)
+            
+            if key not in unique_items:
+                unique_items[key] = item
+            else:
+                # 发现重复，保留利润率更高的
+                existing_item = unique_items[key]
+                if item.profit_rate > existing_item.profit_rate:
+                    unique_items[key] = item
+        
+        return list(unique_items.values())
+    
     def reprocess_with_current_filters(self) -> Tuple[List[PriceDiffItem], Dict]:
         """使用当前筛选条件重新处理已保存的数据"""
         logger.info("🔄 开始从已保存数据重新筛选...")
@@ -444,15 +476,21 @@ class SavedDataProcessor:
                     stats['creation_errors'] += 1
                     continue
         
+        # 🔥 新增：在排序前进行去重
+        original_count = len(diff_items)
+        diff_items = self._deduplicate_diff_items(diff_items)
+        if len(diff_items) < original_count:
+            logger.info(f"🔄 去重完成: 移除{original_count - len(diff_items)}个重复商品")
+        
         # 按利润率排序
         diff_items.sort(key=lambda x: x.profit_rate, reverse=True)
         
         # 限制输出数量
-        original_count = len(diff_items)
+        final_original_count = len(diff_items)
         if len(diff_items) > Config.MAX_OUTPUT_ITEMS:
             diff_items = diff_items[:Config.MAX_OUTPUT_ITEMS]
             stats['limited_output'] = True
-            stats['original_final_count'] = original_count
+            stats['original_final_count'] = final_original_count
         else:
             stats['limited_output'] = False
         

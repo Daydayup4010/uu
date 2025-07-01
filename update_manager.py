@@ -402,6 +402,8 @@ class UpdateManager:
                     updated_items = loop.run_until_complete(self._run_full_analysis())
                     
                     if updated_items:
+                        # 🔥 新增：更新数据前先去重
+                        updated_items = self._deduplicate_items(updated_items)
                         # 更新当前数据
                         self.current_diff_items = updated_items
                         
@@ -466,6 +468,8 @@ class UpdateManager:
                     updated_items = loop.run_until_complete(self._run_incremental_analysis())
                     
                     if updated_items:
+                        # 🔥 新增：直接使用重新分析的结果前先去重
+                        updated_items = self._deduplicate_items(updated_items)
                         # 🔥 直接使用重新分析的结果，不需要合并
                         self.current_diff_items = updated_items
                         
@@ -891,23 +895,48 @@ class UpdateManager:
         return diff_items
     
     def _merge_incremental_data(self, incremental_items: List[PriceDiffItem]):
-        """合并增量数据到当前数据中"""
-        # 创建当前数据的索引（按name或id）
+        """合并增量数据到当前数据中 - 增强去重逻辑"""
+        # 🔥 新增：使用更稳定的关键字进行去重
+        def generate_item_key(item):
+            """生成商品的唯一关键字"""
+            # 优先使用ID，其次使用hash_name，最后使用name
+            if item.id:
+                return f"id_{item.id}"
+            elif hasattr(item, 'hash_name') and item.hash_name:
+                return f"hash_{item.hash_name}"
+            else:
+                return f"name_{item.name}"
+        
+        # 创建当前数据的索引
         current_index = {}
         for i, item in enumerate(self.current_diff_items):
-            key = f"{item.name}_{item.id}" if item.id else item.name
+            key = generate_item_key(item)
             current_index[key] = i
         
-        # 合并新数据
+        # 合并新数据，避免重复
+        merged_count = 0
+        added_count = 0
+        
         for new_item in incremental_items:
-            key = f"{new_item.name}_{new_item.id}" if new_item.id else new_item.name
+            key = generate_item_key(new_item)
             
             if key in current_index:
-                # 更新现有商品
-                self.current_diff_items[current_index[key]] = new_item
+                # 更新现有商品（保留更高利润率的）
+                existing_item = self.current_diff_items[current_index[key]]
+                if new_item.profit_rate > existing_item.profit_rate:
+                    self.current_diff_items[current_index[key]] = new_item
+                    merged_count += 1
+                    logger.debug(f"   更新商品: {new_item.name} (利润率: {new_item.profit_rate:.2f}%)")
             else:
                 # 添加新商品
                 self.current_diff_items.append(new_item)
+                added_count += 1
+                logger.debug(f"   新增商品: {new_item.name} (利润率: {new_item.profit_rate:.2f}%)")
+        
+        logger.info(f"📊 数据合并完成: 更新{merged_count}个, 新增{added_count}个商品")
+        
+        # 🔥 新增：最终去重检查
+        self.current_diff_items = self._deduplicate_items(self.current_diff_items)
         
         # 按价差排序
         self.current_diff_items.sort(key=lambda x: x.price_diff, reverse=True)
@@ -915,6 +944,45 @@ class UpdateManager:
         # 限制数量
         if len(self.current_diff_items) > Config.MAX_OUTPUT_ITEMS:
             self.current_diff_items = self.current_diff_items[:Config.MAX_OUTPUT_ITEMS]
+    
+    def _deduplicate_items(self, items: List[PriceDiffItem]) -> List[PriceDiffItem]:
+        """对商品列表进行去重处理"""
+        if not items:
+            return items
+        
+        def generate_item_key(item):
+            """生成商品的唯一关键字"""
+            if item.id:
+                return f"id_{item.id}"
+            elif hasattr(item, 'hash_name') and item.hash_name:
+                return f"hash_{item.hash_name}"
+            else:
+                return f"name_{item.name}"
+        
+        unique_items = {}
+        duplicate_count = 0
+        
+        for item in items:
+            key = generate_item_key(item)
+            
+            if key not in unique_items:
+                unique_items[key] = item
+            else:
+                # 发现重复，保留利润率更高的
+                existing_item = unique_items[key]
+                if item.profit_rate > existing_item.profit_rate:
+                    unique_items[key] = item
+                    logger.debug(f"   去重替换: {item.name} (新利润率: {item.profit_rate:.2f}% > 旧利润率: {existing_item.profit_rate:.2f}%)")
+                else:
+                    logger.debug(f"   去重保留: {existing_item.name} (利润率: {existing_item.profit_rate:.2f}% >= {item.profit_rate:.2f}%)")
+                duplicate_count += 1
+        
+        deduplicated_items = list(unique_items.values())
+        
+        if duplicate_count > 0:
+            logger.info(f"🔄 去重完成: 移除{duplicate_count}个重复商品，剩余{len(deduplicated_items)}个")
+        
+        return deduplicated_items
     
     def get_current_data(self) -> List[PriceDiffItem]:
         """获取当前数据"""
@@ -978,6 +1046,8 @@ class UpdateManager:
                         continue
                 
                 if loaded_items:
+                    # 🔥 新增：加载数据后进行去重检查
+                    loaded_items = self._deduplicate_items(loaded_items)
                     self.current_diff_items = loaded_items
                     # 从文件元数据获取更新时间
                     metadata = data.get('metadata', {})
@@ -996,6 +1066,9 @@ class UpdateManager:
     def _save_current_data(self):
         """保存当前数据到文件"""
         try:
+            # 🔥 新增：保存前先去重
+            self.current_diff_items = self._deduplicate_items(self.current_diff_items)
+            
             # 确保目录存在
             os.makedirs(os.path.dirname(Config.LATEST_DATA_FILE), exist_ok=True)
             

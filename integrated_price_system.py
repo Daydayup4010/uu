@@ -559,6 +559,35 @@ class IntegratedPriceAnalyzer:
         if self.youpin_client:
             await self.youpin_client.__aexit__(exc_type, exc_val, exc_tb)
     
+    def _deduplicate_diff_items(self, diff_items: List[PriceDiffItem]) -> List[PriceDiffItem]:
+        """对价差商品列表进行去重处理"""
+        if not diff_items:
+            return diff_items
+        
+        def generate_item_key(item):
+            """生成商品的唯一关键字"""
+            if item.id:
+                return f"id_{item.id}"
+            elif hasattr(item, 'hash_name') and item.hash_name:
+                return f"hash_{item.hash_name}"
+            else:
+                return f"name_{item.name}"
+        
+        unique_items = {}
+        
+        for item in diff_items:
+            key = generate_item_key(item)
+            
+            if key not in unique_items:
+                unique_items[key] = item
+            else:
+                # 发现重复，保留利润率更高的
+                existing_item = unique_items[key]
+                if item.profit_rate > existing_item.profit_rate:
+                    unique_items[key] = item
+        
+        return list(unique_items.values())
+    
     async def analyze_price_differences(self, max_output_items: int = None) -> List[PriceDiffItem]:
         """
         分析价差商品 - 正确的工作流程：
@@ -765,6 +794,12 @@ class IntegratedPriceAnalyzer:
         
         # 🔥 显示改进匹配算法的详细统计
         improved_matcher.print_statistics()
+        
+        # 🔥 新增：在返回前进行去重检查
+        original_count = len(diff_items)
+        diff_items = self._deduplicate_diff_items(diff_items)
+        if len(diff_items) < original_count:
+            print(f"🔄 去重完成: 移除{original_count - len(diff_items)}个重复商品")
         
         # 按利润率排序
         diff_items.sort(key=lambda x: x.profit_rate, reverse=True)
